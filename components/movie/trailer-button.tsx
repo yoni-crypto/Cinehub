@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 
 interface TrailerButtonProps {
   className?: string;
+  size?: 'sm' | 'lg';
 }
 
-export function TrailerButton({ className }: TrailerButtonProps) {
+export function TrailerButton({ className, size = 'lg' }: TrailerButtonProps) {
   const handleClick = () => {
     const trailerSection = document.getElementById('trailer');
     if (trailerSection) {
@@ -16,8 +17,8 @@ export function TrailerButton({ className }: TrailerButtonProps) {
 
   return (
     <Button
-      size="lg"
-      className={`bg-primary hover:bg-primary/90 text-white px-8 ${className || ''}`}
+      size={size}
+      className={`bg-primary hover:bg-primary/90 text-white px-4 sm:px-8 ${className || ''}`}
       onClick={handleClick}
     >
       Watch Trailer

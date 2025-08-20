@@ -66,10 +66,10 @@ export function Header() {
               whileTap={{ scale: 0.95 }}
             >
               <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">C</span>
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-sm sm:text-lg">C</span>
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <span className="text-xl sm:text-2xl font-bold text-blue-600">
                   CineHub
                 </span>
               </Link>

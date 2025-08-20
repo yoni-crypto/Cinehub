@@ -95,7 +95,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
         <Header />
         
         <main className="pt-16">
-          <div className="relative w-full h-[80vh] overflow-hidden">
+          <div className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden">
             <Image
               src={tmdbApi.getBackdropUrl(movie.backdrop_path, 'w1280')}
               alt={movie.title}
@@ -109,8 +109,8 @@ export default async function MoviePage({ params }: MoviePageProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
 
             <div className="absolute inset-0 flex items-end">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-12 lg:pb-16">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-end">
                   <div className="hidden lg:block">
                     <div className="w-80 aspect-[2/3] relative rounded-lg overflow-hidden shadow-2xl">
                       <Image
@@ -124,7 +124,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
                   </div>
 
                   <div className="text-white">
-                    <div className="flex items-center space-x-2 mb-4">
+                    <div className="flex items-center space-x-2 mb-3 sm:mb-4">
                       <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
                         <Link href="/">
                           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -133,78 +133,81 @@ export default async function MoviePage({ params }: MoviePageProps) {
                       </Button>
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-bold mb-4 text-shadow">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-2 sm:mb-4 text-shadow">
                       {movie.title}
                     </h1>
 
                     {movie.tagline && (
-                      <p className="text-xl text-gray-300 mb-6 italic text-shadow">
+                      <p className="text-sm sm:text-lg md:text-xl text-gray-300 mb-4 sm:mb-6 italic text-shadow">
                         {movie.tagline}
                       </p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-4 mb-6">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
                       {rating > 0 && (
-                        <Badge variant="secondary" className="bg-black/60 text-white border-0">
-                          <Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />
+                        <Badge variant="secondary" className="bg-black/60 text-white border-0 text-xs sm:text-sm">
+                          <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 fill-yellow-400 text-yellow-400" />
                           {rating} / 10
                         </Badge>
                       )}
                       
                       {releaseYear && (
-                        <div className="flex items-center text-gray-300">
-                          <Calendar className="w-4 h-4 mr-1" />
+                        <div className="flex items-center text-gray-300 text-xs sm:text-sm">
+                          <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                           {releaseYear}
                         </div>
                       )}
 
                       {runtime && (
-                        <div className="flex items-center text-gray-300">
-                          <Clock className="w-4 h-4 mr-1" />
+                        <div className="flex items-center text-gray-300 text-xs sm:text-sm">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                           {runtime}
                         </div>
                       )}
 
                       {movie.vote_count > 0 && (
-                        <div className="flex items-center text-gray-300">
-                          <Users className="w-4 h-4 mr-1" />
+                        <div className="flex items-center text-gray-300 text-xs sm:text-sm">
+                          <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                           {movie.vote_count.toLocaleString()} votes
                         </div>
                       )}
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 sm:mb-6">
                       {movie.genres.map((genre) => (
                         <Badge
                           key={genre.id}
                           variant="outline"
-                          className="border-white/30 text-white hover:bg-white/10"
+                          className="border-white/30 text-white hover:bg-white/10 text-xs sm:text-sm"
                         >
                           {genre.name}
                         </Badge>
                       ))}
                     </div>
 
-                    <p className="text-lg text-gray-200 mb-8 max-w-2xl text-shadow leading-relaxed">
+                    <p className="text-sm sm:text-base lg:text-lg text-gray-200 mb-6 sm:mb-8 max-w-2xl text-shadow leading-relaxed">
                       {movie.overview}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                       {trailerVideoId && (
-                        <TrailerButton />
+                        <TrailerButton className="w-full sm:w-auto" />
                       )}
 
                       <WatchlistButton 
                         movieId={movieId} 
                         movieTitle={movie.title}
                         moviePoster={movie.poster_path || ''}
+                        className="w-full sm:w-auto text-white hover:bg-white/10"
+                        size="sm"
                       />
 
                       <FavoritesButton 
                         movieId={movieId} 
                         movieTitle={movie.title}
                         moviePoster={movie.poster_path || ''}
-                        className="text-white hover:bg-white/10"
+                        className="w-full sm:w-auto text-white hover:bg-white/10"
+                        size="sm"
                       />
                     </div>
                   </div>
@@ -213,25 +216,25 @@ export default async function MoviePage({ params }: MoviePageProps) {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16">
             {trailerVideoId && (
               <section id="trailer">
-                <h2 className="text-3xl font-bold mb-8">Official Trailer</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Official Trailer</h2>
                 <YouTubePlayer videoId={trailerVideoId} title={`${movie.title} - Official Trailer`} />
               </section>
             )}
 
             {credits.cast.length > 0 && (
               <section>
-                <h2 className="text-3xl font-bold mb-8">Cast</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Cast</h2>
                 <CastGrid cast={credits.cast.slice(0, 12)} />
               </section>
             )}
 
             <section>
-              <h2 className="text-3xl font-bold mb-8">Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                <div className="space-y-3 sm:space-y-4">
                   {movie.budget > 0 && (
                     <div>
                       <h3 className="font-semibold text-muted-foreground">Budget</h3>
@@ -247,7 +250,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
                   )}
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div>
                     <h3 className="font-semibold text-muted-foreground">Status</h3>
                     <p>{movie.status}</p>

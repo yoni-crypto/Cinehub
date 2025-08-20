@@ -83,7 +83,7 @@ export function FavoritesButton({
       <Button
         size={size}
         variant={variant}
-        className={`${className}`}
+        className={`px-4 sm:px-8 ${className}`}
         onClick={handleToggleFavorites}
         disabled={isLoading}
       >
@@ -92,12 +92,14 @@ export function FavoritesButton({
         ) : isInFavorites ? (
           <>
             <StarOff className="w-4 h-4 mr-2" />
-            Remove from Favorites
+            <span className="hidden sm:inline">Remove from Favorites</span>
+            <span className="sm:hidden">Remove</span>
           </>
         ) : (
           <>
             <Star className="w-4 h-4 mr-2" />
-            Add to Favorites
+            <span className="hidden sm:inline">Add to Favorites</span>
+            <span className="sm:hidden">Add</span>
           </>
         )}
       </Button>

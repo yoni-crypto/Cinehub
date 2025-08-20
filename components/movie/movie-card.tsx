@@ -145,7 +145,7 @@ export function MovieCard({
                 </Badge>
               )}
 
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-2 right-2 opacity-0 sm:group-hover:opacity-100 transition-opacity sm:opacity-0">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -197,7 +197,7 @@ export function MovieCard({
               className="text-xs text-muted-foreground mt-2 line-clamp-3"
               initial={{ height: 0, opacity: 0 }}
               animate={{ 
-                height: isHovered ? 'auto' : 0,
+                height: isHovered ? 'auto' : 0, 
                 opacity: isHovered ? 1 : 0 
               }}
               transition={{ duration: 0.3 }}

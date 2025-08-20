@@ -13,15 +13,15 @@ interface WatchlistButtonProps {
   movieTitle: string;
   moviePoster: string;
   className?: string;
+  size?: 'sm' | 'lg';
 }
 
-export function WatchlistButton({ movieId, movieTitle, moviePoster, className }: WatchlistButtonProps) {
+export function WatchlistButton({ movieId, movieTitle, moviePoster, className, size = 'lg' }: WatchlistButtonProps) {
   const { user } = useAuth();
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  // Check if movie is in watchlist on component mount
   useEffect(() => {
     if (user) {
       checkWatchlistStatus();
@@ -34,7 +34,6 @@ export function WatchlistButton({ movieId, movieTitle, moviePoster, className }:
       setIsInWatchlist(status);
     } catch (error) {
       console.error('Error checking watchlist status:', error);
-      // Don't show error to user, just assume not in watchlist
       setIsInWatchlist(false);
     }
   };
@@ -74,9 +73,9 @@ export function WatchlistButton({ movieId, movieTitle, moviePoster, className }:
   return (
     <>
       <Button
-        size="lg"
+        size={size}
         variant="outline"
-        className={`border-white/30 text-white hover:bg-white/10 px-8 ${className || ''}`}
+        className={`border-white/30 text-white hover:bg-white/10 px-4 sm:px-8 ${className || ''}`}
         onClick={handleToggleWatchlist}
         disabled={isLoading}
       >
@@ -85,12 +84,14 @@ export function WatchlistButton({ movieId, movieTitle, moviePoster, className }:
         ) : isInWatchlist ? (
           <>
             <HeartOff className="w-4 h-4 mr-2" />
-            Remove from Watchlist
+            <span className="hidden sm:inline">Remove from Watchlist</span>
+            <span className="sm:hidden">Remove</span>
           </>
         ) : (
           <>
             <Heart className="w-4 h-4 mr-2" />
-            Add to Watchlist
+            <span className="hidden sm:inline">Add to Watchlist</span>
+            <span className="sm:hidden">Add</span>
           </>
         )}
       </Button>
