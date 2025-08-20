@@ -95,7 +95,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
         <Header />
         
         <main className="pt-16">
-          <div className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden">
+          <div className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] overflow-hidden">
             <Image
               src={tmdbApi.getBackdropUrl(movie.backdrop_path, 'w1280')}
               alt={movie.title}
@@ -109,7 +109,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
 
             <div className="absolute inset-0 flex items-end">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-12 lg:pb-16">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-6 sm:pb-8 lg:pb-12">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-end">
                   <div className="hidden lg:block">
                     <div className="w-80 aspect-[2/3] relative rounded-lg overflow-hidden shadow-2xl">
@@ -133,17 +133,17 @@ export default async function MoviePage({ params }: MoviePageProps) {
                       </Button>
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-2 sm:mb-4 text-shadow">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-2 sm:mb-3 lg:mb-4 text-shadow leading-tight">
                       {movie.title}
                     </h1>
 
                     {movie.tagline && (
-                      <p className="text-sm sm:text-lg md:text-xl text-gray-300 mb-4 sm:mb-6 italic text-shadow">
+                      <p className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 lg:mb-6 italic text-shadow">
                         {movie.tagline}
                       </p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4 lg:mb-6">
                       {rating > 0 && (
                         <Badge variant="secondary" className="bg-black/60 text-white border-0 text-xs sm:text-sm">
                           <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 fill-yellow-400 text-yellow-400" />
@@ -173,7 +173,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
                       )}
                     </div>
 
-                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 sm:mb-6">
+                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4 lg:mb-6">
                       {movie.genres.map((genre) => (
                         <Badge
                           key={genre.id}
@@ -185,13 +185,13 @@ export default async function MoviePage({ params }: MoviePageProps) {
                       ))}
                     </div>
 
-                    <p className="text-sm sm:text-base lg:text-lg text-gray-200 mb-6 sm:mb-8 max-w-2xl text-shadow leading-relaxed">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 lg:mb-8 max-w-2xl text-shadow leading-relaxed line-clamp-3 sm:line-clamp-4 lg:line-clamp-none">
                       {movie.overview}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
                       {trailerVideoId && (
-                        <TrailerButton className="w-full sm:w-auto" />
+                        <TrailerButton className="w-full sm:w-auto" size="sm" />
                       )}
 
                       <WatchlistButton 
@@ -216,55 +216,55 @@ export default async function MoviePage({ params }: MoviePageProps) {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 space-y-8 sm:space-y-12 lg:space-y-16">
             {trailerVideoId && (
               <section id="trailer">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Official Trailer</h2>
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 lg:mb-8">Official Trailer</h2>
                 <YouTubePlayer videoId={trailerVideoId} title={`${movie.title} - Official Trailer`} />
               </section>
             )}
 
             {credits.cast.length > 0 && (
               <section>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Cast</h2>
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 lg:mb-8">Cast</h2>
                 <CastGrid cast={credits.cast.slice(0, 12)} />
               </section>
             )}
 
             <section>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 lg:mb-8">Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                 <div className="space-y-3 sm:space-y-4">
                   {movie.budget > 0 && (
                     <div>
-                      <h3 className="font-semibold text-muted-foreground">Budget</h3>
-                      <p>${movie.budget.toLocaleString()}</p>
+                      <h3 className="font-semibold text-muted-foreground text-sm sm:text-base">Budget</h3>
+                      <p className="text-sm sm:text-base">${movie.budget.toLocaleString()}</p>
                     </div>
                   )}
 
                   {movie.revenue > 0 && (
                     <div>
-                      <h3 className="font-semibold text-muted-foreground">Revenue</h3>
-                      <p>${movie.revenue.toLocaleString()}</p>
+                      <h3 className="font-semibold text-muted-foreground text-sm sm:text-base">Revenue</h3>
+                      <p className="text-sm sm:text-base">${movie.revenue.toLocaleString()}</p>
                     </div>
                   )}
                 </div>
 
                 <div className="space-y-3 sm:space-y-4">
                   <div>
-                    <h3 className="font-semibold text-muted-foreground">Status</h3>
-                    <p>{movie.status}</p>
+                    <h3 className="font-semibold text-muted-foreground text-sm sm:text-base">Status</h3>
+                    <p className="text-sm sm:text-base">{movie.status}</p>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-muted-foreground">Original Language</h3>
-                    <p>{movie.original_language.toUpperCase()}</p>
+                    <h3 className="font-semibold text-muted-foreground text-sm sm:text-base">Original Language</h3>
+                    <p className="text-sm sm:text-base">{movie.original_language.toUpperCase()}</p>
                   </div>
 
                   {movie.production_companies.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-muted-foreground">Production Companies</h3>
-                      <p>{movie.production_companies.map(c => c.name).join(', ')}</p>
+                      <h3 className="font-semibold text-muted-foreground text-sm sm:text-base">Production Companies</h3>
+                      <p className="text-sm sm:text-base">{movie.production_companies.map(c => c.name).join(', ')}</p>
                     </div>
                   )}
                 </div>
