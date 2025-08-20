@@ -185,7 +185,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
                       ))}
                     </div>
 
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 lg:mb-8 max-w-2xl text-shadow leading-relaxed line-clamp-3 sm:line-clamp-4 lg:line-clamp-none">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 lg:mb-8 max-w-2xl text-shadow leading-relaxed">
                       {movie.overview}
                     </p>
 
