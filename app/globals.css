@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dark theme colors */
+  --background: 220 13% 6%;
+  --foreground: 210 20% 98%;
+  --card: 220 13% 9%;
+  --card-foreground: 210 20% 98%;
+  --popover: 220 13% 9%;
+  --popover-foreground: 210 20% 98%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 20% 6%;
+  --secondary: 220 13% 15%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 220 13% 15%;
+  --muted-foreground: 220 13% 65%;
+  --accent: 16 100% 57%;
+  --accent-foreground: 210 20% 6%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 220 13% 20%;
+  --input: 220 13% 15%;
+  --ring: 217 91% 60%;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .gradient-bg {
+    background: linear-gradient(135deg, #001F3F 0%, #0A0A0A 100%);
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(180deg, rgba(0, 31, 63, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%);
+  }
+  
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+  }
+  
+  .parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+  
+  .backdrop-blur-custom {
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary;
+}
