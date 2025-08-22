@@ -18,7 +18,7 @@ export function TrailerButton({ className, size = 'lg' }: TrailerButtonProps) {
   return (
     <Button
       size={size}
-      className={`bg-primary hover:bg-primary/90 text-white px-4 sm:px-8 ${className || ''}`}
+      className={className}
       onClick={handleClick}
     >
       Watch Trailer

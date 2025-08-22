@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
+import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { MovieGrid } from '@/components/movie/movie-grid';
@@ -43,7 +44,7 @@ export default function CategoriesPage({
             <CategoryTabs activeCategory={category} />
           </div>
 
-          <Suspense fallback={<MovieGridSkeleton />}>
+          <Suspense key={category} fallback={<MovieGridSkeleton />}>
             <CategoryContent category={category} />
           </Suspense>
         </div>
@@ -60,38 +61,45 @@ async function CategoryContent({ category }: { category: string }) {
     
     let movies;
     let title;
+    let categoryProp: 'popular' | 'top-rated' | 'upcoming' | 'now-playing';
     
     switch (category) {
       case 'popular':
         const popularData = await tmdbApi.getPopularMovies(1);
         movies = popularData.results;
         title = 'Popular Movies';
+        categoryProp = 'popular';
         break;
       case 'top-rated':
         const topRatedData = await tmdbApi.getTopRatedMovies(1);
         movies = topRatedData.results;
         title = 'Top Rated Movies';
+        categoryProp = 'top-rated';
         break;
       case 'upcoming':
         const upcomingData = await tmdbApi.getUpcomingMovies(1);
         movies = upcomingData.results;
         title = 'Upcoming Movies';
+        categoryProp = 'upcoming';
         break;
       case 'now-playing':
         const nowPlayingData = await tmdbApi.getNowPlayingMovies(1);
         movies = nowPlayingData.results;
         title = 'Now Playing';
+        categoryProp = 'now-playing';
         break;
       default:
         const defaultData = await tmdbApi.getPopularMovies(1);
         movies = defaultData.results;
         title = 'Popular Movies';
+        categoryProp = 'popular';
     }
 
     return (
       <MovieGrid
         movies={movies}
         title={title}
+        category={categoryProp}
         showYear={true}
         showRating={true}
       />

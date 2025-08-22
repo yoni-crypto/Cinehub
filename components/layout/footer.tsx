@@ -5,108 +5,66 @@ import { Separator } from '@/components/ui/separator';
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-gray-900 border-t border-gray-800">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-sm sm:text-lg">C</span>
+            <Link href="/" className="flex items-center space-x-2 mb-4">
+              <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">C</span>
               </div>
-              <span className="text-xl sm:text-2xl font-bold text-blue-600">
-                CineHub
-              </span>
-            </div>
-            <p className="text-muted-foreground text-sm max-w-md">
-              Discover the latest movies, watch trailers, and build your personalized watchlist. 
-              Your premium destination for movie discovery and entertainment.
+              <span className="text-white font-bold text-xl">CineHub</span>
+            </Link>
+            <p className="text-gray-400 text-sm max-w-md">
+              Discover and watch the latest movies and TV shows. Your ultimate entertainment destination.
             </p>
-            <div className="flex items-center space-x-4 mt-6">
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="https://github.com" aria-label="GitHub">
-                  <Github className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="https://twitter.com" aria-label="Twitter">
-                  <Twitter className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="https://youtube.com" aria-label="YouTube">
-                  <Youtube className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="mailto:contact@cinehub.com" aria-label="Email">
-                  <Mail className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
           </div>
 
+          {/* Navigation */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Explore</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-white font-semibold mb-4">Navigation</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Home
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Movies
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/tv-shows" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  TV Shows
+                </Link>
+              </li>
+              <li>
+                <Link href="/categories" className="text-gray-400 hover:text-white transition-colors text-sm">
                   Categories
-                </Link>
-              </li>
-              <li>
-                <Link href="/watchlist" className="text-muted-foreground hover:text-foreground transition-colors">
-                  My Watchlist
-                </Link>
-              </li>
-              <li>
-                <Link href="/favorites" className="text-muted-foreground hover:text-foreground transition-colors">
-                  My Favorites
                 </Link>
               </li>
             </ul>
           </div>
 
+          {/* Account */}
           <div>
-            <h3 className="font-semibold text-foreground mb-4">Support</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-white font-semibold mb-4">Account</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy Policy
+                <Link href="/watchlist" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Watchlist
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Terms of Service
+                <Link href="/favorites" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  Favorites
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <Separator className="my-8" />
-
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-sm text-muted-foreground">
-            © 2024 CineHub. All rights reserved.
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+          <p className="text-gray-400 text-sm">
+            © 2024 CineHub. All rights reserved. Powered by TMDB API.
           </p>
-          
-          <div className="flex items-center space-x-6 text-xs text-muted-foreground">
-            <span>Powered by</span>
-            <Link href="https://www.themoviedb.org/" className="hover:text-foreground transition-colors">
-              TMDB
-            </Link>
-            <Link href="https://developers.google.com/youtube" className="hover:text-foreground transition-colors">
-              YouTube API
-            </Link>
-            <Link href="https://supabase.com" className="hover:text-foreground transition-colors">
-              Supabase
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

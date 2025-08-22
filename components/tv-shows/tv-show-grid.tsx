@@ -1,89 +1,86 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Movie, TMDBResponse } from '@/lib/types/movie';
-import { MovieCard } from './movie-card';
+import { TVShow } from '@/lib/api/tmdb';
+import { TMDBResponse } from '@/lib/types/movie';
+import { TVShowCard } from './tv-show-card';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface MovieGridProps {
-  movies: Movie[];
+interface TVShowGridProps {
+  tvShows: TVShow[];
   title?: string;
-  showYear?: boolean;
-  showRating?: boolean;
-  category?: 'popular' | 'top-rated' | 'upcoming' | 'now-playing';
+  category?: 'popular' | 'top-rated' | 'on-the-air' | 'airing-today';
 }
 
-export function MovieGrid({ 
-  movies: initialMovies, 
-  title, 
-  showYear = false, 
-  showRating = false,
+export function TVShowGrid({ 
+  tvShows: initialTVShows, 
+  title,
   category 
-}: MovieGridProps) {
-  const [movies, setMovies] = useState<Movie[]>(initialMovies);
+}: TVShowGridProps) {
+  const [tvShows, setTVShows] = useState<TVShow[]>(initialTVShows);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver>();
 
-  const loadMoreMovies = useCallback(async (page: number) => {
+  const loadMoreTVShows = useCallback(async (page: number) => {
     if (isLoading || !hasMore || !category) return;
 
     setIsLoading(true);
     try {
-      let response: TMDBResponse<Movie>;
+      let response: TMDBResponse<TVShow>;
       switch (category) {
         case 'popular':
-          response = await tmdbApi.getPopularMovies(page);
+          response = await tmdbApi.getPopularTVShows(page);
           break;
         case 'top-rated':
-          response = await tmdbApi.getTopRatedMovies(page);
+          response = await tmdbApi.getTopRatedTVShows(page);
           break;
-        case 'upcoming':
-          response = await tmdbApi.getUpcomingMovies(page);
+        case 'on-the-air':
+          response = await tmdbApi.getOnTheAirTVShows(page);
           break;
-        case 'now-playing':
-          response = await tmdbApi.getNowPlayingMovies(page);
+        case 'airing-today':
+          response = await tmdbApi.getAiringTodayTVShows(page);
           break;
         default:
           return;
       }
 
       if (page === 1) {
-        setMovies(response.results);
+        setTVShows(response.results);
       } else {
-        setMovies(prev => [...prev, ...response.results]);
+        setTVShows(prev => [...prev, ...response.results]);
       }
 
       setTotalPages(response.total_pages);
       setHasMore(page < response.total_pages);
     } catch (error) {
-      console.error('Error loading movies:', error);
+      console.error('Error loading TV shows:', error);
     } finally {
       setIsLoading(false);
     }
   }, [category, isLoading, hasMore]);
 
   const loadNextPage = useCallback(() => {
-    if (!isLoading && hasMore) {
+    if (!isLoading && hasMore && category) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
-      loadMoreMovies(nextPage);
+      loadMoreTVShows(nextPage);
     }
-  }, [currentPage, isLoading, hasMore, loadMoreMovies]);
+  }, [currentPage, isLoading, hasMore, category, loadMoreTVShows]);
 
   const loadPreviousPage = useCallback(() => {
-    if (!isLoading && currentPage > 1) {
+    if (!isLoading && currentPage > 1 && category) {
       const prevPage = currentPage - 1;
       setCurrentPage(prevPage);
-      loadMoreMovies(prevPage);
+      loadMoreTVShows(prevPage);
     }
-  }, [currentPage, isLoading, loadMoreMovies]);
+  }, [currentPage, isLoading, category, loadMoreTVShows]);
 
-  const lastMovieElementRef = useCallback((node: HTMLDivElement) => {
+  const lastTVShowElementRef = useCallback((node: HTMLDivElement) => {
     if (isLoading || !category) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
@@ -102,43 +99,34 @@ export function MovieGrid({
     };
   }, []);
 
-  if (!movies || movies.length === 0) {
+  if (!tvShows || tvShows.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground text-lg">No movies found</p>
+        <p className="text-gray-400 text-lg">No TV shows found</p>
       </div>
     );
   }
 
   return (
-    <section className="py-8">
+    <div>
       {title && (
-        <div className="mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
+        <div className="mb-6">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
+            {title}
+          </h2>
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-        {movies.map((movie, index) => {
-          if (category && movies.length === index + 1) {
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+        {tvShows.map((tvShow, index) => {
+          if (category && tvShows.length === index + 1) {
             return (
-              <div key={movie.id} ref={lastMovieElementRef}>
-                <MovieCard 
-                  movie={movie} 
-                  showYear={showYear}
-                  showRating={showRating}
-                />
+              <div key={tvShow.id} ref={lastTVShowElementRef}>
+                <TVShowCard tvShow={tvShow} />
               </div>
             );
           } else {
-            return (
-              <MovieCard 
-                key={movie.id} 
-                movie={movie} 
-                showYear={showYear}
-                showRating={showRating}
-              />
-            );
+            return <TVShowCard key={tvShow.id} tvShow={tvShow} />;
           }
         })}
       </div>
@@ -147,8 +135,8 @@ export function MovieGrid({
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Loading more movies...</span>
+            <Loader2 className="w-5 h-5 animate-spin text-white" />
+            <span className="text-white">Loading more TV shows...</span>
           </div>
         </div>
       )}
@@ -157,8 +145,8 @@ export function MovieGrid({
       {category && (
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Page Info */}
-          <div className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages} • {movies.length} movies loaded
+          <div className="text-sm text-gray-300">
+            Page {currentPage} of {totalPages} • {tvShows.length} TV shows loaded
           </div>
 
           {/* Manual Controls */}
@@ -168,6 +156,7 @@ export function MovieGrid({
               size="sm"
               onClick={loadPreviousPage}
               disabled={currentPage === 1 || isLoading}
+              className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
             >
               <ChevronLeft className="w-4 h-4" />
               Previous
@@ -178,6 +167,7 @@ export function MovieGrid({
               size="sm"
               onClick={loadNextPage}
               disabled={!hasMore || isLoading}
+              className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
             >
               Next
               <ChevronRight className="w-4 h-4" />
@@ -187,11 +177,11 @@ export function MovieGrid({
       )}
 
       {/* End of results */}
-      {!hasMore && movies.length > 0 && category && (
+      {!hasMore && tvShows.length > 0 && category && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">You've reached the end of the results</p>
+          <p className="text-gray-400">You've reached the end of the results</p>
         </div>
       )}
-    </section>
+    </div>
   );
 }

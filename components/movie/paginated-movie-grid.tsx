@@ -7,21 +7,13 @@ import { tmdbApi } from '@/lib/api/tmdb';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface MovieGridProps {
-  movies: Movie[];
-  title?: string;
-  showYear?: boolean;
-  showRating?: boolean;
-  category?: 'popular' | 'top-rated' | 'upcoming' | 'now-playing';
+interface PaginatedMovieGridProps {
+  title: string;
+  category: 'popular' | 'top-rated' | 'upcoming' | 'now-playing';
+  initialMovies: Movie[];
 }
 
-export function MovieGrid({ 
-  movies: initialMovies, 
-  title, 
-  showYear = false, 
-  showRating = false,
-  category 
-}: MovieGridProps) {
+export function PaginatedMovieGrid({ title, category, initialMovies }: PaginatedMovieGridProps) {
   const [movies, setMovies] = useState<Movie[]>(initialMovies);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -30,7 +22,7 @@ export function MovieGrid({
   const observer = useRef<IntersectionObserver>();
 
   const loadMoreMovies = useCallback(async (page: number) => {
-    if (isLoading || !hasMore || !category) return;
+    if (isLoading || !hasMore) return;
 
     setIsLoading(true);
     try {
@@ -49,7 +41,7 @@ export function MovieGrid({
           response = await tmdbApi.getNowPlayingMovies(page);
           break;
         default:
-          return;
+          response = await tmdbApi.getPopularMovies(page);
       }
 
       if (page === 1) {
@@ -84,7 +76,7 @@ export function MovieGrid({
   }, [currentPage, isLoading, loadMoreMovies]);
 
   const lastMovieElementRef = useCallback((node: HTMLDivElement) => {
-    if (isLoading || !category) return;
+    if (isLoading) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
@@ -92,7 +84,7 @@ export function MovieGrid({
       }
     });
     if (node) observer.current.observe(node);
-  }, [isLoading, hasMore, loadNextPage, category]);
+  }, [isLoading, hasMore, loadNextPage]);
 
   useEffect(() => {
     return () => {
@@ -105,40 +97,58 @@ export function MovieGrid({
   if (!movies || movies.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground text-lg">No movies found</p>
+        <p className="text-gray-400 text-lg">No movies found</p>
       </div>
     );
   }
 
   return (
-    <section className="py-8">
-      {title && (
-        <div className="mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
+          {title}
+        </h2>
+        
+        {/* Manual Pagination Controls */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadPreviousPage}
+            disabled={currentPage === 1 || isLoading}
+            className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Previous
+          </Button>
+          
+          <span className="text-sm text-gray-300 px-3">
+            Page {currentPage} of {totalPages}
+          </span>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadNextPage}
+            disabled={!hasMore || isLoading}
+            className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
+          </Button>
         </div>
-      )}
+      </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
         {movies.map((movie, index) => {
-          if (category && movies.length === index + 1) {
+          if (movies.length === index + 1) {
             return (
               <div key={movie.id} ref={lastMovieElementRef}>
-                <MovieCard 
-                  movie={movie} 
-                  showYear={showYear}
-                  showRating={showRating}
-                />
+                <MovieCard movie={movie} />
               </div>
             );
           } else {
-            return (
-              <MovieCard 
-                key={movie.id} 
-                movie={movie} 
-                showYear={showYear}
-                showRating={showRating}
-              />
-            );
+            return <MovieCard key={movie.id} movie={movie} />;
           }
         })}
       </div>
@@ -147,51 +157,18 @@ export function MovieGrid({
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Loading more movies...</span>
-          </div>
-        </div>
-      )}
-
-      {/* Pagination Controls - Only show if category is provided and at bottom */}
-      {category && (
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Page Info */}
-          <div className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages} • {movies.length} movies loaded
-          </div>
-
-          {/* Manual Controls */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadPreviousPage}
-              disabled={currentPage === 1 || isLoading}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Previous
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadNextPage}
-              disabled={!hasMore || isLoading}
-            >
-              Next
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            <Loader2 className="w-5 h-5 animate-spin text-white" />
+            <span className="text-white">Loading more movies...</span>
           </div>
         </div>
       )}
 
       {/* End of results */}
-      {!hasMore && movies.length > 0 && category && (
+      {!hasMore && movies.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">You've reached the end of the results</p>
+          <p className="text-gray-400">You've reached the end of the results</p>
         </div>
       )}
-    </section>
+    </div>
   );
 }

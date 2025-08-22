@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Calendar, Star, Play, Heart, HeartOff } from 'lucide-react';
+import { Calendar, Star, Play, Heart, HeartOff, ExternalLink } from 'lucide-react';
 import { Movie } from '@/lib/types/movie';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/auth/auth-provider';
 import { watchlistService } from '@/lib/services/watchlist';
 import { toast } from 'sonner';
 import { AuthModal } from '@/components/auth/auth-modal';
+import { StreamingModal } from './streaming-modal';
 import {
   Tooltip,
   TooltipContent,
@@ -38,6 +39,7 @@ export function MovieCard({
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showStreamingModal, setShowStreamingModal] = useState(false);
   const { user } = useAuth();
 
   const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : '';
@@ -94,6 +96,19 @@ export function MovieCard({
     }
   };
 
+  const handleWatchMovie = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      setShowStreamingModal(true);
+      toast.success(`Opening ${movie.title} for streaming`);
+    } catch (error) {
+      console.error('Error opening streaming:', error);
+      toast.error('Failed to open streaming. Please try again.');
+    }
+  };
+
   return (
     <>
       <TooltipProvider>
@@ -145,7 +160,23 @@ export function MovieCard({
                 </Badge>
               )}
 
-              <div className="absolute top-2 right-2 opacity-0 sm:group-hover:opacity-100 transition-opacity sm:opacity-0">
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 sm:group-hover:opacity-100 transition-opacity sm:opacity-0">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="h-8 w-8 p-0 bg-red-600 hover:bg-red-700 border-0"
+                      onClick={handleWatchMovie}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Watch Full Movie
+                  </TooltipContent>
+                </Tooltip>
+                
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -209,6 +240,15 @@ export function MovieCard({
       </TooltipProvider>
 
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
+      
+      <StreamingModal
+        isOpen={showStreamingModal}
+        onClose={() => setShowStreamingModal(false)}
+        movieId={movie.id}
+        title={movie.title}
+        posterPath={movie.poster_path || undefined}
+        backdropPath={movie.backdrop_path || undefined}
+      />
     </>
   );
 }

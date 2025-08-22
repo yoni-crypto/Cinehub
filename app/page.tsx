@@ -48,8 +48,9 @@ async function PopularMoviesSection() {
     const popularData = await tmdbApi.getPopularMovies(1);
     return (
       <MovieGrid
-        movies={popularData.results.slice(0, 18)}
+        movies={popularData.results}
         title="Popular Now"
+        category="popular"
         showYear={true}
         showRating={true}
       />
@@ -72,8 +73,9 @@ async function TopRatedMoviesSection() {
     const topRatedData = await tmdbApi.getTopRatedMovies(1);
     return (
       <MovieGrid
-        movies={topRatedData.results.slice(0, 12)}
+        movies={topRatedData.results}
         title="Top Rated"
+        category="top-rated"
         showYear={true}
         showRating={true}
       />
@@ -89,8 +91,9 @@ async function UpcomingMoviesSection() {
     const upcomingData = await tmdbApi.getUpcomingMovies(1);
     return (
       <MovieGrid
-        movies={upcomingData.results.slice(0, 12)}
+        movies={upcomingData.results}
         title="Coming Soon"
+        category="upcoming"
         showYear={true}
         showRating={false}
       />
@@ -124,7 +127,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-16">
+      <main>
         <Suspense 
           fallback={
             <div className="h-[70vh] min-h-[500px] bg-gradient-to-br from-primary/20 to-background animate-pulse" />

@@ -82,25 +82,16 @@ export function FavoritesButton({
     <>
       <Button
         size={size}
-        variant={variant}
-        className={`px-4 sm:px-8 ${className}`}
+        className={className}
         onClick={handleToggleFavorites}
         disabled={isLoading}
       >
         {isLoading ? (
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
         ) : isInFavorites ? (
-          <>
-            <StarOff className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Remove from Favorites</span>
-            <span className="sm:hidden">Remove</span>
-          </>
+          <Star className="w-4 h-4 fill-yellow-400" />
         ) : (
-          <>
-            <Star className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Add to Favorites</span>
-            <span className="sm:hidden">Add</span>
-          </>
+          <Star className="w-4 h-4" />
         )}
       </Button>
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />

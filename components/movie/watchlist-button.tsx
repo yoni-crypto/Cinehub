@@ -74,25 +74,16 @@ export function WatchlistButton({ movieId, movieTitle, moviePoster, className, s
     <>
       <Button
         size={size}
-        variant="outline"
-        className={`border-white/30 text-white hover:bg-white/10 px-4 sm:px-8 ${className || ''}`}
+        className={className}
         onClick={handleToggleWatchlist}
         disabled={isLoading}
       >
         {isLoading ? (
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
         ) : isInWatchlist ? (
-          <>
-            <HeartOff className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Remove from Watchlist</span>
-            <span className="sm:hidden">Remove</span>
-          </>
+          <HeartOff className="w-4 h-4" />
         ) : (
-          <>
-            <Heart className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Add to Watchlist</span>
-            <span className="sm:hidden">Add</span>
-          </>
+          <Heart className="w-4 h-4" />
         )}
       </Button>
 

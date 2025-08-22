@@ -16,6 +16,7 @@ import { CastGrid } from '@/components/movie/cast-grid';
 import { TrailerButton } from '@/components/movie/trailer-button';
 import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
+import StreamingButton from '@/components/movie/streaming-button';
 
 interface MoviePageProps {
   params: {
@@ -95,120 +96,286 @@ export default async function MoviePage({ params }: MoviePageProps) {
         <Header />
         
         <main className="pt-16">
-          <div className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] overflow-hidden">
-            <Image
-              src={tmdbApi.getBackdropUrl(movie.backdrop_path, 'w1280')}
-              alt={movie.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="100vw"
-            />
-            
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
+          {/* Mobile Layout */}
+          <div className="lg:hidden">
+            {/* Mobile Hero - Shorter height */}
+            <div className="relative w-full h-[40vh] overflow-hidden">
+              <Image
+                src={tmdbApi.getBackdropUrl(movie.backdrop_path, 'w1280')}
+                alt={movie.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="100vw"
+              />
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+              
+              {/* Back button positioned at top */}
+              <div className="absolute top-4 left-4 z-10">
+                <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10 bg-black/20 backdrop-blur-sm">
+                  <Link href="/">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back
+                  </Link>
+                </Button>
+              </div>
+            </div>
 
-            <div className="absolute inset-0 flex items-end">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-6 sm:pb-8 lg:pb-12">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-end">
-                  <div className="hidden lg:block">
-                    <div className="w-80 aspect-[2/3] relative rounded-lg overflow-hidden shadow-2xl">
-                      <Image
-                        src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
-                        alt={movie.title}
-                        fill
-                        className="object-cover"
-                        sizes="320px"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="text-white">
-                    <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-                      <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
-                        <Link href="/">
-                          <ArrowLeft className="w-4 h-4 mr-2" />
-                          Back
-                        </Link>
-                      </Button>
-                    </div>
-
-                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-2 sm:mb-3 lg:mb-4 text-shadow leading-tight">
-                      {movie.title}
-                    </h1>
-
-                    {movie.tagline && (
-                      <p className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 lg:mb-6 italic text-shadow">
-                        {movie.tagline}
-                      </p>
+            {/* Mobile Content Section */}
+            <div className="px-4 py-6 space-y-6">
+              {/* Mobile Poster and Title Row */}
+              <div className="flex items-start space-x-4">
+                <div className="w-24 aspect-[2/3] relative rounded-lg overflow-hidden shadow-lg flex-shrink-0">
+                  <Image
+                    src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
+                    alt={movie.title}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                  />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl font-bold mb-2 leading-tight">
+                    {movie.title}
+                  </h1>
+                  
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {rating > 0 && (
+                      <Badge variant="secondary" className="bg-primary text-primary-foreground text-xs">
+                        <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                        {rating}
+                      </Badge>
+                    )}
+                    
+                    {releaseYear && (
+                      <div className="flex items-center text-muted-foreground text-xs">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {releaseYear}
+                      </div>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4 lg:mb-6">
-                      {rating > 0 && (
-                        <Badge variant="secondary" className="bg-black/60 text-white border-0 text-xs sm:text-sm">
-                          <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 fill-yellow-400 text-yellow-400" />
-                          {rating} / 10
-                        </Badge>
-                      )}
-                      
-                      {releaseYear && (
-                        <div className="flex items-center text-gray-300 text-xs sm:text-sm">
-                          <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          {releaseYear}
-                        </div>
-                      )}
+                    {runtime && (
+                      <div className="flex items-center text-muted-foreground text-xs">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {runtime}
+                      </div>
+                    )}
+                  </div>
 
-                      {runtime && (
-                        <div className="flex items-center text-gray-300 text-xs sm:text-sm">
-                          <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          {runtime}
-                        </div>
-                      )}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {movie.genres.slice(0, 3).map((genre) => (
+                      <Badge
+                        key={genre.id}
+                        variant="outline"
+                        className="text-xs"
+                      >
+                        {genre.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
-                      {movie.vote_count > 0 && (
-                        <div className="flex items-center text-gray-300 text-xs sm:text-sm">
-                          <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          {movie.vote_count.toLocaleString()} votes
-                        </div>
-                      )}
+              {/* Action Buttons */}
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center gap-3">
+                  <StreamingButton 
+                    movieId={movieId}
+                    movieTitle={movie.title}
+                    posterPath={movie.poster_path || undefined}
+                    backdropPath={movie.backdrop_path || undefined}
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 text-base rounded-lg shadow-lg"
+                    size="lg"
+                  />
+                  
+                  {trailerVideoId && (
+                    <TrailerButton 
+                      className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold px-6 py-3 text-base rounded-lg shadow-lg border" 
+                      size="lg" 
+                    />
+                  )}
+                </div>
+
+                <div className="flex items-center justify-center gap-4">
+                  <WatchlistButton 
+                    movieId={movieId} 
+                    movieTitle={movie.title}
+                    moviePoster={movie.poster_path || ''}
+                    className="bg-secondary hover:bg-secondary/80 text-secondary-foreground border rounded-full p-3 transition-all duration-200 hover:scale-110"
+                    size="lg"
+                  />
+
+                  <FavoritesButton 
+                    movieId={movieId} 
+                    movieTitle={movie.title}
+                    moviePoster={movie.poster_path || ''}
+                    className="bg-secondary hover:bg-secondary/80 text-secondary-foreground border rounded-full p-3 transition-all duration-200 hover:scale-110"
+                    size="lg"
+                  />
+                </div>
+              </div>
+
+              {/* Overview */}
+              <div>
+                <h2 className="text-lg font-semibold mb-2">Overview</h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {movie.overview}
+                </p>
+              </div>
+
+              {/* Additional Info */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {movie.vote_count > 0 && (
+                  <div className="flex items-center text-muted-foreground">
+                    <Users className="w-4 h-4 mr-2" />
+                    {movie.vote_count.toLocaleString()} votes
+                  </div>
+                )}
+                <div className="flex items-center text-muted-foreground">
+                  <span className="font-medium">Status:</span>
+                  <span className="ml-2">{movie.status}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden lg:block">
+            <div className="relative w-full h-[80vh] overflow-hidden">
+              <Image
+                src={tmdbApi.getBackdropUrl(movie.backdrop_path, 'w1280')}
+                alt={movie.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="100vw"
+              />
+              
+              <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-transparent to-black/40" />
+
+              <div className="absolute inset-0 flex items-end">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-12 lg:pb-16">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-end">
+                    <div className="hidden lg:block">
+                      <div className="w-80 aspect-[2/3] relative rounded-xl overflow-hidden shadow-2xl ring-4 ring-white/10">
+                        <Image
+                          src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
+                          alt={movie.title}
+                          fill
+                          className="object-cover"
+                          sizes="320px"
+                        />
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4 lg:mb-6">
-                      {movie.genres.map((genre) => (
-                        <Badge
-                          key={genre.id}
-                          variant="outline"
-                          className="border-white/30 text-white hover:bg-white/10 text-xs sm:text-sm"
-                        >
-                          {genre.name}
-                        </Badge>
-                      ))}
-                    </div>
+                    <div className="text-white">
+                      <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                        <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10">
+                          <Link href="/">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Back
+                          </Link>
+                        </Button>
+                      </div>
 
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 lg:mb-8 max-w-2xl text-shadow leading-relaxed">
-                      {movie.overview}
-                    </p>
+                      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold mb-2 sm:mb-3 lg:mb-4 text-shadow leading-tight">
+                        {movie.title}
+                      </h1>
 
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
-                      {trailerVideoId && (
-                        <TrailerButton className="w-full sm:w-auto" size="sm" />
+                      {movie.tagline && (
+                        <p className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 lg:mb-6 italic text-shadow">
+                          {movie.tagline}
+                        </p>
                       )}
 
-                      <WatchlistButton 
-                        movieId={movieId} 
-                        movieTitle={movie.title}
-                        moviePoster={movie.poster_path || ''}
-                        className="w-full sm:w-auto text-white hover:bg-white/10"
-                        size="sm"
-                      />
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4 lg:mb-6">
+                        {rating > 0 && (
+                          <Badge variant="secondary" className="bg-black/60 text-white border-0 text-xs sm:text-sm">
+                            <Star className="w-3 h-3 sm:w-4 sm:h-4 mr-1 fill-yellow-400 text-yellow-400" />
+                            {rating} / 10
+                          </Badge>
+                        )}
+                        
+                        {releaseYear && (
+                          <div className="flex items-center text-gray-300 text-xs sm:text-sm">
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            {releaseYear}
+                          </div>
+                        )}
 
-                      <FavoritesButton 
-                        movieId={movieId} 
-                        movieTitle={movie.title}
-                        moviePoster={movie.poster_path || ''}
-                        className="w-full sm:w-auto text-white hover:bg-white/10"
-                        size="sm"
-                      />
+                        {runtime && (
+                          <div className="flex items-center text-gray-300 text-xs sm:text-sm">
+                            <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            {runtime}
+                          </div>
+                        )}
+
+                        {movie.vote_count > 0 && (
+                          <div className="flex items-center text-gray-300 text-xs sm:text-sm">
+                            <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                            {movie.vote_count.toLocaleString()} votes
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4 lg:mb-6">
+                        {movie.genres.map((genre) => (
+                          <Badge
+                            key={genre.id}
+                            variant="outline"
+                            className="border-white/30 text-white hover:bg-white/10 text-xs sm:text-sm"
+                          >
+                            {genre.name}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-200 mb-4 sm:mb-6 lg:mb-8 max-w-2xl text-shadow leading-relaxed">
+                        {movie.overview}
+                      </p>
+
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
+                        {/* Primary Action - Watch Full Movie */}
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <StreamingButton 
+                            movieId={movieId}
+                            movieTitle={movie.title}
+                            posterPath={movie.poster_path || undefined}
+                            backdropPath={movie.backdrop_path || undefined}
+                            className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                            size="lg"
+                          />
+                          
+                          {trailerVideoId && (
+                            <TrailerButton 
+                              className="bg-black/60 hover:bg-black/80 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border border-white/20" 
+                              size="lg" 
+                            />
+                          )}
+                        </div>
+
+                        {/* Secondary Actions */}
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <WatchlistButton 
+                            movieId={movieId} 
+                            movieTitle={movie.title}
+                            moviePoster={movie.poster_path || ''}
+                            className="bg-black/40 hover:bg-black/60 text-white border border-white/30 rounded-full p-3 sm:p-4 transition-all duration-200 hover:scale-110"
+                            size="lg"
+                          />
+
+                          <FavoritesButton 
+                            movieId={movieId} 
+                            movieTitle={movie.title}
+                            moviePoster={movie.poster_path || ''}
+                            className="bg-black/40 hover:bg-black/60 text-white border border-white/30 rounded-full p-3 sm:p-4 transition-all duration-200 hover:scale-110"
+                            size="lg"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -228,6 +395,13 @@ export default async function MoviePage({ params }: MoviePageProps) {
               <section>
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 lg:mb-8">Cast</h2>
                 <CastGrid cast={credits.cast.slice(0, 12)} />
+              </section>
+            )}
+
+            {similarMovies.results.length > 0 && (
+              <section>
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 lg:mb-8">More Like This</h2>
+                <MovieGrid movies={similarMovies.results.slice(0, 12)} />
               </section>
             )}
 
