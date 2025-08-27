@@ -4,6 +4,7 @@ import { DM_Sans } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/lib/auth/auth-provider';
+import { Analytics } from '@vercel/analytics/next';
 
 
 const dmSans = DM_Sans({ 
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://cinehub.com',
+    url: 'https://cinehub1.vercel.app',
     siteName: 'CineHub',
     title: 'CineHub - Discover Movies & Watch Trailers',
     description: 'Discover the latest movies, watch trailers, and build your watchlist on CineHub.',
@@ -77,6 +78,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <Toaster position="top-right" richColors />
+            <Analytics />
           </AuthProvider>
         </ThemeProvider>
       </body>
