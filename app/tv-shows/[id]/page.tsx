@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { TVShowDetail } from '@/components/tv-shows/tv-show-detail';
 
+
 interface TVShowPageProps {
   params: {
     id: string;

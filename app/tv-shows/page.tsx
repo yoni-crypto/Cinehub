@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { TVShowCategoryTabs } from '@/components/tv-shows/tv-show-category-tabs';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata: Metadata = {

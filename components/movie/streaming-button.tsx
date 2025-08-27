@@ -6,6 +6,7 @@ import { Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { StreamingModal } from './streaming-modal';
 
+
 interface StreamingButtonProps {
   movieId: number;
   movieTitle: string;
@@ -31,12 +32,13 @@ export default function StreamingButton({
     
     try {
       setIsModalOpen(true);
+
       toast.success(`Opening ${movieTitle} for streaming`);
     } catch (error) {
       console.error('Error opening streaming:', error);
       toast.error('Failed to open streaming. Please try again.');
     }
-  }, [movieTitle]);
+  }, [movieId, movieTitle]);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);

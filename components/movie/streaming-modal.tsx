@@ -42,58 +42,25 @@ export function StreamingModal({
 
   useEffect(() => {
     if (isOpen) {
-      // Prevent body scroll and navigation
       document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.top = `-${window.scrollY}px`;
       
-      // Prevent back button navigation on mobile
-      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        e.preventDefault();
-        e.returnValue = '';
-      };
-      
-      const handlePopState = (e: PopStateEvent) => {
-        e.preventDefault();
-        // Push a new state to prevent going back
-        window.history.pushState(null, '', window.location.href);
-      };
-
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
           handleClose();
         }
       };
       
-      window.addEventListener('beforeunload', handleBeforeUnload);
-      window.addEventListener('popstate', handlePopState);
       window.addEventListener('keydown', handleKeyDown);
       
-      // Push a new state to prevent back navigation
-      window.history.pushState(null, '', window.location.href);
-      
       return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-        window.removeEventListener('popstate', handlePopState);
         window.removeEventListener('keydown', handleKeyDown);
       };
     } else {
-      // Restore body scroll
-      const scrollY = document.body.style.top;
-      document.body.style.overflow = 'unset';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.top = '';
-      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      document.body.style.overflow = '';
     }
 
     return () => {
-      // Cleanup
-      document.body.style.overflow = 'unset';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.top = '';
+      document.body.style.overflow = '';
     };
   }, [isOpen, handleClose]);
 

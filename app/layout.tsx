@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/lib/auth/auth-provider';
 
+
 const dmSans = DM_Sans({ 
   subsets: ['latin'],
   display: 'swap',
@@ -53,6 +54,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  verification: {
+    google: 'your-google-verification-code',
+  },
 };
 
 export default function RootLayout({
@@ -62,6 +66,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+
       <body className={`${dmSans.variable} min-h-screen antialiased`}>
         <ThemeProvider
           attribute="class"

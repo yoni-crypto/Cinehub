@@ -110,7 +110,6 @@ export function PaginatedTVShowGrid({ title, category, initialTVShows }: Paginat
           {title}
         </h2>
         
-        {/* Manual Pagination Controls */}
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -154,7 +153,6 @@ export function PaginatedTVShowGrid({ title, category, initialTVShows }: Paginat
         })}
       </div>
 
-      {/* Loading indicator */}
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2">
@@ -164,7 +162,6 @@ export function PaginatedTVShowGrid({ title, category, initialTVShows }: Paginat
         </div>
       )}
 
-      {/* End of results */}
       {!hasMore && tvShows.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-400">You've reached the end of the results</p>

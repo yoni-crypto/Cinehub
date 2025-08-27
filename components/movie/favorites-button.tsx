@@ -8,6 +8,7 @@ import { favoritesService } from '@/lib/services/favorites';
 import { toast } from 'sonner';
 import { AuthModal } from '@/components/auth/auth-modal';
 
+
 interface FavoritesButtonProps {
   movieId: number;
   movieTitle: string;
@@ -61,6 +62,7 @@ export function FavoritesButton({
       } else {
         await favoritesService.addToFavorites(movieId, movieTitle, moviePoster);
         setIsInFavorites(true);
+
         toast.success('Added to favorites');
       }
     } catch (error: any) {

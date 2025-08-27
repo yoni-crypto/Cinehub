@@ -18,6 +18,7 @@ import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
 import StreamingButton from '@/components/movie/streaming-button';
 
+
 interface MoviePageProps {
   params: {
     id: string;
@@ -96,9 +97,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
         <Header />
         
         <main className="pt-16">
-          {/* Mobile Layout */}
           <div className="lg:hidden">
-            {/* Mobile Hero - Shorter height */}
             <div className="relative w-full h-[40vh] overflow-hidden">
               <Image
                 src={tmdbApi.getBackdropUrl(movie.backdrop_path, 'w1280')}
@@ -111,7 +110,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
               
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
               
-              {/* Back button positioned at top */}
               <div className="absolute top-4 left-4 z-10">
                 <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10 bg-black/20 backdrop-blur-sm">
                   <Link href="/">
@@ -122,9 +120,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
               </div>
             </div>
 
-            {/* Mobile Content Section */}
             <div className="px-4 py-6 space-y-6">
-              {/* Mobile Poster and Title Row */}
               <div className="flex items-start space-x-4">
                 <div className="w-24 aspect-[2/3] relative rounded-lg overflow-hidden shadow-lg flex-shrink-0">
                   <Image
@@ -178,7 +174,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col space-y-3">
                 <div className="flex items-center gap-3">
                   <StreamingButton 
@@ -217,7 +212,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 </div>
               </div>
 
-              {/* Overview */}
               <div>
                 <h2 className="text-lg font-semibold mb-2">Overview</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -225,7 +219,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 </p>
               </div>
 
-              {/* Additional Info */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 {movie.vote_count > 0 && (
                   <div className="flex items-center text-muted-foreground">
@@ -241,7 +234,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
             </div>
           </div>
 
-          {/* Desktop Layout */}
           <div className="hidden lg:block">
             <div className="relative w-full h-[80vh] overflow-hidden">
               <Image
@@ -357,7 +349,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
                           )}
                         </div>
 
-                        {/* Secondary Actions */}
                         <div className="flex items-center gap-2 sm:gap-3">
                           <WatchlistButton 
                             movieId={movieId} 
