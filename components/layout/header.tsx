@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useAuth } from '@/lib/auth/auth-provider';
 import { AuthModal } from '@/components/auth/auth-modal';
 
+
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +23,7 @@ export function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
       setSearchQuery('');
@@ -44,27 +46,25 @@ export function Header() {
   };
 
   return (
-    <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-40">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2" onClick={closeMobileMenu}>
+          <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">C</span>
             </div>
-            <span className="text-foreground font-bold text-xl hidden sm:block">CineHub</span>
+            <span className="font-bold text-xl text-foreground">CineHub</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+              Home
+            </Link>
+            <Link href="/categories" className="text-muted-foreground hover:text-foreground transition-colors">
               Movies
             </Link>
             <Link href="/tv-shows" className="text-muted-foreground hover:text-foreground transition-colors">
               TV Shows
-            </Link>
-            <Link href="/categories" className="text-muted-foreground hover:text-foreground transition-colors">
-              Categories
             </Link>
             {user && (
               <>
@@ -78,9 +78,7 @@ export function Header() {
             )}
           </nav>
 
-          {/* Search and User */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Search - Desktop */}
             <div className="hidden sm:block relative">
               {isSearchOpen ? (
                 <form onSubmit={handleSearch} className="flex items-center space-x-2">
@@ -119,7 +117,6 @@ export function Header() {
               )}
             </div>
 
-            {/* User Menu - Desktop */}
             <div className="hidden sm:block">
               {user ? (
                 <DropdownMenu>
@@ -127,40 +124,39 @@ export function Header() {
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                          {user.email?.charAt(0).toUpperCase()}
+                          {user.email?.charAt(0).toUpperCase() || 'U'}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 bg-background border-border" align="end" forceMount>
-                    <DropdownMenuItem className="text-muted-foreground hover:bg-muted">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>{user.email}</span>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuItem className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.email}</p>
+                      </div>
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-muted-foreground hover:bg-muted"
-                      onClick={handleSignOut}
-                    >
+                    <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>Sign out</span>
+                      <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
                 <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowAuthModal(true)}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="text-muted-foreground hover:text-foreground"
                 >
-                  Sign In
+                  <User className="w-5 h-5" />
                 </Button>
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden text-muted-foreground hover:text-foreground"
+              className="md:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -168,12 +164,10 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            {/* Mobile Search */}
-            <div className="mb-4">
-              <form onSubmit={handleSearch} className="flex items-center space-x-2">
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 border-t border-border">
+              <form onSubmit={handleSearch} className="flex items-center space-x-2 mb-4">
                 <Input
                   type="text"
                   placeholder="Search movies..."
@@ -186,82 +180,72 @@ export function Header() {
                   <Search className="w-4 h-4" />
                 </Button>
               </form>
-            </div>
 
-            {/* Mobile Navigation */}
-            <nav className="flex flex-col space-y-3">
               <Link
                 href="/"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2 px-3 rounded-md hover:bg-muted"
+                className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                onClick={closeMobileMenu}
+              >
+                Home
+              </Link>
+              <Link
+                href="/categories"
+                className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 onClick={closeMobileMenu}
               >
                 Movies
               </Link>
               <Link
                 href="/tv-shows"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2 px-3 rounded-md hover:bg-muted"
+                className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 onClick={closeMobileMenu}
               >
                 TV Shows
-              </Link>
-              <Link
-                href="/categories"
-                className="text-muted-foreground hover:text-foreground transition-colors py-2 px-3 rounded-md hover:bg-muted"
-                onClick={closeMobileMenu}
-              >
-                Categories
               </Link>
               {user && (
                 <>
                   <Link
                     href="/watchlist"
-                    className="text-muted-foreground hover:text-foreground transition-colors py-2 px-3 rounded-md hover:bg-muted"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     onClick={closeMobileMenu}
                   >
                     Watchlist
                   </Link>
                   <Link
                     href="/favorites"
-                    className="text-muted-foreground hover:text-foreground transition-colors py-2 px-3 rounded-md hover:bg-muted"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     onClick={closeMobileMenu}
                   >
                     Favorites
                   </Link>
+                  <div className="border-t border-border pt-2">
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                      {user.email}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        closeMobileMenu();
+                      }}
+                      className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    >
+                      <LogOut className="w-4 h-4 inline mr-2" />
+                      Log out
+                    </button>
+                  </div>
                 </>
               )}
-            </nav>
-
-            {/* Mobile User Menu */}
-            <div className="mt-4 pt-4 border-t border-border">
-              {user ? (
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                      {user.email?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{user.email}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSignOut}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button
+              {!user && (
+                <button
                   onClick={() => {
                     setShowAuthModal(true);
                     closeMobileMenu();
                   }}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 >
+                  <User className="w-4 h-4 inline mr-2" />
                   Sign In
-                </Button>
+                </button>
               )}
             </div>
           </div>

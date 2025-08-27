@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { MovieGrid } from '@/components/movie/movie-grid';
 import { CategoryTabs } from '@/components/categories/category-tabs';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata: Metadata = {
@@ -14,14 +15,17 @@ export const metadata: Metadata = {
 
 function MovieGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-      {Array.from({ length: 18 }).map((_, i) => (
-        <div key={i} className="space-y-3">
-          <Skeleton className="aspect-[2/3] w-full rounded-lg" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-3 w-1/2" />
-        </div>
-      ))}
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-48" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="aspect-[2/3] w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -44,7 +48,7 @@ export default function CategoriesPage({
             <CategoryTabs activeCategory={category} />
           </div>
 
-          <Suspense key={category} fallback={<MovieGridSkeleton />}>
+          <Suspense fallback={<MovieGridSkeleton />}>
             <CategoryContent category={category} />
           </Suspense>
         </div>

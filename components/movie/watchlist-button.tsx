@@ -8,6 +8,7 @@ import { watchlistService } from '@/lib/services/watchlist';
 import { toast } from 'sonner';
 import { AuthModal } from '@/components/auth/auth-modal';
 
+
 interface WatchlistButtonProps {
   movieId: number;
   movieTitle: string;
@@ -53,6 +54,7 @@ export function WatchlistButton({ movieId, movieTitle, moviePoster, className, s
       } else {
         await watchlistService.addToWatchlist(movieId, movieTitle, moviePoster);
         setIsInWatchlist(true);
+
         toast.success('Added to watchlist');
       }
     } catch (error: any) {

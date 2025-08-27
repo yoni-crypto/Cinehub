@@ -131,7 +131,6 @@ export function TVShowGrid({
         })}
       </div>
 
-      {/* Loading indicator */}
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2">
@@ -141,15 +140,12 @@ export function TVShowGrid({
         </div>
       )}
 
-      {/* Pagination Controls - Only show if category is provided and at bottom */}
       {category && (
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Page Info */}
           <div className="text-sm text-gray-300">
             Page {currentPage} of {totalPages} • {tvShows.length} TV shows loaded
           </div>
 
-          {/* Manual Controls */}
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -176,7 +172,6 @@ export function TVShowGrid({
         </div>
       )}
 
-      {/* End of results */}
       {!hasMore && tvShows.length > 0 && category && (
         <div className="text-center py-8">
           <p className="text-gray-400">You've reached the end of the results</p>

@@ -5,6 +5,7 @@ import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { SearchResults } from '@/components/search/search-results';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface SearchPageProps {

@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { MovieGrid } from '@/components/movie/movie-grid';
 import { FavoritesContent } from '@/components/favorites/favorites-content';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata: Metadata = {

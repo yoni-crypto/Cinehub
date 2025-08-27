@@ -109,7 +109,6 @@ export function PaginatedMovieGrid({ title, category, initialMovies }: Paginated
           {title}
         </h2>
         
-        {/* Manual Pagination Controls */}
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -153,7 +152,6 @@ export function PaginatedMovieGrid({ title, category, initialMovies }: Paginated
         })}
       </div>
 
-      {/* Loading indicator */}
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2">
@@ -163,7 +161,6 @@ export function PaginatedMovieGrid({ title, category, initialMovies }: Paginated
         </div>
       )}
 
-      {/* End of results */}
       {!hasMore && movies.length > 0 && (
         <div className="text-center py-8">
           <p className="text-gray-400">You've reached the end of the results</p>

@@ -5,7 +5,6 @@
 @tailwind utilities;
 
 :root {
-  /* Dark theme colors */
   --background: 220 13% 6%;
   --foreground: 210 20% 98%;
   --card: 220 13% 9%;
@@ -84,7 +83,6 @@
   }
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }

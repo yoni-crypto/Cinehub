@@ -143,7 +143,6 @@ export function MovieGrid({
         })}
       </div>
 
-      {/* Loading indicator */}
       {isLoading && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2">
@@ -153,15 +152,12 @@ export function MovieGrid({
         </div>
       )}
 
-      {/* Pagination Controls - Only show if category is provided and at bottom */}
       {category && (
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Page Info */}
           <div className="text-sm text-muted-foreground">
             Page {currentPage} of {totalPages} • {movies.length} movies loaded
           </div>
 
-          {/* Manual Controls */}
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -186,7 +182,6 @@ export function MovieGrid({
         </div>
       )}
 
-      {/* End of results */}
       {!hasMore && movies.length > 0 && category && (
         <div className="text-center py-8">
           <p className="text-muted-foreground">You've reached the end of the results</p>
