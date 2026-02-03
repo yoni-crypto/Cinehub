@@ -33,7 +33,7 @@ export default function StreamingButton({
     try {
       setIsModalOpen(true);
 
-      toast.success(`Opening ${movieTitle} for streaming`);
+      toast.success(`Opening ${movieTitle}...`);
     } catch (error) {
       console.error('Error opening streaming:', error);
       toast.error('Failed to open streaming. Please try again.');

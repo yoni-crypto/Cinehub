@@ -7,6 +7,8 @@ import { AuthProvider } from '@/lib/auth/auth-provider';
 import { Analytics } from '@vercel/analytics/next';
 import { StructuredData } from '@/components/seo/structured-data';
 import { KeyboardShortcuts } from '@/components/keyboard-shortcuts';
+import { ErrorBoundary } from '@/components/error-boundary';
+import { Suspense } from 'react';
 
 
 const dmSans = DM_Sans({ 
@@ -86,6 +88,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <StructuredData />
+        <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -97,12 +100,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <KeyboardShortcuts />
-            {children}
-            <Toaster position="top-right" richColors />
-            <Analytics />
-          </AuthProvider>
+          <ErrorBoundary>
+            <AuthProvider>
+              <KeyboardShortcuts />
+              {children}
+              <Toaster position="top-right" richColors />
+              <Suspense fallback={null}>
+                <Analytics />
+              </Suspense>
+            </AuthProvider>
+          </ErrorBoundary>
         </ThemeProvider>
       </body>
     </html>

@@ -49,11 +49,8 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">C</span>
-            </div>
-            <span className="font-bold text-xl text-foreground">CineHub</span>
+          <Link href="/" className="flex items-center">
+            <img src="/logown.png" alt="CineHub" className="h-24 w-auto" />
           </Link>
 
           <nav className="hidden md:flex items-center space-x-6">

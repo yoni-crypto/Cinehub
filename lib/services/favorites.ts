@@ -1,7 +1,6 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { getSupabaseClient } from '@/lib/supabase/client';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = getSupabaseClient();
 
 export interface FavoriteItem {
   id: number;
@@ -16,11 +15,7 @@ export class FavoritesService {
   private supabase: any;
 
   constructor() {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn('Supabase environment variables are not configured. Favorites features will be disabled.');
-      return;
-    }
-    this.supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    this.supabase = supabase;
   }
 
   async addToFavorites(movieId: number, movieTitle: string, moviePoster: string) {
@@ -107,24 +102,30 @@ export class FavoritesService {
       return false;
     }
 
-    const { data: { user } } = await this.supabase.auth.getUser();
-    
-    if (!user) {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser();
+      
+      if (!user) {
+        return false;
+      }
+
+      const { data, error } = await this.supabase
+        .from('favorites')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('movie_id', movieId)
+        .maybeSingle();
+
+      if (error) {
+        console.warn('Error checking favorites status:', error);
+        return false;
+      }
+
+      return !!data;
+    } catch (error) {
+      console.warn('Error checking favorites status:', error);
       return false;
     }
-
-    const { data, error } = await this.supabase
-      .from('favorites')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('movie_id', movieId)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      throw error;
-    }
-
-    return !!data;
   }
 }
 
