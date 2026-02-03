@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth/auth-provider';
 import { MovieGrid } from '@/components/movie/movie-grid';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/auth/auth-modal';
+import { LoadingScreen } from '@/components/loading-screen';
 import { Star, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { favoritesService, FavoriteItem } from '@/lib/services/favorites';
@@ -37,12 +38,7 @@ export function FavoritesContent() {
   };
 
   if (loading) {
-    return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Loading your favorites...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading your favorites…" fullScreen={false} />;
   }
 
   if (!user) {
@@ -75,12 +71,7 @@ export function FavoritesContent() {
   }
 
   if (isLoading) {
-    return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Loading your favorites...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading your favorites…" fullScreen={false} />;
   }
 
   const favoritesMovies = favoritesItems.map(item => ({

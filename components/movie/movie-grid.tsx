@@ -118,7 +118,7 @@ export function MovieGrid({
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
         {movies.map((movie, index) => {
           if (category && movies.length === index + 1) {
             return (
@@ -127,6 +127,7 @@ export function MovieGrid({
                   movie={movie} 
                   showYear={showYear}
                   showRating={showRating}
+                  priority={index < 6}
                 />
               </div>
             );
@@ -137,6 +138,7 @@ export function MovieGrid({
                 movie={movie} 
                 showYear={showYear}
                 showRating={showRating}
+                priority={index < 6}
               />
             );
           }

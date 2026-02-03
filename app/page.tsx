@@ -1,38 +1,75 @@
-import { Suspense } from 'react';
+'use client';
+
+import { Suspense, useState } from 'react';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { validateEnv } from '@/lib/config/env';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { HeroCarousel } from '@/components/movie/hero-carousel';
 import { MovieGrid } from '@/components/movie/movie-grid';
+import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingScreen } from '@/components/loading-screen';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
-function MovieGridSkeleton() {
+function ContentTabs({ activeTab, onTabChange }: { activeTab: 'movies' | 'tv-shows'; onTabChange: (tab: 'movies' | 'tv-shows') => void }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div key={i} className="space-y-3">
-          <Skeleton className="aspect-[2/3] w-full rounded-lg" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-3 w-1/2" />
-        </div>
-      ))}
+    <div className="bg-[#1a1a1a] rounded-lg p-1 inline-flex mb-8">
+      <button
+        onClick={() => onTabChange('movies')}
+        className={`px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+          activeTab === 'movies'
+            ? 'bg-red-600 text-white shadow-lg'
+            : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]'
+        }`}
+      >
+        Movies
+      </button>
+      <button
+        onClick={() => onTabChange('tv-shows')}
+        className={`px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+          activeTab === 'tv-shows'
+            ? 'bg-red-600 text-white shadow-lg'
+            : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]'
+        }`}
+      >
+        TV Shows
+      </button>
     </div>
   );
 }
 
-async function TrendingSection() {
-  try {
-    const trendingData = await tmdbApi.getTrendingMovies('week');
-    return <HeroCarousel movies={trendingData.results.slice(0, 10)} />;
-  } catch (error) {
-    console.error('Error fetching trending movies:', error);
+function TrendingSection({ contentType }: { contentType: 'movies' | 'tv-shows' }) {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      setError(false);
+      try {
+        const trendingData = contentType === 'movies' 
+          ? await tmdbApi.getTrendingMovies('week')
+          : await tmdbApi.getTrendingTVShows('week');
+        setData(trendingData);
+      } catch (error) {
+        console.error('Error fetching trending data:', error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [contentType]);
+
+  if (loading) return <LoadingScreen message="Loading…" fullScreen={false} />;
+  if (error) {
     return (
       <div className="h-[70vh] min-h-[500px] flex items-center justify-center bg-gradient-to-br from-primary/20 to-background">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Unable to load trending movies</h2>
+          <h2 className="text-2xl font-bold mb-4">Unable to load trending content</h2>
           <p className="text-muted-foreground mb-6">Please check your API configuration</p>
           <Button asChild>
             <Link href="/">Go Home</Link>
@@ -41,70 +78,85 @@ async function TrendingSection() {
       </div>
     );
   }
+
+  return <HeroCarousel movies={data.results.slice(0, 10)} />;
 }
 
-async function PopularMoviesSection() {
-  try {
-    const popularData = await tmdbApi.getPopularMovies(1);
-    return (
-      <MovieGrid
-        movies={popularData.results}
-        title="Popular Now"
-        category="popular"
-        showYear={true}
-        showRating={true}
-      />
-    );
-  } catch (error) {
-    console.error('Error fetching popular movies:', error);
-    return (
-      <section className="py-8">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8">Popular Now</h2>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Unable to load popular movies</p>
+function ContentSections({ contentType }: { contentType: 'movies' | 'tv-shows' }) {
+  const [sections, setSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadSections = async () => {
+      setLoading(true);
+      try {
+        if (contentType === 'movies') {
+          const [trending, popular, recent, topRated, upcoming] = await Promise.all([
+            tmdbApi.getTrendingMovies('day'),
+            tmdbApi.getPopularMovies(1),
+            tmdbApi.getNowPlayingMovies(1),
+            tmdbApi.getTopRatedMovies(1),
+            tmdbApi.getUpcomingMovies(1)
+          ]);
+          setSections([
+            { data: trending.results.slice(0, 12), title: 'Trending Today', category: 'popular' },
+            { data: popular.results.slice(0, 12), title: 'Popular Now', category: 'popular' },
+            { data: recent.results.slice(0, 12), title: 'Recently Added', category: 'now-playing' },
+            { data: topRated.results.slice(0, 12), title: 'Top Rated', category: 'top-rated' },
+            { data: upcoming.results.slice(0, 12), title: 'Coming Soon', category: 'upcoming' }
+          ]);
+        } else {
+          const [trending, popular, onAir, topRated] = await Promise.all([
+            tmdbApi.getTrendingTVShows('day'),
+            tmdbApi.getPopularTVShows(1),
+            tmdbApi.getOnTheAirTVShows(1),
+            tmdbApi.getTopRatedTVShows(1)
+          ]);
+          setSections([
+            { data: trending.results.slice(0, 12), title: 'Trending Today', category: 'popular' },
+            { data: popular.results.slice(0, 12), title: 'Popular Now', category: 'popular' },
+            { data: onAir.results.slice(0, 12), title: 'On The Air', category: 'on-the-air' },
+            { data: topRated.results.slice(0, 12), title: 'Top Rated', category: 'top-rated' }
+          ]);
+        }
+      } catch (error) {
+        console.error('Error loading sections:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSections();
+  }, [contentType]);
+
+  if (loading) return <LoadingScreen message="Loading…" fullScreen={false} />;
+
+  return (
+    <>
+      {sections.map((section, index) => (
+        <div key={`${contentType}-${index}`}>
+          {contentType === 'movies' ? (
+            <MovieGrid
+              movies={section.data}
+              title={section.title}
+              category={section.category}
+              showYear={true}
+              showRating={true}
+            />
+          ) : (
+            <TVShowGrid
+              tvShows={section.data}
+              title={section.title}
+              category={section.category}
+            />
+          )}
         </div>
-      </section>
-    );
-  }
+      ))}
+    </>
+  );
 }
 
-async function TopRatedMoviesSection() {
-  try {
-    const topRatedData = await tmdbApi.getTopRatedMovies(1);
-    return (
-      <MovieGrid
-        movies={topRatedData.results}
-        title="Top Rated"
-        category="top-rated"
-        showYear={true}
-        showRating={true}
-      />
-    );
-  } catch (error) {
-    console.error('Error fetching top rated movies:', error);
-    return null;
-  }
-}
-
-async function UpcomingMoviesSection() {
-  try {
-    const upcomingData = await tmdbApi.getUpcomingMovies(1);
-    return (
-      <MovieGrid
-        movies={upcomingData.results}
-        title="Coming Soon"
-        category="upcoming"
-        showYear={true}
-        showRating={false}
-      />
-    );
-  } catch (error) {
-    console.error('Error fetching upcoming movies:', error);
-    return null;
-  }
-}
-
-export default async function HomePage() {
+export default function HomePage() {
+  const [activeTab, setActiveTab] = useState<'movies' | 'tv-shows'>('movies');
   const isEnvValid = validateEnv();
 
   if (!isEnvValid) {
@@ -128,41 +180,20 @@ export default async function HomePage() {
       <Header />
       
       <main>
-        <Suspense 
-          fallback={
-            <div className="h-[70vh] min-h-[500px] bg-gradient-to-br from-primary/20 to-background animate-pulse" />
-          }
-        >
-          <TrendingSection />
-        </Suspense>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-          <Suspense fallback={
-            <section className="py-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Popular Now</h2>
-              <MovieGridSkeleton />
-            </section>
-          }>
-            <PopularMoviesSection />
+        <div className="hidden md:block">
+          <Suspense fallback={<LoadingScreen message="Loading…" fullScreen={false} />}>
+            <TrendingSection contentType={activeTab} />
           </Suspense>
+        </div>
 
-          <Suspense fallback={
-            <section className="py-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Top Rated</h2>
-              <MovieGridSkeleton />
-            </section>
-          }>
-            <TopRatedMoviesSection />
-          </Suspense>
-
-          <Suspense fallback={
-            <section className="py-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-8">Coming Soon</h2>
-              <MovieGridSkeleton />
-            </section>
-          }>
-            <UpcomingMoviesSection />
-          </Suspense>
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <ContentTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          
+          <div className="space-y-20">
+            <Suspense key={activeTab} fallback={<LoadingScreen message="Loading…" fullScreen={false} />}>
+              <ContentSections contentType={activeTab} />
+            </Suspense>
+          </div>
         </div>
       </main>
 

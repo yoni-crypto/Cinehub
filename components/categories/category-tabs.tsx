@@ -16,10 +16,8 @@ const categories = [
 ];
 
 export function CategoryTabs({ activeCategory }: CategoryTabsProps) {
-  const searchParams = useSearchParams();
-
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="bg-[#1a1a1a] rounded-lg p-1 inline-flex">
       {categories.map((category) => {
         const isActive = category.id === activeCategory;
         
@@ -28,10 +26,10 @@ export function CategoryTabs({ activeCategory }: CategoryTabsProps) {
             key={category.id}
             href={category.href}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+              'px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap',
               isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'bg-red-600 text-white shadow-lg'
+                : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]'
             )}
           >
             {category.label}

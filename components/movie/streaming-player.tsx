@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Play, X, Loader2 } from 'lucide-react';
+import { Play, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { streamingApi } from '@/lib/api/streaming';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { AdBlockDetector } from '@/components/ad-block-detector';
+import { LoadingScreen } from '@/components/loading-screen';
 
 interface StreamingPlayerProps {
   movieId: number;
@@ -48,31 +49,13 @@ export function StreamingPlayer({
     setError(null);
 
     try {
-      let url;
-      if (isTVShow && seasonNumber && episodeNumber) {
-        url = await streamingApi.getTVShowEmbedUrl(movieId, seasonNumber, episodeNumber);
-      } else {
-        const response = await fetch(`/api/streaming?movieId=${movieId}`);
-        const data = await response.json();
-        
-        if (data.embedUrl) {
-          setEmbedUrl(data.embedUrl);
-          if (data.subtitles) {
-            setSubtitles(data.subtitles);
-          }
-          return;
-        }
-        url = data.embedUrl;
-      }
-
-      if (url) {
-        setEmbedUrl(url);
-      } else {
-        setError(isTVShow ? 'Streaming not available for this TV show episode' : 'Streaming not available for this movie');
-      }
+      // Use the reliable source directly
+      const directUrl = `https://vidsrc.cc/v2/embed/movie/${movieId}`;
+      console.log('Using direct streaming URL:', directUrl);
+      setEmbedUrl(directUrl);
     } catch (err) {
       setError('Failed to load streaming');
-      console.error('Error fetching embed URL:', err);
+      console.error('Error setting embed URL:', err);
     } finally {
       setIsLoading(false);
     }
@@ -132,17 +115,13 @@ export function StreamingPlayer({
 
   if (isLoading) {
     return (
-      <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-white mx-auto mb-4" />
-          <p className="text-white text-sm">Loading streaming...</p>
-        </div>
-
+      <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
+        <LoadingScreen message="Loading stream…" compact />
         {onClose && (
           <Button
             size="sm"
             variant="secondary"
-            className="absolute top-4 right-4 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 border-0"
+            className="absolute top-4 right-4 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 border-0 z-10"
             onClick={handleClose}
           >
             <X className="w-4 h-4" />

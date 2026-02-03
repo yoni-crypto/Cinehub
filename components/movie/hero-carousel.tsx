@@ -25,7 +25,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % movies.length);
-    }, 6000);
+    }, 10000); // 10 seconds as per README
 
     return () => clearInterval(interval);
   }, [movies.length, isAutoPlaying]);
@@ -53,7 +53,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
   const rating = Math.round(currentMovie.vote_average * 10) / 10;
 
   return (
-    <div className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[70vh] min-h-[400px] sm:min-h-[500px] overflow-hidden">
+    <div className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] xl:h-[85vh] min-h-[500px] sm:min-h-[600px] overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentMovie.id}
@@ -72,13 +72,14 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
               priority
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
           </div>
 
           <div className="absolute inset-0 flex items-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <div className="max-w-2xl">
+            <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+              <div className="max-w-3xl">
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -99,22 +100,22 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
                     )}
                   </div>
 
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 text-shadow">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold text-white mb-4 sm:mb-6 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
                     {currentMovie.title}
                   </h1>
 
-                  <p className="text-sm sm:text-base lg:text-lg text-gray-200 mb-6 sm:mb-8 line-clamp-3 max-w-xl text-shadow">
+                  <p className="text-base sm:text-lg lg:text-xl text-gray-200 mb-8 sm:mb-10 line-clamp-3 max-w-2xl leading-relaxed" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
                     {currentMovie.overview}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
                     <Button
                       size="lg"
-                      className="bg-primary hover:bg-primary/90 text-white px-6 sm:px-8 text-sm sm:text-base"
+                      className="bg-red-600 hover:bg-red-700 text-white px-8 sm:px-12 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                       asChild
                     >
                       <Link href={`/movies/${currentMovie.id}`}>
-                        <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="white" />
+                        <Play className="w-5 h-5 sm:w-6 sm:h-6 mr-3" fill="white" />
                         Watch Now
                       </Link>
                     </Button>
@@ -122,11 +123,11 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-white/30 text-white hover:bg-white/10 px-6 sm:px-8 text-sm sm:text-base"
+                      className="border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 px-8 sm:px-12 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-lg backdrop-blur-sm transition-all duration-300 hover:scale-105"
                       asChild
                     >
                       <Link href={`/movies/${currentMovie.id}`}>
-                        <Info className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                        <Info className="w-5 h-5 sm:w-6 sm:h-6 mr-3" />
                         More Info
                       </Link>
                     </Button>
@@ -156,13 +157,15 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
             {movies.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentIndex ? 'bg-white' : 'bg-white/50'
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex 
+                    ? 'bg-red-600 scale-125 shadow-lg' 
+                    : 'bg-white/40 hover:bg-white/70 hover:scale-110'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />

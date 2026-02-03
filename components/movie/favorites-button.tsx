@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Star, StarOff } from 'lucide-react';
+import { Star, Plus } from 'lucide-react';
 import { useAuth } from '@/lib/auth/auth-provider';
 import { favoritesService } from '@/lib/services/favorites';
 import { toast } from 'sonner';
@@ -16,6 +16,9 @@ interface FavoritesButtonProps {
   className?: string;
   size?: 'sm' | 'lg';
   variant?: 'default' | 'outline' | 'ghost';
+  /** Show Plus icon and label (e.g. "Add to favorite") for streaming bar */
+  iconType?: 'star' | 'plus';
+  label?: string;
 }
 
 export function FavoritesButton({ 
@@ -24,7 +27,9 @@ export function FavoritesButton({
   moviePoster, 
   className = '',
   size = 'lg',
-  variant = 'outline'
+  variant = 'outline',
+  iconType = 'star',
+  label
 }: FavoritesButtonProps) {
   const { user } = useAuth();
   const [isInFavorites, setIsInFavorites] = useState(false);
@@ -84,16 +89,22 @@ export function FavoritesButton({
     <>
       <Button
         size={size}
+        variant={variant}
         className={className}
         onClick={handleToggleFavorites}
         disabled={isLoading}
       >
         {isLoading ? (
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-        ) : isInFavorites ? (
-          <Star className="w-4 h-4 fill-yellow-400" />
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
         ) : (
-          <Star className="w-4 h-4" />
+          <>
+            {iconType === 'plus' ? (
+              <Plus className="w-4 h-4 mr-1.5" />
+            ) : (
+              <Star className={`w-4 h-4 ${isInFavorites ? 'fill-yellow-400' : ''}`} />
+            )}
+            {label && <span>{isInFavorites && iconType === 'plus' ? 'In favorites' : label}</span>}
+          </>
         )}
       </Button>
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />

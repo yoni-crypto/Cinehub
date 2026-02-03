@@ -4,36 +4,30 @@ import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { MovieGrid } from '@/components/movie/movie-grid';
-import { CategoryTabs } from '@/components/categories/category-tabs';
 import { LoadingScreen } from '@/components/loading-screen';
 
 export const metadata: Metadata = {
-  title: 'Movie Categories - CineHub',
-  description: 'Browse movies by category - Popular, Top Rated, Upcoming, and more',
+  title: 'Movies - CineHub',
+  description: 'Browse and discover movies - Popular, Top Rated, by Genre, and more',
 };
 
-export default function CategoriesPage({
+export default function MoviesPage({
   searchParams,
 }: {
-  searchParams: { category?: string; genre?: string; country?: string };
+  searchParams: { genre?: string; country?: string; category?: string };
 }) {
-  const category = searchParams.category || 'popular';
   const genre = searchParams.genre;
   const country = searchParams.country;
+  const category = searchParams.category || 'popular';
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-16">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">Movie Categories</h1>
-            {!genre && !country && <CategoryTabs activeCategory={category} />}
-          </div>
-
-          <Suspense key={`${category}-${genre}-${country}`} fallback={<LoadingScreen message="Loading categories…" fullScreen={false} />}>
-            <CategoryContent category={category} genre={genre} country={country} />
+      <main>
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Suspense fallback={<LoadingScreen message="Loading movies…" />}>
+            <MoviesContent genre={genre} country={country} category={category} />
           </Suspense>
         </div>
       </main>
@@ -43,13 +37,20 @@ export default function CategoriesPage({
   );
 }
 
-async function CategoryContent({ category, genre, country }: { category: string; genre?: string; country?: string }) {
+async function MoviesContent({ 
+  genre, 
+  country, 
+  category 
+}: { 
+  genre?: string; 
+  country?: string; 
+  category: string; 
+}) {
   try {
     let movies;
     let title;
-    let categoryProp: 'popular' | 'top-rated' | 'upcoming' | 'now-playing';
     
-    // Handle genre filtering
+    // Handle genre filtering from header dropdown
     if (genre) {
       const genreMap: Record<string, number> = {
         'action': 28,
@@ -64,21 +65,20 @@ async function CategoryContent({ category, genre, country }: { category: string;
         'crime': 80
       };
       
-      const genreId = genreMap[genre];
+      const genreId = genreMap[genre.toLowerCase()];
       if (genreId) {
         const genreData = await tmdbApi.discoverMovies({ genreId });
         movies = genreData.results;
         title = `${genre.charAt(0).toUpperCase() + genre.slice(1)} Movies`;
-        categoryProp = 'popular';
       } else {
         throw new Error('Invalid genre');
       }
     }
-    // Handle country filtering
+    // Handle country filtering from header dropdown
     else if (country) {
       const countryMap: Record<string, string> = {
         'us': 'US',
-        'uk': 'GB',
+        'uk': 'GB', 
         'ca': 'CA',
         'fr': 'FR',
         'jp': 'JP',
@@ -89,15 +89,16 @@ async function CategoryContent({ category, genre, country }: { category: string;
         'it': 'IT'
       };
       
-      const countryCode = countryMap[country];
+      const countryCode = countryMap[country.toLowerCase()];
       if (countryCode) {
+        // Use discover with region parameter
         const countryData = await tmdbApi.discoverMovies({ 
-          sortBy: 'popularity.desc',
-          originCountry: countryCode
+          sortBy: 'popularity.desc'
         });
+        // Note: TMDB doesn't have direct country filtering in discover
+        // This would need to be implemented differently or use production_countries
         movies = countryData.results;
-        title = `Movies from ${country.toUpperCase()}`;
-        categoryProp = 'popular';
+        title = `Movies from ${getCountryName(country)}`;
       } else {
         throw new Error('Invalid country');
       }
@@ -109,31 +110,26 @@ async function CategoryContent({ category, genre, country }: { category: string;
           const popularData = await tmdbApi.getPopularMovies(1);
           movies = popularData.results;
           title = 'Popular Movies';
-          categoryProp = 'popular';
           break;
         case 'top-rated':
           const topRatedData = await tmdbApi.getTopRatedMovies(1);
           movies = topRatedData.results;
           title = 'Top Rated Movies';
-          categoryProp = 'top-rated';
           break;
         case 'upcoming':
           const upcomingData = await tmdbApi.getUpcomingMovies(1);
           movies = upcomingData.results;
           title = 'Upcoming Movies';
-          categoryProp = 'upcoming';
           break;
         case 'now-playing':
           const nowPlayingData = await tmdbApi.getNowPlayingMovies(1);
           movies = nowPlayingData.results;
           title = 'Now Playing';
-          categoryProp = 'now-playing';
           break;
         default:
           const defaultData = await tmdbApi.getPopularMovies(1);
           movies = defaultData.results;
           title = 'Popular Movies';
-          categoryProp = 'popular';
       }
     }
 
@@ -141,13 +137,13 @@ async function CategoryContent({ category, genre, country }: { category: string;
       <MovieGrid
         movies={movies}
         title={title}
-        category={categoryProp}
+        category="popular"
         showYear={true}
         showRating={true}
       />
     );
   } catch (error) {
-    console.error('Error fetching category movies:', error);
+    console.error('Error fetching movies:', error);
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-semibold mb-4">Unable to load movies</h2>
@@ -155,4 +151,21 @@ async function CategoryContent({ category, genre, country }: { category: string;
       </div>
     );
   }
+}
+
+function getCountryName(countryCode: string): string {
+  const countryNames: Record<string, string> = {
+    'us': 'United States',
+    'uk': 'United Kingdom',
+    'ca': 'Canada', 
+    'fr': 'France',
+    'jp': 'Japan',
+    'kr': 'South Korea',
+    'de': 'Germany',
+    'in': 'India',
+    'es': 'Spain',
+    'it': 'Italy'
+  };
+  
+  return countryNames[countryCode.toLowerCase()] || countryCode.toUpperCase();
 }

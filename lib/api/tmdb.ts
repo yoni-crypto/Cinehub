@@ -202,6 +202,13 @@ class TMDBApi {
     return this.request(`/movie/${movieId}/similar`, { page: page.toString() });
   }
 
+  async searchMulti(query: string, page: number = 1): Promise<TMDBResponse<any>> {
+    return this.request('/search/multi', { 
+      query: encodeURIComponent(query),
+      page: page.toString()
+    });
+  }
+
   async searchMovies(query: string, page: number = 1): Promise<TMDBResponse<Movie>> {
     return this.request('/search/movie', { 
       query: encodeURIComponent(query),
@@ -218,6 +225,8 @@ class TMDBApi {
     year?: number;
     sortBy?: string;
     page?: number;
+    region?: string;
+    originCountry?: string;
   }): Promise<TMDBResponse<Movie>> {
     const queryParams: Record<string, string> = {
       page: (params.page || 1).toString(),
@@ -230,6 +239,14 @@ class TMDBApi {
 
     if (params.year) {
       queryParams.year = params.year.toString();
+    }
+
+    if (params.region) {
+      queryParams.region = params.region;
+    }
+
+    if (params.originCountry) {
+      queryParams.with_origin_country = params.originCountry;
     }
 
     return this.request('/discover/movie', queryParams);
@@ -314,17 +331,17 @@ class TMDBApi {
   }
 
   getImageUrl(path: string | null, size: string = 'w500'): string {
-    if (!path) return '/placeholder-movie.jpg';
+    if (!path) return '/placeholder.png';
     return `${env.TMDB_IMAGE_BASE_URL}/${size}${path}`;
   }
 
   getBackdropUrl(path: string | null, size: string = 'w1280'): string {
-    if (!path) return '/placeholder-backdrop.jpg';
+    if (!path) return '/placeholder.png';
     return `${env.TMDB_IMAGE_BASE_URL}/${size}${path}`;
   }
 
   getPosterUrl(path: string | null, size: string = 'w500'): string {
-    if (!path) return '/placeholder-movie.jpg';
+    if (!path) return '/placeholder.png';
     return `${env.TMDB_IMAGE_BASE_URL}/${size}${path}`;
   }
 }

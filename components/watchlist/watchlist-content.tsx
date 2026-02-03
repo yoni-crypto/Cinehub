@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth/auth-provider';
 import { MovieGrid } from '@/components/movie/movie-grid';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/auth/auth-modal';
+import { LoadingScreen } from '@/components/loading-screen';
 import { Heart, LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { watchlistService, WatchlistItem } from '@/lib/services/watchlist';
@@ -38,12 +39,7 @@ export function WatchlistContent() {
   };
 
   if (loading) {
-    return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Loading your watchlist...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading your watchlist…" fullScreen={false} />;
   }
 
   if (!user) {
@@ -76,12 +72,7 @@ export function WatchlistContent() {
   }
 
   if (isLoading) {
-    return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Loading your watchlist...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading your watchlist…" fullScreen={false} />;
   }
 
   // Convert watchlist items to movie format for MovieGrid

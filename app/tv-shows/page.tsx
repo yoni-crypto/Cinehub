@@ -5,27 +5,12 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { TVShowCategoryTabs } from '@/components/tv-shows/tv-show-category-tabs';
-
-import { Skeleton } from '@/components/ui/skeleton';
+import { LoadingScreen } from '@/components/loading-screen';
 
 export const metadata: Metadata = {
   title: 'TV Shows - CineHub',
   description: 'Discover and watch the latest TV shows',
 };
-
-function TVShowGridSkeleton() {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-      {Array.from({ length: 18 }).map((_, i) => (
-        <div key={i} className="space-y-3">
-          <Skeleton className="aspect-[2/3] w-full rounded-lg" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-3 w-1/2" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function TVShowsPage({
   searchParams,
@@ -39,13 +24,13 @@ export default function TVShowsPage({
       <Header />
       
       <main className="pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">TV Shows</h1>
             <TVShowCategoryTabs activeCategory={category} />
           </div>
 
-          <Suspense key={category} fallback={<TVShowGridSkeleton />}>
+          <Suspense key={category} fallback={<LoadingScreen message="Loading TV shows…" fullScreen={false} />}>
             <TVShowCategoryContent category={category} />
           </Suspense>
         </div>

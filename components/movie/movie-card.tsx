@@ -3,23 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { Calendar, Star, Play, Heart, HeartOff, ExternalLink } from 'lucide-react';
+import { Calendar, Star, Play, Heart } from 'lucide-react';
 import { Movie } from '@/lib/types/movie';
 import { tmdbApi } from '@/lib/api/tmdb';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/lib/auth/auth-provider';
 import { watchlistService } from '@/lib/services/watchlist';
 import { toast } from 'sonner';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { StreamingModal } from './streaming-modal';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 interface MovieCardProps {
   movie: Movie;
@@ -32,7 +23,7 @@ export function MovieCard({
   movie, 
   showYear = true, 
   showRating = true, 
-  priority = false 
+  priority = false
 }: MovieCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -111,133 +102,82 @@ export function MovieCard({
 
   return (
     <>
-      <TooltipProvider>
-        <motion.div
-          className="group relative bg-card rounded-lg overflow-hidden border border-border/50 card-hover"
-          onHoverStart={() => setIsHovered(true)}
-          onHoverEnd={() => setIsHovered(false)}
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Link href={`/movies/${movie.id}`}>
-            <div className="relative aspect-[2/3] overflow-hidden">
-              <Image
-                src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
-                alt={movie.title}
-                fill
-                className={`object-cover transition-all duration-500 ${
-                  imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-                } group-hover:scale-110`}
-                onLoad={() => setImageLoaded(true)}
-                priority={priority}
-                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              />
-              
-              <motion.div 
-                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isHovered ? 1 : 0 }}
-              />
+      <div
+        className="group relative bg-gray-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-red-600/50 transition-all duration-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Link href={`/movies/${movie.id}`}>
+          <div className="relative aspect-[2/3] overflow-hidden">
+            <Image
+              src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
+              alt={movie.title}
+              fill
+              className={`object-cover transition-transform duration-300 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              } group-hover:scale-105`}
+              onLoad={() => setImageLoaded(true)}
+              priority={priority}
+              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+            
+            <div 
+              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            />
 
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                  scale: isHovered ? 1 : 0, 
-                  opacity: isHovered ? 1 : 0 
-                }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <div className="w-16 h-16 bg-primary/90 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                </div>
-              </motion.div>
-
-              {showRating && rating > 0 && (
-                <Badge className="absolute top-2 left-2 bg-black/80 text-white border-0">
-                  <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                  {rating}
-                </Badge>
-              )}
-
-              <div className="absolute top-2 right-2 flex gap-1 opacity-0 sm:group-hover:opacity-100 transition-opacity sm:opacity-0">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="h-8 w-8 p-0 bg-red-600 hover:bg-red-700 border-0"
-                      onClick={handleWatchMovie}
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    Watch Full Movie
-                  </TooltipContent>
-                </Tooltip>
-                
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="h-8 w-8 p-0 bg-black/60 hover:bg-black/80 border-0"
-                      onClick={handleToggleWatchlist}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                      ) : isInWatchlist ? (
-                        <HeartOff className="w-4 h-4 text-red-400" />
-                      ) : (
-                        <Heart className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
-                  </TooltipContent>
-                </Tooltip>
+            <div
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center">
+                <Play className="w-8 h-8 text-white ml-1" fill="white" />
               </div>
             </div>
-          </Link>
 
-          <div className="p-4">
-            <h3 className="font-semibold text-sm line-clamp-2 mb-2 group-hover:text-primary transition-colors">
-              {movie.title}
-            </h3>
-            
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              {showYear && releaseYear && (
-                <div className="flex items-center">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  {releaseYear}
-                </div>
-              )}
-              
-              {showRating && rating > 0 && (
-                <div className="flex items-center">
-                  <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                  {rating}
-                </div>
-              )}
+            {showRating && rating > 0 && (
+              <div className="absolute top-2 left-2 bg-black/80 text-white text-xs px-2 py-1 rounded flex items-center">
+                <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                {rating}
+              </div>
+            )}
+
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                className="w-8 h-8 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
+                onClick={handleToggleWatchlist}
+                disabled={isLoading}
+                title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+              >
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-3 w-3 border border-white border-t-transparent"></div>
+                ) : isInWatchlist ? (
+                  <Heart className="w-4 h-4 text-red-400" fill="currentColor" />
+                ) : (
+                  <Heart className="w-4 h-4 text-white" />
+                )}
+              </button>
             </div>
-
-            <motion.p
-              className="text-xs text-muted-foreground mt-2 line-clamp-3"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ 
-                height: isHovered ? 'auto' : 0, 
-                opacity: isHovered ? 1 : 0 
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              {movie.overview}
-            </motion.p>
           </div>
-        </motion.div>
-      </TooltipProvider>
+        </Link>
+
+        <div className="p-3">
+          <h3 className="font-medium text-white text-sm line-clamp-2 mb-2">
+            {movie.title}
+          </h3>
+          
+          <div className="flex items-center justify-between text-xs text-gray-400">
+            {showYear && releaseYear && (
+              <span>{releaseYear}</span>
+            )}
+            
+            {showRating && rating > 0 && (
+              <div className="flex items-center">
+                <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                {rating}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
       
