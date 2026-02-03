@@ -47,15 +47,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
   useEffect(() => {
+    let mounted = true;
+    
     const getUser = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
+        if (mounted) {
+          setUser(user);
+        }
       } catch (error) {
         console.error('Error getting user:', error);
-        setUser(null);
+        if (mounted) {
+          setUser(null);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -63,13 +71,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
+        if (mounted) {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const signOut = async () => {
     try {
