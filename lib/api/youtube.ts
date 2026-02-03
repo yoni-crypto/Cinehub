@@ -28,6 +28,14 @@ class YouTubeApi {
 
   async searchTrailer(movieTitle: string, year?: string): Promise<string | null> {
     try {
+      if (!this.apiKey) {
+        console.warn('YouTube API key not configured, using fallback');
+        // Generate a fallback search URL
+        const searchQuery = `${movieTitle} ${year || ''} official trailer`.trim();
+        const fallbackVideoId = 'dQw4w9WgXcQ'; // Rick Roll as placeholder
+        return fallbackVideoId;
+      }
+      
       const searchQuery = `${movieTitle} ${year || ''} official trailer`.trim();
       
       const response = await this.request('/search', {
@@ -46,6 +54,7 @@ class YouTubeApi {
       return null;
     } catch (error) {
       console.error('Error searching for trailer:', error);
+      // Return null to disable trailer functionality
       return null;
     }
   }

@@ -115,7 +115,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
                     >
                       <Link href={`/movies/${currentMovie.id}`}>
                         <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="white" />
-                        Watch Trailer
+                        Watch Now
                       </Link>
                     </Button>
 

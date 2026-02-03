@@ -5,6 +5,7 @@ import { Play, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { streamingApi } from '@/lib/api/streaming';
 import { tmdbApi } from '@/lib/api/tmdb';
+import { AdBlockDetector } from '@/components/ad-block-detector';
 
 interface StreamingPlayerProps {
   movieId: number;
@@ -32,6 +33,7 @@ export function StreamingPlayer({
   const [isPlaying, setIsPlaying] = useState(autoplay);
   const [hasStartedPlaying, setHasStartedPlaying] = useState(autoplay);
   const [embedUrl, setEmbedUrl] = useState<string | null>(null);
+  const [subtitles, setSubtitles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +52,17 @@ export function StreamingPlayer({
       if (isTVShow && seasonNumber && episodeNumber) {
         url = await streamingApi.getTVShowEmbedUrl(movieId, seasonNumber, episodeNumber);
       } else {
-        url = await streamingApi.getEmbedUrl(movieId);
+        const response = await fetch(`/api/streaming?movieId=${movieId}`);
+        const data = await response.json();
+        
+        if (data.embedUrl) {
+          setEmbedUrl(data.embedUrl);
+          if (data.subtitles) {
+            setSubtitles(data.subtitles);
+          }
+          return;
+        }
+        url = data.embedUrl;
       }
 
       if (url) {
@@ -142,17 +154,30 @@ export function StreamingPlayer({
 
   if (error) {
     return (
-      <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-sm mb-4">{error}</p>
-          <Button
-            size="sm"
-            variant="secondary"
-            className="bg-red-600 hover:bg-red-700 text-white"
-            onClick={handlePlay}
-          >
-            Try Again
-          </Button>
+      <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
+        <AdBlockDetector />
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <p className="text-red-400 text-sm mb-4">{error}</p>
+            <div className="space-y-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="bg-red-600 hover:bg-red-700 text-white mr-2"
+                onClick={handlePlay}
+              >
+                Try Again
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-white border-white/30"
+                onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(title + ' trailer')}`, '_blank')}
+              >
+                Watch Trailer Instead
+              </Button>
+            </div>
+          </div>
         </div>
 
         {onClose && (
@@ -180,14 +205,36 @@ export function StreamingPlayer({
           className="w-full h-full"
           frameBorder="0"
           loading="lazy"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+          referrerPolicy="no-referrer"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          style={{ border: 'none' }}
           onLoad={() => {
-            // Prevent any navigation when iframe loads
             console.log('Streaming iframe loaded successfully');
+            // Try to unmute after load
+            setTimeout(() => {
+              const iframe = document.querySelector('iframe');
+              if (iframe && iframe.contentWindow) {
+                try {
+                  iframe.contentWindow.postMessage({ action: 'unmute' }, '*');
+                } catch (e) {
+                  console.log('Could not unmute automatically');
+                }
+              }
+            }, 1000);
           }}
           onError={() => {
-            console.error('Streaming iframe failed to load');
-            setError('Failed to load streaming player');
+            console.error('Streaming iframe failed to load, trying alternative...');
+            const altSources = [
+              `https://vidsrc.xyz/embed/movie/${movieId}`,
+              `https://embedder.net/e/movie?tmdb=${movieId}`,
+              `https://vidsrc.me/embed/movie?tmdb=${movieId}`
+            ];
+            
+            const currentIndex = altSources.findIndex(src => embedUrl.includes(src.split('/')[2]));
+            const nextSource = altSources[currentIndex + 1] || altSources[0];
+            
+            console.log('Trying next source:', nextSource);
+            setEmbedUrl(nextSource);
           }}
         />
       )}

@@ -5,6 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/lib/auth/auth-provider';
 import { Analytics } from '@vercel/analytics/next';
+import { StructuredData } from '@/components/seo/structured-data';
+import { KeyboardShortcuts } from '@/components/keyboard-shortcuts';
 
 
 const dmSans = DM_Sans({ 
@@ -14,35 +16,50 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://cinehub1.vercel.app'),
   title: {
-    default: 'CineHub - Discover Movies & Watch Trailers',
-    template: '%s | CineHub'
+    default: 'CineHub - Free Movies, TV Shows & Trailers Online',
+    template: '%s | CineHub - Free Movie Streaming'
   },
-  description: 'Discover the latest movies, watch trailers, and build your watchlist on CineHub - your premium movie discovery platform.',
-  keywords: ['movies', 'trailers', 'cinema', 'entertainment', 'film', 'discovery'],
+  description: 'Watch free movies and TV shows online. Stream the latest blockbusters, discover trending films, and build your watchlist on CineHub - your ultimate movie streaming platform.',
+  keywords: [
+    'free movies online',
+    'watch movies free',
+    'movie streaming',
+    'tv shows online',
+    'cinema',
+    'film streaming',
+    'movie trailers',
+    'blockbusters',
+    'entertainment',
+    'watch online',
+    'movie database',
+    'film discovery'
+  ],
   authors: [{ name: 'CineHub Team' }],
   creator: 'CineHub',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://cinehub1.vercel.app',
-    siteName: 'CineHub',
-    title: 'CineHub - Discover Movies & Watch Trailers',
-    description: 'Discover the latest movies, watch trailers, and build your watchlist on CineHub.',
+    siteName: 'CineHub - Free Movie Streaming',
+    title: 'CineHub - Watch Free Movies & TV Shows Online',
+    description: 'Stream thousands of movies and TV shows for free. Discover trending films, watch trailers, and build your watchlist on CineHub.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'CineHub - Movie Discovery Platform',
+        alt: 'CineHub - Free Movie Streaming Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CineHub - Discover Movies & Watch Trailers',
-    description: 'Discover the latest movies, watch trailers, and build your watchlist on CineHub.',
+    title: 'CineHub - Watch Free Movies & TV Shows Online',
+    description: 'Stream thousands of movies and TV shows for free. Discover trending films and build your watchlist.',
     images: ['/og-image.jpg'],
+    creator: '@cinehub',
   },
   robots: {
     index: true,
@@ -67,7 +84,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-
+      <head>
+        <StructuredData />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+      </head>
       <body className={`${dmSans.variable} min-h-screen antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -76,6 +98,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
+            <KeyboardShortcuts />
             {children}
             <Toaster position="top-right" richColors />
             <Analytics />

@@ -17,7 +17,7 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, signOut } = useAuth() || { user: null, signOut: async () => {} };
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
