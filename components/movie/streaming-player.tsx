@@ -206,7 +206,6 @@ export function StreamingPlayer({
           frameBorder="0"
           loading="lazy"
           referrerPolicy="no-referrer"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           style={{ border: 'none' }}
           onLoad={() => {
             console.log('Streaming iframe loaded successfully');

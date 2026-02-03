@@ -4,15 +4,33 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const movieId = searchParams.get('movieId');
+    const tvShowId = searchParams.get('tvShowId');
+    const seasonNumber = searchParams.get('seasonNumber');
+    const episodeNumber = searchParams.get('episodeNumber');
     
-    if (!movieId) {
+    if (!movieId && !tvShowId) {
       return NextResponse.json(
-        { error: 'Movie ID is required' },
+        { error: 'Movie ID or TV Show ID is required' },
         { status: 400 }
       );
     }
 
-    // Use reliable free sources that bypass Cloudflare
+    // Handle TV shows
+    if (tvShowId && seasonNumber && episodeNumber) {
+      const reliableSources = [
+        `https://vidsrc.cc/v2/embed/tv/${tvShowId}/${seasonNumber}/${episodeNumber}`,
+        `https://vidsrc.xyz/embed/tv/${tvShowId}/${seasonNumber}/${episodeNumber}`,
+        `https://embedder.net/e/tv?tmdb=${tvShowId}&s=${seasonNumber}&e=${episodeNumber}`,
+        `https://vidsrc.me/embed/tv?tmdb=${tvShowId}&season=${seasonNumber}&episode=${episodeNumber}`
+      ];
+      
+      const embedUrl = reliableSources[0];
+      console.log('Using reliable TV source:', embedUrl);
+      
+      return NextResponse.json({ embedUrl });
+    }
+
+    // Handle movies (existing code)
     const reliableSources = [
       `https://vidsrc.cc/v2/embed/movie/${movieId}`,
       `https://vidsrc.xyz/embed/movie/${movieId}`,
