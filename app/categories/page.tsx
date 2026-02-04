@@ -113,7 +113,17 @@ async function CategoryContent({ category, genre, country }: { category: string;
         'de': 'DE',
         'in': 'IN',
         'es': 'ES',
-        'it': 'IT'
+        'it': 'IT',
+        'au': 'AU',
+        'br': 'BR',
+        'mx': 'MX',
+        'ru': 'RU',
+        'cn': 'CN',
+        'nl': 'NL',
+        'se': 'SE',
+        'no': 'NO',
+        'dk': 'DK',
+        'be': 'BE'
       };
       
       const countryCode = countryMap[country];
@@ -123,7 +133,7 @@ async function CategoryContent({ category, genre, country }: { category: string;
           originCountry: countryCode
         });
         movies = countryData.results;
-        title = `Movies from ${country.toUpperCase()}`;
+        title = `Movies from ${country === 'br' ? 'Brazil' : country === 'mx' ? 'Mexico' : country === 'au' ? 'Australia' : country === 'ru' ? 'Russia' : country === 'cn' ? 'China' : country === 'nl' ? 'Netherlands' : country === 'se' ? 'Sweden' : country === 'no' ? 'Norway' : country === 'dk' ? 'Denmark' : country === 'be' ? 'Belgium' : country.toUpperCase()}`;
         categoryProp = 'popular';
       } else {
         throw new Error('Invalid country');

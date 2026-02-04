@@ -283,18 +283,28 @@ export function Header() {
               <span className="text-white hover:text-red-500 transition-colors font-medium cursor-pointer">
                 Country
               </span>
-              <div className="absolute top-full left-0 w-64 bg-black border border-gray-800 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div className="grid grid-cols-2 gap-0">
-                  <Link href="/categories?country=us" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">USA</Link>
-                  <Link href="/categories?country=uk" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">UK</Link>
-                  <Link href="/categories?country=ca" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Canada</Link>
-                  <Link href="/categories?country=fr" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">France</Link>
-                  <Link href="/categories?country=jp" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Japan</Link>
-                  <Link href="/categories?country=kr" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Korea</Link>
-                  <Link href="/categories?country=de" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Germany</Link>
-                  <Link href="/categories?country=in" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">India</Link>
-                  <Link href="/categories?country=es" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Spain</Link>
-                  <Link href="/categories?country=it" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Italy</Link>
+              <div className="absolute top-full left-0 w-[420px] bg-black border border-gray-800 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="grid grid-cols-4 gap-2 p-3">
+                  <Link href="/categories?country=us" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">USA</Link>
+                  <Link href="/categories?country=uk" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">UK</Link>
+                  <Link href="/categories?country=ca" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Canada</Link>
+                  <Link href="/categories?country=fr" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">France</Link>
+                  <Link href="/categories?country=jp" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Japan</Link>
+                  <Link href="/categories?country=kr" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Korea</Link>
+                  <Link href="/categories?country=de" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Germany</Link>
+                  <Link href="/categories?country=in" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">India</Link>
+                  <Link href="/categories?country=es" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Spain</Link>
+                  <Link href="/categories?country=it" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Italy</Link>
+                  <Link href="/categories?country=au" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Australia</Link>
+                  <Link href="/categories?country=br" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Brazil</Link>
+                  <Link href="/categories?country=mx" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Mexico</Link>
+                  <Link href="/categories?country=ru" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Russia</Link>
+                  <Link href="/categories?country=cn" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">China</Link>
+                  <Link href="/categories?country=nl" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Netherlands</Link>
+                  <Link href="/categories?country=se" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Sweden</Link>
+                  <Link href="/categories?country=no" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Norway</Link>
+                  <Link href="/categories?country=dk" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Denmark</Link>
+                  <Link href="/categories?country=be" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Belgium</Link>
                 </div>
               </div>
             </div>

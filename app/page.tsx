@@ -99,8 +99,8 @@ function TrendingSection({ contentType }: { contentType: 'movies' | 'tv-shows' }
     return (
       <div className="h-[70vh] min-h-[500px] flex items-center justify-center bg-gradient-to-br from-primary/20 to-background">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Unable to load trending content</h2>
-          <p className="text-muted-foreground mb-6">Please check your API configuration</p>
+          <h2 className="text-2xl font-bold mb-4">Content temporarily unavailable</h2>
+          <p className="text-muted-foreground mb-6">Please try refreshing the page</p>
           <Button asChild>
             <Link href="/">Go Home</Link>
           </Button>
