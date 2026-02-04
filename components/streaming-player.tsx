@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Play, ExternalLink } from 'lucide-react';
+import { Play, ExternalLink, Maximize, X } from 'lucide-react';
 
 interface StreamingPlayerProps {
   url: string;
@@ -12,17 +12,13 @@ interface StreamingPlayerProps {
 export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
   const [playerMethod, setPlayerMethod] = useState<'iframe' | 'popup' | 'redirect'>('iframe');
   const [showFallback, setShowFallback] = useState(false);
+  const [iframeError, setIframeError] = useState(false);
 
   useEffect(() => {
-    // Detect mobile and force popup/redirect
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const isSmallScreen = window.innerWidth < 768;
-    
-    if (isMobile || isSmallScreen) {
-      setPlayerMethod('popup');
-      setShowFallback(true);
-    }
-  }, []);
+    // Try iframe first, even on mobile
+    setPlayerMethod('iframe');
+    setShowFallback(false);
+  }, [url]);
 
   const openInPopup = () => {
     const popup = window.open(
@@ -32,7 +28,6 @@ export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
     );
     
     if (!popup) {
-      // Popup blocked, try redirect
       window.location.href = url;
     }
   };
@@ -44,13 +39,41 @@ export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
     }
   };
 
+  const handleIframeError = () => {
+    setIframeError(true);
+    setShowFallback(true);
+  };
+
+  const requestFullscreen = () => {
+    const iframe = document.querySelector('iframe');
+    if (iframe) {
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if ((iframe as any).webkitRequestFullscreen) {
+        (iframe as any).webkitRequestFullscreen();
+      } else if ((iframe as any).mozRequestFullScreen) {
+        (iframe as any).mozRequestFullScreen();
+      } else if ((iframe as any).msRequestFullscreen) {
+        (iframe as any).msRequestFullscreen();
+      }
+    }
+  };
+
   if (showFallback) {
     return (
       <div className="relative w-full aspect-video bg-black flex flex-col items-center justify-center gap-4 text-white">
+        <button
+          onClick={() => setShowFallback(false)}
+          className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white p-1.5 rounded transition-colors"
+          title="Close options"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+        
         <Play className="w-16 h-16 text-red-500" fill="currentColor" />
-        <h3 className="text-lg font-semibold">Choose Playback Method</h3>
+        <h3 className="text-lg font-semibold">Player Options</h3>
         <p className="text-sm text-gray-400 text-center max-w-md">
-          For the best experience on mobile, choose how you'd like to watch
+          {iframeError ? 'Embedded player blocked. Choose an alternative:' : 'Choose how you\'d like to watch:'}
         </p>
         
         <div className="flex flex-col gap-3 w-full max-w-sm">
@@ -70,12 +93,14 @@ export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
             Open in New Tab
           </button>
           
-          <button
-            onClick={() => setShowFallback(false)}
-            className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-          >
-            Try Embedded Player
-          </button>
+          {!iframeError && (
+            <button
+              onClick={() => setShowFallback(false)}
+              className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              Try Embedded Player
+            </button>
+          )}
         </div>
       </div>
     );
@@ -92,11 +117,19 @@ export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
         title={title}
         referrerPolicy="no-referrer"
         loading="eager"
-        onError={() => setShowFallback(true)}
+        onError={handleIframeError}
+        onLoad={() => setIframeError(false)}
       />
       
-      {/* Fallback button overlay */}
-      <div className="absolute top-2 right-2">
+      {/* Control overlay */}
+      <div className="absolute top-2 right-2 flex gap-1">
+        <button
+          onClick={requestFullscreen}
+          className="bg-black/70 hover:bg-black/90 text-white p-1.5 rounded text-xs transition-colors"
+          title="Fullscreen"
+        >
+          <Maximize className="w-3.5 h-3.5" />
+        </button>
         <button
           onClick={() => setShowFallback(true)}
           className="bg-black/70 hover:bg-black/90 text-white px-2 py-1 rounded text-xs transition-colors"
