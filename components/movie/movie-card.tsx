@@ -16,6 +16,7 @@ interface MovieCardProps {
   movie: Movie;
   showYear?: boolean;
   showRating?: boolean;
+  showHDBadge?: boolean;
   priority?: boolean;
 }
 
@@ -23,6 +24,7 @@ export function MovieCard({
   movie, 
   showYear = true, 
   showRating = true, 
+  showHDBadge = true,
   priority = false
 }: MovieCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -93,10 +95,20 @@ export function MovieCard({
     
     try {
       setShowStreamingModal(true);
-      toast.success(`Opening ${movie.title} for streaming`);
     } catch (error) {
       console.error('Error opening streaming:', error);
-      toast.error('Failed to open streaming. Please try again.');
+    }
+  };
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Only prevent navigation on mobile if clicking interactive elements
+    const target = e.target as HTMLElement;
+    const isMobile = window.innerWidth < 768;
+    
+    if (isMobile && (target.closest('button') || target.closest('[role="button"]'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
     }
   };
 
@@ -107,7 +119,7 @@ export function MovieCard({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Link href={`/movies/${movie.id}`}>
+        <Link href={`/movies/${movie.id}`} onClick={handleCardClick}>
           <div className="relative aspect-[2/3] overflow-hidden">
             <Image
               src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
@@ -140,9 +152,14 @@ export function MovieCard({
               </div>
             )}
 
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute top-2 right-2 flex items-center gap-1.5 justify-end">
+              {showHDBadge && (
+                <span className="bg-black/90 text-amber-400 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide">
+                  HD
+                </span>
+              )}
               <button
-                className="w-8 h-8 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
+                className="w-8 h-8 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300"
                 onClick={handleToggleWatchlist}
                 disabled={isLoading}
                 title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}

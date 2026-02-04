@@ -29,8 +29,9 @@ export function MovieGrid({
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver>();
 
-  const loadMoreMovies = useCallback(async (page: number) => {
-    if (isLoading || !hasMore || !category) return;
+  const loadMoreMovies = useCallback(async (page: number, replace = false) => {
+    if (isLoading || !category) return;
+    if (!replace && !hasMore && page > 1) return;
 
     setIsLoading(true);
     try {
@@ -52,7 +53,7 @@ export function MovieGrid({
           return;
       }
 
-      if (page === 1) {
+      if (page === 1 || replace) {
         setMovies(response.results);
       } else {
         setMovies(prev => [...prev, ...response.results]);
@@ -79,7 +80,7 @@ export function MovieGrid({
     if (!isLoading && currentPage > 1) {
       const prevPage = currentPage - 1;
       setCurrentPage(prevPage);
-      loadMoreMovies(prevPage);
+      loadMoreMovies(prevPage, true);
     }
   }, [currentPage, isLoading, loadMoreMovies]);
 
@@ -118,7 +119,7 @@ export function MovieGrid({
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
         {movies.map((movie, index) => {
           if (category && movies.length === index + 1) {
             return (
@@ -155,30 +156,56 @@ export function MovieGrid({
       )}
 
       {category && (
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-muted-foreground">
-            Page {currentPage} of {totalPages} • {movies.length} movies loaded
+        <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center sm:justify-between gap-3">
+          <div className="text-xs sm:text-sm text-muted-foreground order-2 sm:order-1 w-full sm:w-auto text-center sm:text-left">
+            Page {currentPage} of {totalPages}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-1 sm:gap-2 order-1 sm:order-2">
             <Button
               variant="outline"
               size="sm"
+              className="h-9 w-9 p-0 sm:h-8 sm:w-auto sm:px-3"
+              onClick={() => { setCurrentPage(1); loadMoreMovies(1, true); }}
+              disabled={currentPage === 1 || isLoading}
+              aria-label="First page"
+            >
+              <span className="hidden sm:inline">First</span>
+              <span className="sm:hidden">«</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 w-9 p-0"
               onClick={loadPreviousPage}
               disabled={currentPage === 1 || isLoading}
+              aria-label="Previous page"
             >
               <ChevronLeft className="w-4 h-4" />
-              Previous
             </Button>
-            
+            <span className="min-w-[2rem] h-9 flex items-center justify-center rounded-full bg-red-600 text-white text-sm font-medium">
+              {currentPage}
+            </span>
             <Button
               variant="outline"
               size="sm"
+              className="h-9 w-9 p-0"
               onClick={loadNextPage}
               disabled={!hasMore || isLoading}
+              aria-label="Next page"
             >
-              Next
               <ChevronRight className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 w-9 p-0 sm:h-8 sm:w-auto sm:px-3"
+              onClick={() => { setCurrentPage(totalPages); loadMoreMovies(totalPages, true); }}
+              disabled={currentPage >= totalPages || isLoading || totalPages <= 1}
+              aria-label="Last page"
+            >
+              <span className="hidden sm:inline">Last</span>
+              <span className="sm:hidden">»</span>
             </Button>
           </div>
         </div>

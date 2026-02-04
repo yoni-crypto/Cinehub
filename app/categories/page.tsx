@@ -1,11 +1,13 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
+import { Filter } from 'lucide-react';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { MovieGrid } from '@/components/movie/movie-grid';
 import { CategoryTabs } from '@/components/categories/category-tabs';
 import { LoadingScreen } from '@/components/loading-screen';
+import { CategoriesSearchBar } from '@/components/categories/categories-search-bar';
 
 export const metadata: Metadata = {
   title: 'Movie Categories - CineHub',
@@ -26,11 +28,28 @@ export default function CategoriesPage({
       <Header />
       
       <main className="pt-16">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">Movie Categories</h1>
-            {!genre && !country && <CategoryTabs activeCategory={category} />}
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="mb-4 sm:mb-6">
+            <CategoriesSearchBar />
           </div>
+          <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Movie Categories</h1>
+            {!genre && !country && (
+              <a
+                href="#category-tabs"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-muted-foreground transition-colors self-start sm:self-auto"
+                title="Filter by category"
+              >
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Filter</span>
+              </a>
+            )}
+          </div>
+          {!genre && !country && (
+            <div id="category-tabs" className="mb-6 scroll-mt-4">
+              <CategoryTabs activeCategory={category} />
+            </div>
+          )}
 
           <Suspense key={`${category}-${genre}-${country}`} fallback={<LoadingScreen message="Loading categories…" fullScreen={false} />}>
             <CategoryContent category={category} genre={genre} country={country} />
@@ -53,15 +72,23 @@ async function CategoryContent({ category, genre, country }: { category: string;
     if (genre) {
       const genreMap: Record<string, number> = {
         'action': 28,
+        'adventure': 12,
+        'animation': 16,
         'comedy': 35,
+        'crime': 80,
+        'documentary': 99,
         'drama': 18,
+        'family': 10751,
+        'fantasy': 14,
+        'history': 36,
         'horror': 27,
-        'thriller': 53,
+        'music': 10402,
+        'mystery': 9648,
         'romance': 10749,
         'sci-fi': 878,
-        'fantasy': 14,
-        'animation': 16,
-        'crime': 80
+        'thriller': 53,
+        'war': 10752,
+        'western': 37,
       };
       
       const genreId = genreMap[genre];

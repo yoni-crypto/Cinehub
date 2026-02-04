@@ -17,7 +17,7 @@ const categories = [
 
 export function CategoryTabs({ activeCategory }: CategoryTabsProps) {
   return (
-    <div className="bg-[#1a1a1a] rounded-lg p-1 inline-flex">
+    <div className="bg-[#1a1a1a] rounded-lg p-1 flex overflow-x-auto scrollbar-hide">
       {categories.map((category) => {
         const isActive = category.id === activeCategory;
         
@@ -26,7 +26,7 @@ export function CategoryTabs({ activeCategory }: CategoryTabsProps) {
             key={category.id}
             href={category.href}
             className={cn(
-              'px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap',
+              'px-4 sm:px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap flex-shrink-0',
               isActive
                 ? 'bg-red-600 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-[#2a2a2a]'

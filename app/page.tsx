@@ -10,8 +10,38 @@ import { MovieGrid } from '@/components/movie/movie-grid';
 import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { Button } from '@/components/ui/button';
 import { LoadingScreen } from '@/components/loading-screen';
+import { CategoriesSearchBar } from '@/components/categories/categories-search-bar';
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { Filter } from 'lucide-react';
+
+function HomePopularMovies() {
+  const [movies, setMovies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    tmdbApi.getPopularMovies(1).then((res) => {
+      if (!cancelled) {
+        setMovies(res.results);
+      }
+    }).catch(() => {}).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  if (loading) return <LoadingScreen message="Loading…" fullScreen={false} />;
+  return (
+    <MovieGrid
+      movies={movies}
+      title=""
+      category="popular"
+      showYear={true}
+      showRating={true}
+    />
+  );
+}
 
 function ContentTabs({ activeTab, onTabChange }: { activeTab: 'movies' | 'tv-shows'; onTabChange: (tab: 'movies' | 'tv-shows') => void }) {
   return (
@@ -178,17 +208,46 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
-      <main>
-        <div className="hidden md:block">
+
+      <main className="pt-16">
+        {/* Mobile only: HDToday-style layout with your theme */}
+        <div className="md:hidden bg-background">
+          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+            <div className="mb-4">
+              <CategoriesSearchBar
+                className="max-w-full"
+                wrapperClassName="bg-gray-900 border-gray-700"
+                inputClassName="text-white placeholder-gray-400"
+              />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-white">
+                Popular Movies
+              </h1>
+              <Link
+                href="/categories"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition-colors"
+                title="Filter by category"
+              >
+                <Filter className="w-4 h-4" />
+              </Link>
+            </div>
+            <Suspense fallback={<LoadingScreen message="Loading…" fullScreen={false} />}>
+              <HomePopularMovies />
+            </Suspense>
+          </div>
+        </div>
+
+        {/* Hero carousel + main content: visible on all, hero only on desktop */}
+        <div className="hidden md:block bg-background">
           <Suspense fallback={<LoadingScreen message="Loading…" fullScreen={false} />}>
             <TrendingSection contentType={activeTab} />
           </Suspense>
         </div>
 
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-background">
           <ContentTabs activeTab={activeTab} onTabChange={setActiveTab} />
-          
+
           <div className="space-y-20">
             <Suspense key={activeTab} fallback={<LoadingScreen message="Loading…" fullScreen={false} />}>
               <ContentSections contentType={activeTab} />
