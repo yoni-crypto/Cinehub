@@ -3,7 +3,7 @@
 import { Share2, Facebook, Twitter, MessageCircle, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 
-export default function ShareButton({ title, url = '' }) {
+export default function ShareButton({ title, url = '' }: { title: string; url?: string }) {
   const [show, setShow] = useState(false);
   const [copied, setCopied] = useState(false);
   
