@@ -11,6 +11,7 @@ import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
 import { AdBlockDetector } from '@/components/ad-block-detector';
+import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
 import React, { useState, useEffect, useRef } from 'react';
@@ -342,7 +343,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                   </p>
 
                   {/* Watch Buttons — scroll to pick episode; play opens in new tab */}
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 mb-4">
                     <button
                       type="button"
                       onClick={scrollToSeasonSelector}
@@ -358,7 +359,13 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       moviePoster={tvShow.poster_path || ''}
                       className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded font-semibold flex items-center gap-2"
                     />
+                    
+                    <ShareButton title={tvShow.name} />
                   </div>
+                  
+                  <p className="text-gray-400 text-xs">
+                    Free streaming? Tell your friends about it
+                  </p>
                 </div>
               </div>
             </div>
