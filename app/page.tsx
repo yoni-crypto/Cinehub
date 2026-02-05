@@ -9,6 +9,7 @@ import { HeroCarousel } from '@/components/movie/hero-carousel';
 import { MovieGrid } from '@/components/movie/movie-grid';
 import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { Button } from '@/components/ui/button';
+import { ContinueWatching } from '@/components/continue-watching';
 import { LoadingScreen } from '@/components/loading-screen';
 import { CategoriesSearchBar } from '@/components/categories/categories-search-bar';
 import Link from 'next/link';
@@ -246,6 +247,8 @@ export default function HomePage() {
         </div>
 
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-background">
+          <ContinueWatching />
+          
           <ContentTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
           <div className="space-y-20">

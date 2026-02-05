@@ -14,6 +14,7 @@ import { AdBlockDetector } from '@/components/ad-block-detector';
 import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
+import { continueWatching } from '@/lib/continue-watching';
 import React, { useState, useEffect } from 'react';
 
 interface ClientPageProps {
@@ -47,6 +48,8 @@ export default function ClientPage({ movieId }: ClientPageProps) {
   const pageLoadTime = React.useRef<number>(Date.now());
   const watchingInterval = React.useRef<NodeJS.Timeout | null>(null);
   const clickCount = React.useRef<{ [key: string]: { count: number; lastClick: number } }>({});
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
 
   // Record when player opens so we can ignore ghost taps on close button (mobile)
   useEffect(() => {
@@ -76,6 +79,17 @@ export default function ClientPage({ movieId }: ClientPageProps) {
       }
     };
   }, [isPlayerOpen, selectedServer, movieId]);
+
+  useEffect(() => {
+    // Check URL params for auto-play
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoplay = urlParams.get('autoplay') === 'true';
+    
+    if (autoplay) {
+      setShouldAutoPlay(true);
+      setIsAutoPlaying(true);
+    }
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -113,8 +127,28 @@ export default function ClientPage({ movieId }: ClientPageProps) {
     }
   }, [movieId]);
 
-  if (loading || !movie) {
-    return <LoadingScreen message="Loading movie…" />;
+  // Auto-play when data is loaded
+  useEffect(() => {
+    if (shouldAutoPlay && movie && !isPlayerOpen) {
+      setTimeout(() => {
+        setIsPlayerOpen(true);
+        
+        // Add to continue watching
+        continueWatching.add({
+          id: movieId.toString(),
+          type: 'movie',
+          title: movie.title,
+          poster: movie.poster_path || ''
+        });
+        
+        setShouldAutoPlay(false);
+        setIsAutoPlaying(false);
+      }, 1000);
+    }
+  }, [shouldAutoPlay, movie, isPlayerOpen]);
+
+  if (loading || !movie || isAutoPlaying) {
+    return <LoadingScreen message={isAutoPlaying ? "Starting playback..." : "Loading movie…"} />;
   }
 
   const releaseYear = movie.release_date ? new Date(movie.release_date).getFullYear() : '';
@@ -150,6 +184,8 @@ export default function ClientPage({ movieId }: ClientPageProps) {
     clickCount.current[key].lastClick = now;
   };
 
+
+
   // Handle play button clicks - just open the player, no new tabs
   const handlePlayClick = (serverIndex?: number) => {
     const idx = serverIndex ?? selectedServer;
@@ -171,6 +207,16 @@ export default function ClientPage({ movieId }: ClientPageProps) {
     }
     
     trackClick('play');
+    
+    // Add to continue watching
+    if (movie) {
+      continueWatching.add({
+        id: movieId.toString(),
+        type: 'movie',
+        title: movie.title,
+        poster: movie.poster_path || ''
+      });
+    }
   };
 
   return (
