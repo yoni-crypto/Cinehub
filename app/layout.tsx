@@ -92,6 +92,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="75dacefb-9327-4e41-894e-15746ab91235"></script>
       </head>
       <body className={`${dmSans.variable} min-h-screen antialiased`}>
         <ThemeProvider
