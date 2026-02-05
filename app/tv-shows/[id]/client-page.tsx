@@ -14,6 +14,7 @@ import { AdBlockDetector } from '@/components/ad-block-detector';
 import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
+import { continueWatching } from '@/lib/continue-watching';
 import React, { useState, useEffect, useRef } from 'react';
 
 interface TVShowClientPageProps {
@@ -42,6 +43,9 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   const [lightsOff, setLightsOff] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState<number>(1);
   const [selectedEpisode, setSelectedEpisode] = useState<number>(1);
+  const [hasAutoResumed, setHasAutoResumed] = useState(false);
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [tvShow, setTvShow] = useState<any>(null);
   const [credits, setCredits] = useState<any>({ cast: [] });
   const [similarTVShows, setSimilarTVShows] = useState<any>({ results: [] });
@@ -53,6 +57,21 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   const clickCount = useRef<{ [key: string]: { count: number; lastClick: number } }>({});
 
   useEffect(() => {
+    // Check URL params for auto-play
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoplay = urlParams.get('autoplay') === 'true';
+    const urlSeason = urlParams.get('season');
+    const urlEpisode = urlParams.get('episode');
+    
+    if (autoplay) {
+      setShouldAutoPlay(true);
+      setIsAutoPlaying(true);
+      if (urlSeason && urlEpisode) {
+        setSelectedSeason(parseInt(urlSeason));
+        setSelectedEpisode(parseInt(urlEpisode));
+      }
+    }
+    
     const loadData = async () => {
       try {
         const [tvShowData, creditsData, similarData] = await Promise.all([
@@ -63,6 +82,16 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
         setTvShow(tvShowData);
         setCredits(creditsData);
         setSimilarTVShows(similarData);
+        
+        // Auto-resume from continue watching
+        if (!hasAutoResumed) {
+          const continueItem = continueWatching.get(tvShowId.toString(), 'tv');
+          if (continueItem && continueItem.season && continueItem.episode) {
+            setSelectedSeason(continueItem.season);
+            setSelectedEpisode(continueItem.episode);
+          }
+          setHasAutoResumed(true);
+        }
         
         // Track page load
         if (typeof window !== 'undefined' && (window as any).umami) {
@@ -81,6 +110,17 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
     };
     loadData();
   }, [tvShowId]);
+
+  // Auto-play when data is loaded
+  useEffect(() => {
+    if (shouldAutoPlay && tvShow && seasonDetails && !isPlayerOpen) {
+      setTimeout(() => {
+        openPlayer(selectedServer, selectedSeason, selectedEpisode);
+        setShouldAutoPlay(false);
+        setIsAutoPlaying(false);
+      }, 1000);
+    }
+  }, [shouldAutoPlay, tvShow, seasonDetails, isPlayerOpen]);
 
   // Watch time tracking
   useEffect(() => {
@@ -121,7 +161,10 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
     try {
       const season = await tmdbApi.getSeasonDetails(tvShowId, seasonNumber);
       setSeasonDetails(season);
-      setSelectedEpisode(season.episodes?.[0]?.episode_number ?? 1);
+      // Don't reset episode if we have a specific one selected (from URL or continue watching)
+      if (selectedEpisode === 1 && season.episodes?.[0]?.episode_number) {
+        setSelectedEpisode(season.episodes[0].episode_number);
+      }
     } catch (error) {
       console.error('Error loading season details:', error);
     } finally {
@@ -186,10 +229,24 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
     }
     
     trackClick('play');
+    
+    // Add to continue watching
+    if (tvShow) {
+      const episodeName = seasonDetails?.episodes?.find((ep: any) => ep.episode_number === e)?.name;
+      continueWatching.add({
+        id: tvShowId.toString(),
+        type: 'tv',
+        title: tvShow.name,
+        poster: tvShow.poster_path || '',
+        season: s,
+        episode: e,
+        episodeName: episodeName
+      });
+    }
   };
 
-  if (loading || !tvShow) {
-    return <LoadingScreen message="Loading TV show…" />;
+  if (loading || !tvShow || isAutoPlaying) {
+    return <LoadingScreen message={isAutoPlaying ? "Starting playback..." : "Loading TV show…"} />;
   }
 
   const releaseYear = tvShow.first_air_date ? new Date(tvShow.first_air_date).getFullYear() : '';
