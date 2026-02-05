@@ -48,6 +48,9 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   const [seasonDetails, setSeasonDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isLoadingSeason, setIsLoadingSeason] = useState(false);
+  const pageLoadTime = useRef<number>(Date.now());
+  const watchingInterval = useRef<NodeJS.Timeout | null>(null);
+  const clickCount = useRef<{ [key: string]: { count: number; lastClick: number } }>({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -60,6 +63,15 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
         setTvShow(tvShowData);
         setCredits(creditsData);
         setSimilarTVShows(similarData);
+        
+        // Track page load
+        if (typeof window !== 'undefined' && (window as any).umami) {
+          (window as any).umami.track('page_load', {
+            type: 'tv',
+            tvShowId: tvShowId,
+            title: tvShowData.name
+          });
+        }
       } catch (error) {
         console.error('Error loading TV show:', error);
         notFound();
@@ -69,6 +81,34 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
     };
     loadData();
   }, [tvShowId]);
+
+  // Watch time tracking
+  useEffect(() => {
+    if (isPlayerOpen) {
+      watchingInterval.current = setInterval(() => {
+        if (typeof window !== 'undefined' && (window as any).umami) {
+          (window as any).umami.track('watching', {
+            type: 'tv',
+            tvShowId: tvShowId,
+            season: selectedSeason,
+            episode: selectedEpisode,
+            server: TV_STREAMING_SOURCES[selectedServer]?.name || 'Unknown'
+          });
+        }
+      }, 60000);
+    } else {
+      if (watchingInterval.current) {
+        clearInterval(watchingInterval.current);
+        watchingInterval.current = null;
+      }
+    }
+    
+    return () => {
+      if (watchingInterval.current) {
+        clearInterval(watchingInterval.current);
+      }
+    };
+  }, [isPlayerOpen, selectedServer, selectedSeason, selectedEpisode, tvShowId]);
 
   useEffect(() => {
     if (selectedSeason && tvShow) {
@@ -93,6 +133,34 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
     seasonSelectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // Track rage clicks
+  const trackClick = (target: string) => {
+    const now = Date.now();
+    const key = `${target}_${tvShowId}`;
+    
+    if (!clickCount.current[key]) {
+      clickCount.current[key] = { count: 1, lastClick: now };
+    } else {
+      const timeDiff = now - clickCount.current[key].lastClick;
+      if (timeDiff < 5000) {
+        clickCount.current[key].count++;
+        if (clickCount.current[key].count >= 3) {
+          if (typeof window !== 'undefined' && (window as any).umami) {
+            (window as any).umami.track('rage_click', {
+              target: target,
+              tvShowId: tvShowId,
+              clicks: clickCount.current[key].count
+            });
+          }
+          clickCount.current[key].count = 0;
+        }
+      } else {
+        clickCount.current[key] = { count: 1, lastClick: now };
+      }
+    }
+    clickCount.current[key].lastClick = now;
+  };
+
   // Handle TV show play - just open the player, no new tabs
   const openPlayer = (serverIndex?: number, season?: number, episode?: number) => {
     const s = season ?? selectedSeason;
@@ -103,6 +171,21 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
     if (typeof episode === 'number') setSelectedEpisode(episode);
     setIsPlayerOpen(true);
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+    
+    // Track TV show play event with time-to-play
+    const timeToPlay = Date.now() - pageLoadTime.current;
+    if (typeof window !== 'undefined' && (window as any).umami) {
+      (window as any).umami.track('tv_play', {
+        show: tvShow.name,
+        season: s,
+        episode: e,
+        server: TV_STREAMING_SOURCES[idx]?.name || 'Unknown',
+        tvShowId: tvShowId,
+        timeToPlay: timeToPlay
+      });
+    }
+    
+    trackClick('play');
   };
 
   if (loading || !tvShow) {
@@ -271,6 +354,16 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                         onClick={() => {
                           setSelectedServer(idx);
                           setUserSelectedServer(true);
+                          // Track server change for TV shows
+                          if (typeof window !== 'undefined' && (window as any).umami) {
+                            (window as any).umami.track('tv_server_change', {
+                              show: tvShow.name,
+                              season: selectedSeason,
+                              episode: selectedEpisode,
+                              server: TV_STREAMING_SOURCES[idx]?.name || 'Unknown',
+                              tvShowId: tvShowId
+                            });
+                          }
                         }}
                         className={`flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border text-sm transition-colors ${
                           selectedServer === idx
@@ -382,7 +475,17 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
               <button
                 key={seasonNum}
                 type="button"
-                onClick={() => setSelectedSeason(seasonNum)}
+                  onClick={() => {
+                    setSelectedSeason(seasonNum);
+                    // Track season change
+                    if (typeof window !== 'undefined' && (window as any).umami) {
+                      (window as any).umami.track('season_change', {
+                        show: tvShow.name,
+                        season: seasonNum,
+                        tvShowId: tvShowId
+                      });
+                    }
+                  }}
                 className={`px-3 sm:px-4 py-2 rounded text-sm font-medium transition-colors ${
                   selectedSeason === seasonNum
                     ? 'bg-red-600 text-white'
@@ -427,7 +530,19 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
               {seasonDetails.episodes.map((episode: any) => (
                 <div
                   key={episode.id}
-                  onClick={() => openPlayer(selectedServer, selectedSeason, episode.episode_number)}
+                  onClick={() => {
+                    openPlayer(selectedServer, selectedSeason, episode.episode_number);
+                    // Track episode selection
+                    if (typeof window !== 'undefined' && (window as any).umami) {
+                      (window as any).umami.track('episode_select', {
+                        show: tvShow.name,
+                        season: selectedSeason,
+                        episode: episode.episode_number,
+                        episodeName: episode.name,
+                        tvShowId: tvShowId
+                      });
+                    }
+                  }}
                   className={`flex items-center gap-3 sm:gap-4 p-3 border-b border-gray-800 last:border-b-0 hover:bg-gray-900/80 transition-colors cursor-pointer ${
                     selectedEpisode === episode.episode_number ? 'bg-gray-900' : ''
                   }`}

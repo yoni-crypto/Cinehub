@@ -7,9 +7,10 @@ interface StreamingPlayerProps {
   url: string;
   title: string;
   onClose?: () => void;
+  onError?: () => void;
 }
 
-export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
+export function StreamingPlayer({ url, title, onClose, onError }: StreamingPlayerProps) {
   const [playerMethod, setPlayerMethod] = useState<'iframe' | 'popup' | 'redirect'>('iframe');
   const [showFallback, setShowFallback] = useState(false);
   const [iframeError, setIframeError] = useState(false);
@@ -42,6 +43,7 @@ export function StreamingPlayer({ url, title, onClose }: StreamingPlayerProps) {
   const handleIframeError = () => {
     setIframeError(true);
     setShowFallback(true);
+    onError?.();
   };
 
   const requestFullscreen = () => {

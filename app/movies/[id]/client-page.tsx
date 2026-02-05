@@ -44,13 +44,38 @@ export default function ClientPage({ movieId }: ClientPageProps) {
   const [similarMovies, setSimilarMovies] = useState<any>({ results: [] });
   const [loading, setLoading] = useState(true);
   const playerOpenedAt = React.useRef<number>(0);
+  const pageLoadTime = React.useRef<number>(Date.now());
+  const watchingInterval = React.useRef<NodeJS.Timeout | null>(null);
+  const clickCount = React.useRef<{ [key: string]: { count: number; lastClick: number } }>({});
 
   // Record when player opens so we can ignore ghost taps on close button (mobile)
   useEffect(() => {
     if (isPlayerOpen) {
       playerOpenedAt.current = Date.now();
+      // Start watch time tracking
+      watchingInterval.current = setInterval(() => {
+        if (typeof window !== 'undefined' && (window as any).umami) {
+          (window as any).umami.track('watching', {
+            type: 'movie',
+            movieId: movieId,
+            server: STREAMING_SOURCES[selectedServer]?.name || 'Unknown'
+          });
+        }
+      }, 60000); // Every 60 seconds
+    } else {
+      // Clear watch time tracking
+      if (watchingInterval.current) {
+        clearInterval(watchingInterval.current);
+        watchingInterval.current = null;
+      }
     }
-  }, [isPlayerOpen]);
+    
+    return () => {
+      if (watchingInterval.current) {
+        clearInterval(watchingInterval.current);
+      }
+    };
+  }, [isPlayerOpen, selectedServer, movieId]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -63,6 +88,15 @@ export default function ClientPage({ movieId }: ClientPageProps) {
         setMovie(movieData);
         setCredits(creditsData);
         setSimilarMovies(similarData);
+        
+        // Track page load
+        if (typeof window !== 'undefined' && (window as any).umami) {
+          (window as any).umami.track('page_load', {
+            type: 'movie',
+            movieId: movieId,
+            title: movieData.title
+          });
+        }
       } catch (error) {
         console.error('Error loading movie:', error);
         // Don't call notFound() immediately, give it a moment
@@ -87,6 +121,35 @@ export default function ClientPage({ movieId }: ClientPageProps) {
   const rating = Math.round(movie.vote_average * 10) / 10;
   const runtime = movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : '';
 
+  // Track rage clicks
+  const trackClick = (target: string) => {
+    const now = Date.now();
+    const key = `${target}_${movieId}`;
+    
+    if (!clickCount.current[key]) {
+      clickCount.current[key] = { count: 1, lastClick: now };
+    } else {
+      const timeDiff = now - clickCount.current[key].lastClick;
+      if (timeDiff < 5000) { // Within 5 seconds
+        clickCount.current[key].count++;
+        if (clickCount.current[key].count >= 3) {
+          // Rage click detected
+          if (typeof window !== 'undefined' && (window as any).umami) {
+            (window as any).umami.track('rage_click', {
+              target: target,
+              movieId: movieId,
+              clicks: clickCount.current[key].count
+            });
+          }
+          clickCount.current[key].count = 0; // Reset
+        }
+      } else {
+        clickCount.current[key] = { count: 1, lastClick: now };
+      }
+    }
+    clickCount.current[key].lastClick = now;
+  };
+
   // Handle play button clicks - just open the player, no new tabs
   const handlePlayClick = (serverIndex?: number) => {
     const idx = serverIndex ?? selectedServer;
@@ -95,6 +158,19 @@ export default function ClientPage({ movieId }: ClientPageProps) {
       setUserSelectedServer(true);
     }
     setIsPlayerOpen(true);
+    
+    // Track play event with time-to-play
+    const timeToPlay = Date.now() - pageLoadTime.current;
+    if (typeof window !== 'undefined' && (window as any).umami) {
+      (window as any).umami.track('play', {
+        movie: movie.title,
+        server: STREAMING_SOURCES[idx]?.name || 'Unknown',
+        movieId: movieId,
+        timeToPlay: timeToPlay
+      });
+    }
+    
+    trackClick('play');
   };
 
   return (
@@ -242,6 +318,14 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                         onClick={() => {
                           setSelectedServer(idx);
                           setUserSelectedServer(true);
+                          // Track server change
+                          if (typeof window !== 'undefined' && (window as any).umami) {
+                            (window as any).umami.track('server_change', {
+                              movie: movie.title,
+                              server: STREAMING_SOURCES[idx]?.name || 'Unknown',
+                              movieId: movieId
+                            });
+                          }
                         }}
                         className={`flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border text-sm transition-colors ${
                           selectedServer === idx
@@ -426,7 +510,17 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                       {STREAMING_SOURCES.map((source, idx) => (
                         <button
                           key={idx}
-                        onClick={() => handlePlayClick(idx)}
+                        onClick={() => {
+                          handlePlayClick(idx);
+                          // Track server selection from main buttons
+                          if (typeof window !== 'undefined' && (window as any).umami) {
+                            (window as any).umami.track('server_select', {
+                              movie: movie.title,
+                              server: source.name,
+                              movieId: movieId
+                            });
+                          }
+                        }}
                         className="flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white hover:bg-gray-800/50 text-sm transition-colors"
                         >
                           <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
