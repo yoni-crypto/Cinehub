@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth/auth-provider';
 import { AuthModal } from '@/components/auth/auth-modal';
 import { tmdbApi } from '@/lib/api/tmdb';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const GENRE_LINKS = [
   { label: 'Action', slug: 'action' },
@@ -198,8 +199,8 @@ export function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
         isHomePage
-          ? 'bg-black border-b border-gray-900 md:bg-black md:border-gray-900'
-          : 'bg-black border-b border-gray-900'
+          ? 'bg-background/95 backdrop-blur-sm border-b border-border md:bg-background/95 md:border-border'
+          : 'bg-background/95 backdrop-blur-sm border-b border-border'
       }`}
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -213,7 +214,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden text-white p-2 -ml-2"
+              className="lg:hidden text-foreground p-2 -ml-2"
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label="Open menu"
             >
@@ -221,9 +222,13 @@ export function Header() {
             </Button>
             <Link
               href="/"
-              className={`hidden items-center ${isHomePage ? 'md:flex' : 'lg:flex'}`}
+              className={`hidden items-center gap-1.5 ${isHomePage ? 'md:flex' : 'lg:flex'}`}
             >
-              <img src="/logo_wn.png" alt="CineHub" className="h-12 xl:h-14 w-auto" />
+              <img src="/logo.png" alt="CineHub" className="h-8 w-auto" />
+              <span className="text-xl font-bold">
+                <span className="text-foreground">Cine</span>
+                <span className="text-red-600">Hub</span>
+              </span>
             </Link>
           </div>
 
@@ -233,78 +238,82 @@ export function Header() {
               isHomePage ? 'md:hidden' : 'lg:hidden'
             }`}
           >
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center gap-1.5">
               <img
-                src="/logo_wn.png"
+                src="/logo.png"
                 alt="CineHub"
-                className="h-24 sm:h-28 w-auto"
+                className="h-16 w-auto"
               />
+              <span className="text-2xl font-bold">
+                <span className="text-foreground">Cine</span>
+                <span className="text-red-600">Hub</span>
+              </span>
             </Link>
           </div>
 
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 flex-1 justify-center">
-            <Link href="/" className="text-white hover:text-red-500 transition-colors font-medium">
+            <Link href="/" className="text-foreground hover:text-red-500 transition-colors font-medium">
               Home
             </Link>
             
             <div className="relative">
-              <Link href="/categories" className="text-white hover:text-red-500 transition-colors font-medium">
+              <Link href="/movies" className="text-foreground hover:text-red-500 transition-colors font-medium">
                 Movies
               </Link>
             </div>
             
             <div className="relative">
-              <Link href="/tv-shows" className="text-white hover:text-red-500 transition-colors font-medium">
+              <Link href="/tv-shows" className="text-foreground hover:text-red-500 transition-colors font-medium">
                 TV Shows
               </Link>
             </div>
             
             <div className="relative group">
-              <span className="text-white hover:text-red-500 transition-colors font-medium cursor-pointer">
+              <span className="text-foreground hover:text-red-500 transition-colors font-medium cursor-pointer">
                 Genre
               </span>
-              <div className="absolute top-full left-0 w-64 bg-black border border-gray-800 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute top-full left-0 w-64 bg-background border border-border rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="grid grid-cols-2 gap-0">
-                  <Link href="/categories?genre=action" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Action</Link>
-                  <Link href="/categories?genre=comedy" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Comedy</Link>
-                  <Link href="/categories?genre=drama" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Drama</Link>
-                  <Link href="/categories?genre=horror" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Horror</Link>
-                  <Link href="/categories?genre=thriller" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Thriller</Link>
-                  <Link href="/categories?genre=romance" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Romance</Link>
-                  <Link href="/categories?genre=sci-fi" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Sci-Fi</Link>
-                  <Link href="/categories?genre=fantasy" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Fantasy</Link>
-                  <Link href="/categories?genre=animation" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Animation</Link>
-                  <Link href="/categories?genre=crime" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800">Crime</Link>
+                  <Link href="/categories?genre=action" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Action</Link>
+                  <Link href="/categories?genre=comedy" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Comedy</Link>
+                  <Link href="/categories?genre=drama" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Drama</Link>
+                  <Link href="/categories?genre=horror" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Horror</Link>
+                  <Link href="/categories?genre=thriller" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Thriller</Link>
+                  <Link href="/categories?genre=romance" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Romance</Link>
+                  <Link href="/categories?genre=sci-fi" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Sci-Fi</Link>
+                  <Link href="/categories?genre=fantasy" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Fantasy</Link>
+                  <Link href="/categories?genre=animation" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Animation</Link>
+                  <Link href="/categories?genre=crime" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Crime</Link>
                 </div>
               </div>
             </div>
             
             <div className="relative group">
-              <span className="text-white hover:text-red-500 transition-colors font-medium cursor-pointer">
+              <span className="text-foreground hover:text-red-500 transition-colors font-medium cursor-pointer">
                 Country
               </span>
-              <div className="absolute top-full left-0 w-[420px] bg-black border border-gray-800 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute top-full left-0 w-[420px] bg-background border border-border rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="grid grid-cols-4 gap-2 p-3">
-                  <Link href="/categories?country=us" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">USA</Link>
-                  <Link href="/categories?country=uk" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">UK</Link>
-                  <Link href="/categories?country=ca" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Canada</Link>
-                  <Link href="/categories?country=fr" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">France</Link>
-                  <Link href="/categories?country=jp" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Japan</Link>
-                  <Link href="/categories?country=kr" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Korea</Link>
-                  <Link href="/categories?country=de" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Germany</Link>
-                  <Link href="/categories?country=in" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">India</Link>
-                  <Link href="/categories?country=es" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Spain</Link>
-                  <Link href="/categories?country=it" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Italy</Link>
-                  <Link href="/categories?country=au" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Australia</Link>
-                  <Link href="/categories?country=br" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Brazil</Link>
-                  <Link href="/categories?country=mx" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Mexico</Link>
-                  <Link href="/categories?country=ru" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Russia</Link>
-                  <Link href="/categories?country=cn" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">China</Link>
-                  <Link href="/categories?country=nl" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Netherlands</Link>
-                  <Link href="/categories?country=se" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Sweden</Link>
-                  <Link href="/categories?country=no" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Norway</Link>
-                  <Link href="/categories?country=dk" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Denmark</Link>
-                  <Link href="/categories?country=be" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-800 text-sm rounded transition-colors text-center">Belgium</Link>
+                  <Link href="/categories?country=us" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">USA</Link>
+                  <Link href="/categories?country=uk" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">UK</Link>
+                  <Link href="/categories?country=ca" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Canada</Link>
+                  <Link href="/categories?country=fr" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">France</Link>
+                  <Link href="/categories?country=jp" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Japan</Link>
+                  <Link href="/categories?country=kr" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Korea</Link>
+                  <Link href="/categories?country=de" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Germany</Link>
+                  <Link href="/categories?country=in" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">India</Link>
+                  <Link href="/categories?country=es" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Spain</Link>
+                  <Link href="/categories?country=it" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Italy</Link>
+                  <Link href="/categories?country=au" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Australia</Link>
+                  <Link href="/categories?country=br" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Brazil</Link>
+                  <Link href="/categories?country=mx" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Mexico</Link>
+                  <Link href="/categories?country=ru" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Russia</Link>
+                  <Link href="/categories?country=cn" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">China</Link>
+                  <Link href="/categories?country=nl" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Netherlands</Link>
+                  <Link href="/categories?country=se" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Sweden</Link>
+                  <Link href="/categories?country=no" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Norway</Link>
+                  <Link href="/categories?country=dk" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Denmark</Link>
+                  <Link href="/categories?country=be" className="block px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-muted text-sm rounded transition-colors text-center">Belgium</Link>
                 </div>
               </div>
             </div>
@@ -324,7 +333,7 @@ export function Header() {
                   value={searchQuery}
                   onChange={handleSearchInputChange}
                   onFocus={handleSearchFocus}
-                  className="bg-gray-900 border border-gray-700 rounded-l px-4 py-2.5 text-white placeholder-gray-400 w-80 focus:outline-none focus:border-red-500 h-10"
+                  className="bg-muted border border-border rounded-l px-4 py-2.5 text-foreground placeholder-muted-foreground w-80 focus:outline-none focus:border-red-500 h-10"
                 />
                 <button type="submit" className="bg-red-600 hover:bg-red-700 px-4 py-2.5 rounded-r transition-colors h-10">
                   <Search className="w-5 h-5 text-white" />
@@ -332,9 +341,9 @@ export function Header() {
               </form>
               
               {(showSuggestions && searchResults.length > 0) || (showHistory && searchHistory.length > 0) ? (
-                <div className="absolute top-full left-0 right-0 bg-black border border-gray-800 rounded-b-lg shadow-xl z-50">
+                <div className="absolute top-full left-0 right-0 bg-background border border-border rounded-b-lg shadow-xl z-50">
                   {showSuggestions && searchQuery.length > 0 && (
-                    <div className="border-b border-gray-800">
+                    <div className="border-b border-border">
                       <button
                         onClick={() => {
                           router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
@@ -342,7 +351,7 @@ export function Header() {
                           setShowSuggestions(false);
                           setShowHistory(false);
                         }}
-                        className="w-full p-3 text-center text-red-500 hover:bg-gray-800 transition-colors text-sm font-medium"
+                        className="w-full p-3 text-center text-red-500 hover:bg-muted transition-colors text-sm font-medium"
                       >
                         View All Results
                       </button>
@@ -352,12 +361,12 @@ export function Header() {
                   <div className="max-h-80 overflow-y-auto">
                     {showHistory && searchHistory.length > 0 && (
                       <>
-                        <div className="px-4 py-2 text-xs text-gray-400 border-b border-gray-800">Recent Searches</div>
+                        <div className="px-4 py-2 text-xs text-muted-foreground border-b border-border">Recent Searches</div>
                         {searchHistory.map((item, index) => (
                           <div
                             key={index}
                             onClick={() => selectHistoryItem(item)}
-                            className="flex items-center p-2 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-b-0 group"
+                            className="flex items-center p-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0 group"
                           >
                             <img
                               src={item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : '/placeholder.png'}
@@ -365,16 +374,16 @@ export function Header() {
                               className="w-8 h-12 object-cover rounded mr-2"
                             />
                             <div className="flex-1">
-                              <h4 className="text-white font-medium text-xs">{item.title}</h4>
-                              <p className="text-gray-400 text-xs">
+                              <h4 className="text-foreground font-medium text-xs">{item.title}</h4>
+                              <p className="text-muted-foreground text-xs">
                                 {item.media_type === 'movie' ? 'Movie' : 'TV Show'} • {item.release_date ? new Date(item.release_date).getFullYear() : 'N/A'}
                               </p>
                             </div>
                             <button
                               onClick={(e) => removeHistoryItem(item.id, e)}
-                              className="p-1 hover:bg-gray-700 rounded transition-all"
+                              className="p-1 hover:bg-muted rounded transition-all"
                             >
-                              <X className="w-3 h-3 text-gray-400 hover:text-white" />
+                              <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
                             </button>
                           </div>
                         ))}
@@ -385,7 +394,7 @@ export function Header() {
                       <div
                         key={item.id}
                         onClick={() => selectSuggestion(item)}
-                        className="flex items-center p-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800"
+                        className="flex items-center p-3 hover:bg-muted cursor-pointer border-b border-border"
                       >
                         <img
                           src={item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : '/placeholder.png'}
@@ -393,10 +402,10 @@ export function Header() {
                           className="w-12 h-16 object-cover rounded mr-3"
                         />
                         <div className="flex-1">
-                          <h4 className="text-white font-medium text-sm">
+                          <h4 className="text-foreground font-medium text-sm">
                             {item.title || item.name}
                           </h4>
-                          <p className="text-gray-400 text-xs">
+                          <p className="text-muted-foreground text-xs">
                             {item.media_type === 'movie' ? 'Movie' : `TV Show${item.number_of_seasons ? ` • ${item.number_of_seasons} Season${item.number_of_seasons > 1 ? 's' : ''}` : ''}`} • {item.release_date || item.first_air_date ? new Date(item.release_date || item.first_air_date).getFullYear() : 'N/A'}
                           </p>
                         </div>
@@ -407,23 +416,24 @@ export function Header() {
               ) : null}
             </div>
 
-            <div className="hidden sm:block">
+            <div className="hidden sm:flex items-center gap-2">
+              <ThemeToggle />
               {user ? (
                 <div className="relative group">
-                  <button className="text-white hover:text-red-500 transition-colors">
+                  <button className="text-foreground hover:text-red-500 transition-colors">
                     <User className="w-5 h-5" />
                   </button>
-                  <div className="absolute top-full right-0 w-48 bg-black border border-gray-800 rounded-lg p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="px-3 py-2 text-sm text-gray-300 border-b border-gray-800">
+                  <div className="absolute top-full right-0 w-48 bg-background border border-border rounded-lg p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="px-3 py-2 text-sm text-muted-foreground border-b border-border">
                       {user.email}
                     </div>
-                    <Link href="/watchlist" className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded transition-colors flex items-center">
+                    <Link href="/watchlist" className="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors flex items-center">
                       Watchlist
                     </Link>
-                    <Link href="/favorites" className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded transition-colors flex items-center">
+                    <Link href="/favorites" className="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors flex items-center">
                       Favorites
                     </Link>
-                    <button onClick={handleSignOut} className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded transition-colors flex items-center">
+                    <button onClick={handleSignOut} className="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors flex items-center">
                       <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </button>
@@ -451,14 +461,14 @@ export function Header() {
               aria-hidden="true"
             />
             <aside
-              className="fixed top-0 left-0 bottom-0 w-[min(280px,85vw)] max-w-full bg-gray-950 border-r border-gray-800 z-[70] lg:hidden flex flex-col shadow-2xl"
+              className="fixed top-0 left-0 bottom-0 w-[min(280px,85vw)] max-w-full bg-background border-r border-border z-[70] lg:hidden flex flex-col shadow-2xl"
               aria-label="Navigation menu"
             >
-              <div className="p-3 border-b border-gray-800">
+              <div className="p-3 border-b border-border">
                 <button
                   type="button"
                   onClick={closeMobileMenu}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-800/80 hover:bg-gray-800 text-gray-200 text-sm font-medium border border-gray-700 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-muted hover:bg-muted/80 text-foreground text-sm font-medium border border-border transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Close menu
@@ -467,17 +477,17 @@ export function Header() {
               <nav className="flex-1 overflow-y-auto py-2">
                 <Link
                   href="/"
-                  className="block px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                  className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                   onClick={closeMobileMenu}
                 >
                   Home
                 </Link>
 
-                <div className="border-b border-gray-800">
+                <div className="border-b border-border">
                   <button
                     type="button"
                     onClick={() => setGenreOpen((o) => !o)}
-                    className="w-full flex items-center justify-between px-4 py-3 text-white font-semibold hover:bg-gray-800/50 transition-colors"
+                    className="w-full flex items-center justify-between px-4 py-3 text-foreground font-semibold hover:bg-muted transition-colors"
                   >
                     Genre
                     {genreOpen ? <Minus className="w-4 h-4 text-red-500" /> : <Plus className="w-4 h-4 text-red-500" />}
@@ -488,7 +498,7 @@ export function Header() {
                         <Link
                           key={g.slug}
                           href={`/categories?genre=${g.slug}`}
-                          className="px-2 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded transition-colors"
+                          className="px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors"
                           onClick={closeMobileMenu}
                         >
                           {g.label}
@@ -498,11 +508,11 @@ export function Header() {
                   )}
                 </div>
 
-                <div className="border-b border-gray-800">
+                <div className="border-b border-border">
                   <button
                     type="button"
                     onClick={() => setCountryOpen((o) => !o)}
-                    className="w-full flex items-center justify-between px-4 py-3 text-white font-semibold hover:bg-gray-800/50 transition-colors"
+                    className="w-full flex items-center justify-between px-4 py-3 text-foreground font-semibold hover:bg-muted transition-colors"
                   >
                     Country
                     {countryOpen ? <Minus className="w-4 h-4 text-red-500" /> : <Plus className="w-4 h-4 text-red-500" />}
@@ -513,7 +523,7 @@ export function Header() {
                         <Link
                           key={c.slug}
                           href={`/categories?country=${c.slug}`}
-                          className="px-2 py-1.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded transition-colors"
+                          className="px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors"
                           onClick={closeMobileMenu}
                         >
                           {c.label}
@@ -524,22 +534,22 @@ export function Header() {
                 </div>
 
                 <Link
-                  href="/categories"
-                  className="block px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                  href="/movies"
+                  className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                   onClick={closeMobileMenu}
                 >
                   Movies
                 </Link>
                 <Link
                   href="/tv-shows"
-                  className="block px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                  className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                   onClick={closeMobileMenu}
                 >
                   TV Shows
                 </Link>
                 <Link
                   href="/categories?category=top-rated"
-                  className="block px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                  className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                   onClick={closeMobileMenu}
                 >
                   Top IMDB
@@ -549,20 +559,20 @@ export function Header() {
                   <>
                     <Link
                       href="/watchlist"
-                      className="block px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                      className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                       onClick={closeMobileMenu}
                     >
                       Watchlist
                     </Link>
                     <Link
                       href="/favorites"
-                      className="block px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                      className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                       onClick={closeMobileMenu}
                     >
                       Favorites
                     </Link>
-                    <div className="px-4 py-3 border-b border-gray-800">
-                      <p className="text-gray-400 text-xs truncate">{user.email}</p>
+                    <div className="px-4 py-3 border-b border-border">
+                      <p className="text-muted-foreground text-xs truncate">{user.email}</p>
                     </div>
                     <button
                       type="button"
@@ -570,7 +580,7 @@ export function Header() {
                         handleSignOut();
                         closeMobileMenu();
                       }}
-                      className="w-full text-left px-4 py-3 text-gray-300 font-medium hover:text-white hover:bg-gray-800/50 transition-colors"
+                      className="w-full text-left px-4 py-3 text-muted-foreground font-medium hover:text-foreground hover:bg-muted transition-colors"
                     >
                       <LogOut className="w-4 h-4 inline mr-2" />
                       Log out
@@ -584,7 +594,7 @@ export function Header() {
                       setShowAuthModal(true);
                       closeMobileMenu();
                     }}
-                    className="w-full text-left px-4 py-3 text-white font-semibold border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                    className="w-full text-left px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
                   >
                     <User className="w-4 h-4 inline mr-2" />
                     Sign In

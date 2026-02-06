@@ -255,7 +255,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   const currentEpisode = seasonDetails?.episodes?.find((ep: any) => ep.episode_number === selectedEpisode);
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main className="pt-16">
@@ -270,7 +270,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                 className="object-cover"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-background/30 dark:block hidden" />
               
               {/* Breadcrumb on Banner */}
               <div className="absolute top-4 left-0 right-0 z-10">
@@ -326,10 +326,10 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
 
               {/* Player — stream opens in new tab so providers see a real tab (not iframe) */}
               <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="rounded-md overflow-hidden border border-[#2a2a2a] bg-[#0d0d0d]">
-                  <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-[#1a1a1a]">
+                <div className="rounded-md overflow-hidden border border-border bg-card">
+                  <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-border">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-sm font-medium text-white truncate">
+                      <span className="text-sm font-medium text-foreground truncate">
                         {tvShow.name} S{selectedSeason}E{selectedEpisode}
                         {currentEpisode && ` - ${currentEpisode.name}`}
                       </span>
@@ -337,7 +337,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                         href={buildTVEmbedUrl(tvShowId, selectedSeason, selectedEpisode, selectedServer)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-gray-400 hover:text-white flex items-center gap-1 shrink-0 px-2 py-1 rounded transition-colors"
+                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 shrink-0 px-2 py-1 rounded transition-colors"
                         title="Open in new tab"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -358,7 +358,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       <button
                         type="button"
                         onClick={() => setIsPlayerOpen(false)}
-                        className="p-1.5 text-gray-500 hover:text-white rounded transition-colors"
+                        className="p-1.5 text-muted-foreground hover:text-foreground rounded transition-colors"
                         aria-label="Close"
                       >
                         <X className="w-4 h-4" />
@@ -377,7 +377,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
               {/* Below player: dim when lights off */}
               <div className={lightsOff ? 'brightness-[0.2] pointer-events-none transition-all duration-300' : 'transition-all duration-300'}>
                 <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="flex flex-wrap items-center gap-4 mt-3 text-gray-500 text-sm">
+                  <div className="flex flex-wrap items-center gap-4 mt-3 text-muted-foreground text-sm">
                     <FavoritesButton
                       movieId={tvShowId}
                       movieTitle={tvShow.name}
@@ -386,22 +386,22 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       label="Add to favorite"
                       size="sm"
                       variant="ghost"
-                      className="hover:text-white text-gray-500 hover:bg-transparent p-0 h-auto font-normal"
+                      className="hover:text-foreground text-muted-foreground hover:bg-transparent p-0 h-auto font-normal"
                     />
                     <button
                       type="button"
                       onClick={() => setLightsOff(!lightsOff)}
-                      className="flex items-center gap-1.5 hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                     >
                       <Lightbulb className={`w-3.5 h-3.5 ${lightsOff ? 'text-amber-500/90' : ''}`} />
                       {lightsOff ? 'Lights on' : 'Lights off'}
                     </button>
-                    <a href="#comments" className="flex items-center gap-1.5 hover:text-white transition-colors">
+                    <a href="#comments" className="flex items-center gap-1.5 hover:text-foreground transition-colors">
                       <MessageCircle className="w-3.5 h-3.5" />
                       Comments
                     </a>
                   </div>
-                  <p className="text-center text-gray-500 text-sm mt-6 mb-2">
+                  <p className="text-center text-muted-foreground text-sm mt-6 mb-2">
                     If current server doesn&apos;t work, try another below.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
@@ -425,7 +425,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                         className={`flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border text-sm transition-colors ${
                           selectedServer === idx
                             ? 'bg-red-600 border-red-600 text-white'
-                            : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white hover:bg-gray-800/50'
+                            : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted'
                         }`}
                       >
                         <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
@@ -456,9 +456,10 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
         {!isPlayerOpen && (
           <div className="relative -mt-16 sm:-mt-24 lg:-mt-32 z-10">
             <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-white dark:bg-transparent rounded-2xl shadow-xl p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6 lg:gap-8 mb-8">
                 {/* TV Show Poster - Hidden on mobile */}
-                <div className="hidden sm:block w-56 lg:w-64 aspect-[2/3] relative rounded-lg overflow-hidden shadow-xl flex-shrink-0">
+                <div className="hidden sm:block w-40 lg:w-48 aspect-[2/3] relative rounded-lg overflow-hidden shadow-xl flex-shrink-0">
                   <Image
                     src={tmdbApi.getImageUrl(tvShow.poster_path, 'w500')}
                     alt={tvShow.name}
@@ -468,27 +469,27 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                 </div>
 
                 {/* TV Show Info */}
-                <div className="flex-1 text-white pb-4 sm:pb-8">
+                <div className="flex-1 text-foreground pb-4 sm:pb-8">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">{tvShow.name}</h1>
                   
                   <div className="flex items-center gap-3 mb-4">
                     <span className="bg-yellow-500 text-black px-2 py-1 rounded text-sm font-bold">
                       ⭐ {rating}
                     </span>
-                    <span className="text-gray-300">{releaseYear}</span>
-                    <span className="text-gray-300">{tvShow.number_of_seasons} Season{tvShow.number_of_seasons !== 1 ? 's' : ''}</span>
+                    <span className="text-muted-foreground">{releaseYear}</span>
+                    <span className="text-muted-foreground">{tvShow.number_of_seasons} Season{tvShow.number_of_seasons !== 1 ? 's' : ''}</span>
                     <span className="bg-green-600 px-2 py-1 rounded text-xs font-bold">HD</span>
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {tvShow.genres?.map((genre: any) => (
-                      <span key={genre.id} className="bg-gray-800 px-3 py-1 rounded text-sm">
+                      <span key={genre.id} className="bg-muted px-3 py-1 rounded text-sm">
                         {genre.name}
                       </span>
                     ))}
                   </div>
 
-                  <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-6">
                     {tvShow.overview}
                   </p>
 
@@ -513,10 +514,11 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                     <ShareButton title={tvShow.name} />
                   </div>
                   
-                  <p className="text-gray-400 text-xs">
+                  <p className="text-muted-foreground text-xs">
                     Free streaming? Tell your friends about it
                   </p>
                 </div>
+              </div>
               </div>
             </div>
           </div>
@@ -524,7 +526,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
 
         {/* Season & Episode Selection */}
         <div ref={seasonSelectorRef} className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 scroll-mt-24">
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Episodes</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4">Episodes</h2>
 
           {/* Season tabs */}
           <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
@@ -546,7 +548,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                 className={`px-3 sm:px-4 py-2 rounded text-sm font-medium transition-colors ${
                   selectedSeason === seasonNum
                     ? 'bg-red-600 text-white'
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
                 }`}
               >
                 Season {seasonNum}
@@ -557,7 +559,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
           {/* Server Selection for TV Shows */}
           {!isPlayerOpen && (
             <div className="mb-6">
-              <h3 className="text-base font-semibold text-white mb-3">Choose Server</h3>
+              <h3 className="text-base font-semibold text-foreground mb-3">Choose Server</h3>
               <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                 {TV_STREAMING_SOURCES.map((source, idx) => (
                   <button
@@ -567,7 +569,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       const ep = seasonDetails?.episodes?.[0]?.episode_number ?? selectedEpisode;
                       openPlayer(idx, selectedSeason, ep);
                     }}
-                    className="flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white hover:bg-gray-800/50 text-sm transition-colors"
+                    className="flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted text-sm transition-colors"
                   >
                     <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
                     <span className="flex items-center gap-1.5 font-medium mt-0.5">
@@ -581,9 +583,9 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
           )}
 
           {isLoadingSeason ? (
-            <div className="text-gray-400 py-8">Loading episodes…</div>
+            <div className="text-muted-foreground py-8">Loading episodes…</div>
           ) : seasonDetails?.episodes && seasonDetails.episodes.length > 0 ? (
-            <div className="space-y-1 border border-gray-800 rounded-lg overflow-hidden">
+            <div className="space-y-1 border border-border rounded-lg overflow-hidden">
               {seasonDetails.episodes.map((episode: any) => (
                 <div
                   key={episode.id}
@@ -600,11 +602,11 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       });
                     }
                   }}
-                  className={`flex items-center gap-3 sm:gap-4 p-3 border-b border-gray-800 last:border-b-0 hover:bg-gray-900/80 transition-colors cursor-pointer ${
-                    selectedEpisode === episode.episode_number ? 'bg-gray-900' : ''
+                  className={`flex items-center gap-3 sm:gap-4 p-3 border-b border-border last:border-b-0 hover:bg-muted transition-colors cursor-pointer ${
+                    selectedEpisode === episode.episode_number ? 'bg-muted' : ''
                   }`}
                 >
-                  <div className="w-24 sm:w-32 lg:w-40 aspect-video relative rounded overflow-hidden flex-shrink-0 bg-gray-800">
+                  <div className="w-24 sm:w-32 lg:w-40 aspect-video relative rounded overflow-hidden flex-shrink-0 bg-muted">
                     {episode.still_path ? (
                       <Image
                         src={tmdbApi.getImageUrl(episode.still_path, 'w300')}
@@ -613,18 +615,18 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-lg sm:text-2xl font-bold">
+                      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-lg sm:text-2xl font-bold">
                         {episode.episode_number}
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 text-white font-medium">
-                      <span className="text-gray-400 text-xs sm:text-sm">E{episode.episode_number}</span>
+                    <div className="flex items-center gap-2 text-foreground font-medium">
+                      <span className="text-muted-foreground text-xs sm:text-sm">E{episode.episode_number}</span>
                       <span className="truncate text-sm sm:text-base">{episode.name}</span>
                     </div>
                     {episode.overview && (
-                      <p className="text-gray-500 text-xs sm:text-sm mt-0.5 line-clamp-2">{episode.overview}</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm mt-0.5 line-clamp-2">{episode.overview}</p>
                     )}
                   </div>
                   <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center transition-colors">
@@ -634,18 +636,18 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No episodes available for this season.</p>
+            <p className="text-muted-foreground">No episodes available for this season.</p>
           )}
         </div>
 
         {/* Cast */}
         {credits.cast.length > 0 && (
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Cast</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Cast</h2>
             <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {credits.cast.slice(0, 15).map((actor: any) => (
                 <div key={actor.id} className="flex-shrink-0 w-24 sm:w-28 lg:w-32">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 relative rounded-full overflow-hidden mb-2 sm:mb-3 bg-gray-800">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 relative rounded-full overflow-hidden mb-2 sm:mb-3 bg-muted">
                     <Image
                       src={actor.profile_path 
                         ? tmdbApi.getImageUrl(actor.profile_path, 'w185')
@@ -656,8 +658,8 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       className="object-cover"
                     />
                   </div>
-                  <p className="text-white text-xs sm:text-sm font-medium text-center truncate">{actor.name}</p>
-                  <p className="text-gray-400 text-xs text-center truncate">{actor.character}</p>
+                  <p className="text-foreground text-xs sm:text-sm font-medium text-center truncate">{actor.name}</p>
+                  <p className="text-muted-foreground text-xs text-center truncate">{actor.character}</p>
                 </div>
               ))}
             </div>
@@ -665,8 +667,8 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
         )}
 
         <section id="comments" className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 scroll-mt-24">
-          <h2 className="text-lg font-semibold text-white mb-3">Comments</h2>
-          <div className="rounded-lg border border-gray-800 bg-gray-900/30 px-4 py-6 text-center text-gray-500 text-sm">
+          <h2 className="text-lg font-semibold text-foreground mb-3">Comments</h2>
+          <div className="rounded-lg border border-border bg-muted/30 px-4 py-6 text-center text-muted-foreground text-sm">
             Sign in to join the conversation.
           </div>
         </section>
@@ -674,7 +676,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
         {/* Related TV Shows */}
         {similarTVShows.results.length > 0 && (
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">You May Also Like</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">You May Also Like</h2>
             <TVShowGrid 
               tvShows={similarTVShows.results.slice(0, 12)} 
             />

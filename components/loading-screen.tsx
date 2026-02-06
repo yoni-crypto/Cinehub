@@ -12,7 +12,7 @@ interface LoadingScreenProps {
 export function LoadingScreen({ message, fullScreen = true, compact = false }: LoadingScreenProps) {
   if (compact) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 bg-black h-full min-h-[200px]">
+      <div className="flex flex-col items-center justify-center gap-3 bg-background h-full min-h-[200px]">
         <div className="flex space-x-1.5">
           <div
             className="w-2 h-8 bg-gradient-to-t from-red-600 to-red-400 rounded-full animate-pulse"
@@ -27,14 +27,14 @@ export function LoadingScreen({ message, fullScreen = true, compact = false }: L
             style={{ animationDelay: '400ms' }}
           />
         </div>
-        {message && <p className="text-gray-500 text-xs">{message}</p>}
+        {message && <p className="text-muted-foreground text-xs">{message}</p>}
       </div>
     );
   }
 
   return (
     <div
-      className={`flex flex-col items-center justify-center bg-black ${
+      className={`flex flex-col items-center justify-center bg-background ${
         fullScreen ? 'min-h-screen' : 'min-h-[40vh] py-12'
       }`}
     >
@@ -53,7 +53,7 @@ export function LoadingScreen({ message, fullScreen = true, compact = false }: L
         />
       </div>
       {message && (
-        <p className="mt-6 text-gray-400 text-sm">{message}</p>
+        <p className="mt-6 text-muted-foreground text-sm">{message}</p>
       )}
     </div>
   );

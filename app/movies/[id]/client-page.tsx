@@ -3,7 +3,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Play, ChevronRight, Home, X, Lightbulb, MessageCircle, ExternalLink } from 'lucide-react';
+import { Play, ChevronRight, Home, X, Lightbulb, MessageCircle, ExternalLink, Star } from 'lucide-react';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -220,7 +220,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main className="pt-16 relative">
@@ -235,7 +235,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                 className="object-cover"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-background/30 dark:block hidden" />
               
               {/* Breadcrumb on Banner — z-30 so it stays clickable above play area */}
               <div className="absolute top-4 left-0 right-0 z-30">
@@ -282,13 +282,13 @@ export default function ClientPage({ movieId }: ClientPageProps) {
 
               {/* Player — stream opens in new tab so providers see a real tab (not iframe) */}
               <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="rounded-md overflow-hidden border border-[#2a2a2a] bg-[#0d0d0d]">
-                  <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-[#1a1a1a]">
+                <div className="rounded-md overflow-hidden border border-border bg-card">
+                  <div className="flex items-center justify-between gap-2 px-2 py-1.5 border-b border-border">
                     <a
                       href={buildEmbedUrl(movieId, selectedServer)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-gray-400 hover:text-white flex items-center gap-1.5 px-2 py-1.5 rounded transition-colors"
+                      className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 px-2 py-1.5 rounded transition-colors"
                       title="Open in new tab"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -311,7 +311,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                           if (Date.now() - playerOpenedAt.current < 400) return;
                           setIsPlayerOpen(false);
                         }}
-                        className="p-1.5 text-gray-500 hover:text-white rounded transition-colors"
+                        className="p-1.5 text-muted-foreground hover:text-foreground rounded transition-colors"
                         aria-label="Close"
                       >
                         <X className="w-4 h-4" />
@@ -330,7 +330,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
               {/* Below player: dim when lights off */}
               <div className={lightsOff ? 'brightness-[0.2] pointer-events-none transition-all duration-300' : 'transition-all duration-300'}>
                 <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="flex flex-wrap items-center gap-4 mt-3 text-gray-500 text-sm">
+                  <div className="flex flex-wrap items-center gap-4 mt-3 text-muted-foreground text-sm">
                     <FavoritesButton
                       movieId={movieId}
                       movieTitle={movie.title}
@@ -339,22 +339,22 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                       label="Add to favorite"
                       size="sm"
                       variant="ghost"
-                      className="hover:text-white text-gray-500 hover:bg-transparent p-0 h-auto font-normal"
+                      className="hover:text-foreground text-muted-foreground hover:bg-transparent p-0 h-auto font-normal"
                     />
                     <button
                       type="button"
                       onClick={() => setLightsOff(!lightsOff)}
-                      className="flex items-center gap-1.5 hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                     >
                       <Lightbulb className={`w-3.5 h-3.5 ${lightsOff ? 'text-amber-500/90' : ''}`} />
                       {lightsOff ? 'Lights on' : 'Lights off'}
                     </button>
-                    <a href="#comments" className="flex items-center gap-1.5 hover:text-white transition-colors">
+                    <a href="#comments" className="flex items-center gap-1.5 hover:text-foreground transition-colors">
                       <MessageCircle className="w-3.5 h-3.5" />
                       Comments
                     </a>
                   </div>
-                  <p className="text-center text-gray-500 text-sm mt-6 mb-2">
+                  <p className="text-center text-muted-foreground text-sm mt-6 mb-2">
                     If current server doesn&apos;t work, try another below.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2">
@@ -376,7 +376,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                         className={`flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border text-sm transition-colors ${
                           selectedServer === idx
                             ? 'bg-red-600 border-red-600 text-white'
-                            : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white hover:bg-gray-800/50'
+                            : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted'
                         }`}
                       >
                         <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
@@ -389,7 +389,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                   </div>
                 </div>
                 <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-                  <div className="border-l-2 border-gray-800 pl-5 sm:pl-6">
+                  <div className="border-l-2 border-border pl-5 sm:pl-6">
                     <div className="flex flex-col sm:flex-row gap-5 sm:gap-6">
                       <div className="w-40 sm:w-48 aspect-[2/3] relative rounded overflow-hidden flex-shrink-0">
                         <Image
@@ -400,32 +400,33 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">{movie.title}</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">{movie.title}</h1>
                         <div className="flex flex-wrap items-center gap-2 mb-3">
                           <a
                             href={`https://www.youtube.com/results?search_query=${encodeURIComponent(movie.title + ' trailer')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-gray-600 text-gray-300 hover:border-red-500/60 hover:text-red-400 text-sm transition-colors"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-border text-muted-foreground hover:border-red-500/60 hover:text-red-400 text-sm transition-colors"
                           >
                             Trailer
                           </a>
-                          <span className="px-2.5 py-1 rounded border border-gray-600 text-xs font-medium text-green-400/90">HD</span>
-                          <span className="px-2.5 py-1 rounded border border-gray-600 text-sm text-gray-300">
-                            IMDB <span className="text-amber-400/90 font-medium">{rating}</span>
+                          <span className="px-2.5 py-1 rounded border border-border text-xs font-medium text-green-400/90">HD</span>
+                          <span className="px-2.5 py-1 rounded border border-border text-sm text-foreground flex items-center gap-1">
+                            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                            <span className="text-amber-400/90 font-medium">{rating}</span>
                           </span>
                         </div>
-                        <p className="text-gray-400 text-sm leading-relaxed mb-4 max-w-xl">
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-4 max-w-xl">
                           {movie.overview}
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
-                          <div><span className="text-gray-500">Released</span> <span className="text-gray-300">{movie.release_date || '—'}</span></div>
-                          <div><span className="text-gray-500">Duration</span> <span className="text-gray-300">{runtime || '—'}</span></div>
-                          <div><span className="text-gray-500">Genre</span> <span className="text-gray-300">{movie.genres?.map((g: { name: string }) => g.name).join(', ') || '—'}</span></div>
-                          <div><span className="text-gray-500">Country</span> <span className="text-gray-300">{movie.production_countries?.[0]?.name || '—'}</span></div>
-                          <div className="sm:col-span-2"><span className="text-gray-500">Casts</span> <span className="text-gray-300">{credits.cast?.slice(0, 5).map((c: { name: string }) => c.name).join(', ') || '—'}</span></div>
+                          <div><span className="text-muted-foreground">Released</span> <span className="text-foreground">{movie.release_date || '—'}</span></div>
+                          <div><span className="text-muted-foreground">Duration</span> <span className="text-foreground">{runtime || '—'}</span></div>
+                          <div><span className="text-muted-foreground">Genre</span> <span className="text-foreground">{movie.genres?.map((g: { name: string }) => g.name).join(', ') || '—'}</span></div>
+                          <div><span className="text-muted-foreground">Country</span> <span className="text-foreground">{movie.production_countries?.[0]?.name || '—'}</span></div>
+                          <div className="sm:col-span-2"><span className="text-muted-foreground">Casts</span> <span className="text-foreground">{credits.cast?.slice(0, 5).map((c: { name: string }) => c.name).join(', ') || '—'}</span></div>
                           {movie.production_companies?.length > 0 && (
-                            <div className="sm:col-span-2"><span className="text-gray-500">Production</span> <span className="text-gray-300">{movie.production_companies.slice(0, 3).map((p: { name: string }) => p.name).join(', ')}</span></div>
+                            <div className="sm:col-span-2"><span className="text-muted-foreground">Production</span> <span className="text-foreground">{movie.production_companies.slice(0, 3).map((p: { name: string }) => p.name).join(', ')}</span></div>
                           )}
                         </div>
                       </div>
@@ -451,9 +452,10 @@ export default function ClientPage({ movieId }: ClientPageProps) {
         {!isPlayerOpen && (
         <div className="relative -mt-16 sm:-mt-24 lg:-mt-32 z-10">
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white dark:bg-transparent rounded-2xl shadow-xl p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6 lg:gap-8 mb-8">
               {/* Movie Poster - Hidden on mobile */}
-              <div className="hidden sm:block w-56 lg:w-64 aspect-[2/3] relative rounded-lg overflow-hidden shadow-xl flex-shrink-0">
+              <div className="hidden sm:block w-40 lg:w-48 aspect-[2/3] relative rounded-lg overflow-hidden shadow-xl flex-shrink-0">
                 <Image
                   src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
                   alt={movie.title}
@@ -463,27 +465,27 @@ export default function ClientPage({ movieId }: ClientPageProps) {
               </div>
 
               {/* Movie Info */}
-              <div className="flex-1 text-white pb-4 sm:pb-8">
+              <div className="flex-1 text-foreground pb-4 sm:pb-8">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">{movie.title}</h1>
                 
                 <div className="flex items-center gap-3 mb-4">
                   <span className="bg-yellow-500 text-black px-2 py-1 rounded text-sm font-bold">
                     ⭐ {rating}
                   </span>
-                  <span className="text-gray-300">{releaseYear}</span>
-                  <span className="text-gray-300">{runtime}</span>
+                  <span className="text-muted-foreground">{releaseYear}</span>
+                  <span className="text-muted-foreground">{runtime}</span>
                   <span className="bg-green-600 px-2 py-1 rounded text-xs font-bold">HD</span>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {movie.genres.map((genre: any) => (
-                    <span key={genre.id} className="bg-gray-800 px-3 py-1 rounded text-sm">
+                    <span key={genre.id} className="bg-muted px-3 py-1 rounded text-sm">
                       {genre.name}
                     </span>
                   ))}
                 </div>
 
-                <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
                   {movie.overview}
                 </p>
 
@@ -506,16 +508,17 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                     movieId={movieId}
                     movieTitle={movie.title}
                     moviePoster={movie.poster_path || ''}
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded font-semibold flex items-center gap-2"
+                    className="bg-muted hover:bg-muted/80 text-foreground px-6 py-3 rounded font-semibold flex items-center gap-2"
                   />
                   
                   <ShareButton title={movie.title} />
                 </div>
                 
-                <p className="text-gray-400 text-xs">
+                <p className="text-muted-foreground text-xs">
                   Free streaming? Tell your friends about it
                 </p>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -543,7 +546,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
         )}
 
         {/* Content Section */}
-        <div className="bg-black relative z-0">
+        <div className="bg-background relative z-0">
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="">
               {/* Main Content */}
@@ -551,7 +554,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                 {/* Server Selection */}
                 {!isPlayerOpen && (
                   <div className="mb-8">
-                    <h2 className="text-lg sm:text-xl font-bold text-white mb-4">Choose Server</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4">Choose Server</h2>
                     <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                       {STREAMING_SOURCES.map((source, idx) => (
                         <button
@@ -567,7 +570,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                             });
                           }
                         }}
-                        className="flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white hover:bg-gray-800/50 text-sm transition-colors"
+                        className="flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted text-sm transition-colors"
                         >
                           <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
                           <span className="flex items-center gap-1.5 font-medium mt-0.5">
@@ -583,11 +586,11 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                 {/* Cast */}
                 {credits.cast.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Cast</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Cast</h2>
                     <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide">
                       {credits.cast.slice(0, 15).map((actor: any) => (
                         <div key={actor.id} className="flex-shrink-0 w-24 sm:w-28 lg:w-32">
-                          <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 relative rounded-full overflow-hidden mb-2 sm:mb-3 bg-gray-800">
+                          <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 relative rounded-full overflow-hidden mb-2 sm:mb-3 bg-muted">
                             <Image
                               src={actor.profile_path 
                                 ? tmdbApi.getImageUrl(actor.profile_path, 'w185')
@@ -598,8 +601,8 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                               className="object-cover"
                             />
                           </div>
-                          <p className="text-white text-xs sm:text-sm font-medium text-center truncate">{actor.name}</p>
-                          <p className="text-gray-400 text-xs text-center truncate">{actor.character}</p>
+                          <p className="text-foreground text-xs sm:text-sm font-medium text-center truncate">{actor.name}</p>
+                          <p className="text-muted-foreground text-xs text-center truncate">{actor.character}</p>
                         </div>
                       ))}
                     </div>
@@ -607,8 +610,8 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                 )}
 
                 <section id="comments" className="mb-8 scroll-mt-24">
-                  <h2 className="text-lg font-semibold text-white mb-3">Comments</h2>
-                  <div className="rounded-lg border border-gray-800 bg-gray-900/30 px-4 py-6 text-center text-gray-500 text-sm">
+                  <h2 className="text-lg font-semibold text-foreground mb-3">Comments</h2>
+                  <div className="rounded-lg border border-border bg-muted/30 px-4 py-6 text-center text-muted-foreground text-sm">
                     Sign in to join the conversation.
                   </div>
                 </section>
@@ -618,7 +621,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
             {/* Related Movies */}
             {similarMovies.results.length > 0 && (
               <div className="mt-8 sm:mt-12">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">You May Also Like</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">You May Also Like</h2>
                 <MovieGrid 
                   movies={similarMovies.results.slice(0, 12)} 
                   showYear={true}

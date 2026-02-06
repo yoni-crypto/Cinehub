@@ -35,7 +35,7 @@ export function ContinueWatching() {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Continue Watching</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4">Continue Watching</h2>
       <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
         {items.slice(0, 10).map((item) => (
           <div key={`${item.type}-${item.id}`} className="flex-shrink-0 w-48 group relative">
@@ -44,7 +44,7 @@ export function ContinueWatching() {
                 ? `/movies/${item.id}?autoplay=true` 
                 : `/tv-shows/${item.id}?autoplay=true&season=${item.season}&episode=${item.episode}`
             }>
-              <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-800 mb-2">
+              <div className="relative aspect-video rounded-lg overflow-hidden bg-muted mb-2">
                 <Image
                   src={tmdbApi.getImageUrl(item.poster, 'w500')}
                   alt={item.title}
@@ -85,10 +85,10 @@ export function ContinueWatching() {
             </button>
             
             {/* Title and episode info */}
-            <div className="text-white text-sm">
+            <div className="text-foreground text-sm">
               <p className="font-medium truncate">{item.title}</p>
               {item.type === 'tv' && item.season && item.episode && (
-                <p className="text-gray-400 text-xs truncate">
+                <p className="text-muted-foreground text-xs truncate">
                   S{item.season}E{item.episode}
                   {item.episodeName && ` • ${item.episodeName}`}
                 </p>
