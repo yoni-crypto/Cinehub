@@ -20,46 +20,54 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://cinehub1.vercel.app'),
   title: {
-    default: 'CineHub - Free Movies, TV Shows & Trailers Online',
-    template: '%s | CineHub - Free Movie Streaming'
+    default: 'CineHub - Watch Free Movies & TV Shows Online | Stream HD Films',
+    template: '%s | CineHub'
   },
-  description: 'Watch free movies and TV shows online. Stream the latest blockbusters, discover trending films, and build your watchlist on CineHub - your ultimate movie streaming platform.',
+  description: 'Watch free movies and TV shows online in HD. Stream thousands of popular films, trending series, and new releases. No subscription required - start watching now on CineHub.',
   keywords: [
     'free movies online',
     'watch movies free',
+    'free tv shows',
     'movie streaming',
     'tv shows online',
-    'cinema',
+    'watch movies online free',
+    'stream movies',
+    'hd movies',
+    'cinema online',
     'film streaming',
     'movie trailers',
     'blockbusters',
     'entertainment',
     'watch online',
     'movie database',
-    'film discovery'
+    'film discovery',
+    'latest movies',
+    'popular movies',
+    'top rated movies',
   ],
   authors: [{ name: 'CineHub Team' }],
   creator: 'CineHub',
+  publisher: 'CineHub',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://cinehub1.vercel.app',
-    siteName: 'CineHub - Free Movie Streaming',
-    title: 'CineHub - Watch Free Movies & TV Shows Online',
-    description: 'Stream thousands of movies and TV shows for free. Discover trending films, watch trailers, and build your watchlist on CineHub.',
+    siteName: 'CineHub',
+    title: 'CineHub - Watch Free Movies & TV Shows Online in HD',
+    description: 'Stream thousands of movies and TV shows for free in HD. Discover trending films, watch trailers, and build your watchlist on CineHub - no subscription required.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'CineHub - Free Movie Streaming Platform',
+        alt: 'CineHub - Free Movie & TV Show Streaming Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'CineHub - Watch Free Movies & TV Shows Online',
-    description: 'Stream thousands of movies and TV shows for free. Discover trending films and build your watchlist.',
+    description: 'Stream thousands of movies and TV shows for free in HD. Discover trending films and build your watchlist.',
     images: ['/og-image.jpg'],
     creator: '@cinehub',
   },
@@ -74,8 +82,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  alternates: {
+    canonical: 'https://cinehub1.vercel.app',
+  },
   verification: {
-    google: 'your-google-verification-code',
+    google: '32b4b569e6dea431',
   },
 };
 

@@ -15,6 +15,7 @@ import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
 import { continueWatching } from '@/lib/continue-watching';
+import { TVShowStructuredData } from '@/components/seo/tv-show-structured-data';
 import React, { useState, useEffect, useRef } from 'react';
 
 interface TVShowClientPageProps {
@@ -256,6 +257,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <TVShowStructuredData tvShow={tvShow} credits={credits} />
       <Header />
       
       <main className="pt-16">
