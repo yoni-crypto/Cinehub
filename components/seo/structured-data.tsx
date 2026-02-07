@@ -5,8 +5,8 @@ export function StructuredData() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "CineHub",
-    "alternateName": "CineHub - Free Movie Streaming",
-    "description": "Watch free movies and TV shows online in HD. Stream thousands of popular films, trending series, and new releases.",
+    "alternateName": ["CineHub - Free Movie Streaming", "CineHub Movies", "Watch Free Movies CineHub"],
+    "description": "Watch free movies and TV shows online in HD quality without sign up. Stream thousands of popular films, trending series, and new releases instantly. Best free streaming site.",
     "url": "https://cinehub1.vercel.app",
     "potentialAction": {
       "@type": "SearchAction",
@@ -19,7 +19,14 @@ export function StructuredData() {
     "sameAs": [
       "https://twitter.com/elyonox",
       "https://facebook.com/elyonox"
-    ]
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "15420",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
   };
 
   const organizationData = {

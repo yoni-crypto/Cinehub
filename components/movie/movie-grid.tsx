@@ -252,8 +252,6 @@ export function MovieGrid({
         </div>
       )}
 
-      {category && <PaginationControls />}
-
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-1 sm:gap-1.5 md:gap-2 lg:gap-2 my-6">
         {displayedMovies.map((movie, index) => {
           if (category && displayedMovies.length === index + 1) {
@@ -289,8 +287,6 @@ export function MovieGrid({
           </div>
         </div>
       )}
-
-      {category && <PaginationControls />}
     </section>
   );
 }

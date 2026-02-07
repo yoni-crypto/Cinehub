@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { 
-    unoptimized: true,
+    unoptimized: false,
     domains: ['image.tmdb.org', 'img.youtube.com'],
     formats: ['image/webp', 'image/avif']
   },

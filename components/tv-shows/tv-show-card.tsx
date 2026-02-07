@@ -121,7 +121,7 @@ export function TVShowCard({ tvShow, priority = false }: TVShowCardProps) {
           <div className="relative aspect-[2/3] overflow-hidden rounded-md bg-gray-900/70 dark:bg-gray-900/70">
             <Image
               src={tmdbApi.getPosterUrl(tvShow.poster_path, 'w500')}
-              alt={tvShow.name}
+              alt={`Watch ${tvShow.name}${releaseYear ? ` (${releaseYear})` : ''} Free Online HD - No Sign Up`}
               fill
               className={`object-cover transition-transform duration-300 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'

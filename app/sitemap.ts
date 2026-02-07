@@ -32,18 +32,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  try {
-    // Fetch popular movies and TV shows for sitemap
-    const [movies1, movies2, movies3, tvShows1, tvShows2] = await Promise.all([
-      tmdbApi.getPopularMovies(1),
-      tmdbApi.getPopularMovies(2),
-      tmdbApi.getTopRatedMovies(1),
-      tmdbApi.getPopularTVShows(1),
-      tmdbApi.getPopularTVShows(2),
-    ])
+  // Genre pages
+  const genres = ['action', 'comedy', 'drama', 'horror', 'thriller', 'romance', 'sci-fi', 'fantasy', 'animation', 'crime']
+  const genrePages: MetadataRoute.Sitemap = genres.map(genre => ({
+    url: `${baseUrl}/genre/${genre}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  }))
 
-    const allMovies = [...movies1.results, ...movies2.results, ...movies3.results]
-    const allTVShows = [...tvShows1.results, ...tvShows2.results]
+  try {
+    // Fetch top 500 movies and 200 TV shows for comprehensive sitemap
+    const moviePages = Array.from({ length: 25 }, (_, i) => i + 1); // 25 pages = 500 movies
+    const tvPages = Array.from({ length: 10 }, (_, i) => i + 1); // 10 pages = 200 TV shows
+    
+    const [movieResults, tvResults] = await Promise.all([
+      Promise.all(moviePages.map(page => tmdbApi.getPopularMovies(page))),
+      Promise.all(tvPages.map(page => tmdbApi.getPopularTVShows(page)))
+    ]);
+
+    const allMovies = movieResults.flatMap(result => result.results);
+    const allTVShows = tvResults.flatMap(result => result.results);
 
     // Generate movie URLs
     const movieUrls: MetadataRoute.Sitemap = allMovies.map((movie) => ({
@@ -61,9 +70,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
-    return [...staticPages, ...movieUrls, ...tvShowUrls]
+    return [...staticPages, ...genrePages, ...movieUrls, ...tvShowUrls]
   } catch (error) {
     console.error('Error generating sitemap:', error)
-    return staticPages
+    return [...staticPages, ...genrePages]
   }
 }

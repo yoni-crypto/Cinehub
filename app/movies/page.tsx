@@ -8,7 +8,7 @@ import { MovieGrid } from '@/components/movie/movie-grid';
 import { LoadingScreen } from '@/components/loading-screen';
 import { Movie, Genre } from '@/lib/types/movie';
 import { Button } from '@/components/ui/button';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -16,6 +16,8 @@ export default function MoviesPage() {
   const [category, setCategory] = useState<'popular' | 'top-rated' | 'upcoming' | 'now-playing'>('popular');
   const [filterOpen, setFilterOpen] = useState(false);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Applied filters
   const [appliedGenre, setAppliedGenre] = useState<string>('all');
@@ -54,46 +56,48 @@ export default function MoviesPage() {
               year: (appliedYear !== 'all') ? parseInt(appliedYear) : undefined,
               sortBy: appliedSortBy,
               originCountry: (appliedCountry !== 'all') ? appliedCountry : undefined,
-              page: 1
+              page: page * 2 - 1
             }),
             tmdbApi.discoverMovies({
               genreId: (appliedGenre !== 'all') ? parseInt(appliedGenre) : undefined,
               year: (appliedYear !== 'all') ? parseInt(appliedYear) : undefined,
               sortBy: appliedSortBy,
               originCountry: (appliedCountry !== 'all') ? appliedCountry : undefined,
-              page: 2
+              page: page * 2
             })
           ]);
           setMovies([...response.results, ...response2.results]);
+          setTotalPages(Math.min(Math.ceil(response.total_pages / 2), 250));
           setCategory('popular');
         } else {
           let page1, page2;
           switch (appliedCategory) {
             case 'top-rated':
               [page1, page2] = await Promise.all([
-                tmdbApi.getTopRatedMovies(1),
-                tmdbApi.getTopRatedMovies(2)
+                tmdbApi.getTopRatedMovies(page * 2 - 1),
+                tmdbApi.getTopRatedMovies(page * 2)
               ]);
               break;
             case 'upcoming':
               [page1, page2] = await Promise.all([
-                tmdbApi.getUpcomingMovies(1),
-                tmdbApi.getUpcomingMovies(2)
+                tmdbApi.getUpcomingMovies(page * 2 - 1),
+                tmdbApi.getUpcomingMovies(page * 2)
               ]);
               break;
             case 'now-playing':
               [page1, page2] = await Promise.all([
-                tmdbApi.getNowPlayingMovies(1),
-                tmdbApi.getNowPlayingMovies(2)
+                tmdbApi.getNowPlayingMovies(page * 2 - 1),
+                tmdbApi.getNowPlayingMovies(page * 2)
               ]);
               break;
             default:
               [page1, page2] = await Promise.all([
-                tmdbApi.getPopularMovies(1),
-                tmdbApi.getPopularMovies(2)
+                tmdbApi.getPopularMovies(page * 2 - 1),
+                tmdbApi.getPopularMovies(page * 2)
               ]);
           }
           setMovies([...page1.results, ...page2.results]);
+          setTotalPages(Math.min(Math.ceil(page1.total_pages / 2), 250));
         }
       } catch (error) {
         console.error('Error loading movies:', error);
@@ -102,7 +106,7 @@ export default function MoviesPage() {
       }
     };
     loadMovies();
-  }, [appliedCategory, appliedGenre, appliedYear, appliedSortBy, appliedCountry]);
+  }, [appliedCategory, appliedGenre, appliedYear, appliedSortBy, appliedCountry, page]);
 
   const applyFilters = () => {
     setAppliedGenre(tempGenre);
@@ -111,6 +115,7 @@ export default function MoviesPage() {
     setAppliedCountry(tempCountry);
     setAppliedCategory(tempCategory);
     setCategory(tempCategory);
+    setPage(1);
     setFilterOpen(false);
   };
 
@@ -126,6 +131,7 @@ export default function MoviesPage() {
     setAppliedCountry('all');
     setAppliedCategory('popular');
     setCategory('popular');
+    setPage(1);
   };
 
   const closeFilter = () => {
@@ -141,6 +147,50 @@ export default function MoviesPage() {
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
+
+  const PaginationControls = () => (
+    totalPages > 1 ? (
+      <div className="flex items-center justify-center gap-2 my-6">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full w-10 h-10"
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        
+        <div className="flex items-center gap-1">
+          {page > 2 && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(1)}>1</Button>
+          )}
+          {page > 3 && <span className="px-2">...</span>}
+          {page > 1 && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(page - 1)}>{page - 1}</Button>
+          )}
+          <Button size="icon" className="rounded-full w-10 h-10 bg-red-600 hover:bg-red-700">{page}</Button>
+          {page < totalPages && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(page + 1)}>{page + 1}</Button>
+          )}
+          {page < totalPages - 2 && <span className="px-2">...</span>}
+          {page < totalPages - 1 && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(totalPages)}>{totalPages}</Button>
+          )}
+        </div>
+        
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full w-10 h-10"
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    ) : null
+  );
 
   const countries = [
     { code: 'US', name: 'United States' },
@@ -313,6 +363,8 @@ export default function MoviesPage() {
             </div>
           )}
 
+          <PaginationControls />
+
           <MovieGrid
             movies={movies}
             title=""
@@ -320,6 +372,8 @@ export default function MoviesPage() {
             showYear={true}
             showRating={true}
           />
+
+          <PaginationControls />
         </div>
       </main>
       <Footer />

@@ -252,6 +252,10 @@ class TMDBApi {
     return this.request('/discover/movie', queryParams);
   }
 
+  async getMoviesByGenre(genreId: number, page: number = 1): Promise<TMDBResponse<Movie>> {
+    return this.discoverMovies({ genreId, page });
+  }
+
   async getMovieVideos(movieId: number): Promise<{ results: any[] }> {
     return this.request(`/movie/${movieId}/videos`);
   }

@@ -9,7 +9,7 @@ import { LoadingScreen } from '@/components/loading-screen';
 import { TVShow } from '@/lib/api/tmdb';
 import { Genre } from '@/lib/types/movie';
 import { Button } from '@/components/ui/button';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function TVShowsPage() {
   const [tvShows, setTVShows] = useState<TVShow[]>([]);
@@ -17,6 +17,8 @@ export default function TVShowsPage() {
   const [category, setCategory] = useState<'popular' | 'top-rated' | 'on-the-air' | 'airing-today'>('popular');
   const [filterOpen, setFilterOpen] = useState(false);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Applied filters
   const [appliedGenre, setAppliedGenre] = useState<string>('all');
@@ -52,45 +54,47 @@ export default function TVShowsPage() {
               genreId: (appliedGenre !== 'all') ? parseInt(appliedGenre) : undefined,
               year: (appliedYear !== 'all') ? parseInt(appliedYear) : undefined,
               sortBy: appliedSortBy,
-              page: 1
+              page: page * 2 - 1
             }),
             tmdbApi.discoverTVShows({
               genreId: (appliedGenre !== 'all') ? parseInt(appliedGenre) : undefined,
               year: (appliedYear !== 'all') ? parseInt(appliedYear) : undefined,
               sortBy: appliedSortBy,
-              page: 2
+              page: page * 2
             })
           ]);
           setTVShows([...response.results, ...response2.results]);
+          setTotalPages(Math.min(Math.ceil(response.total_pages / 2), 250));
           setCategory('popular');
         } else {
           let page1, page2;
           switch (appliedCategory) {
             case 'top-rated':
               [page1, page2] = await Promise.all([
-                tmdbApi.getTopRatedTVShows(1),
-                tmdbApi.getTopRatedTVShows(2)
+                tmdbApi.getTopRatedTVShows(page * 2 - 1),
+                tmdbApi.getTopRatedTVShows(page * 2)
               ]);
               break;
             case 'on-the-air':
               [page1, page2] = await Promise.all([
-                tmdbApi.getOnTheAirTVShows(1),
-                tmdbApi.getOnTheAirTVShows(2)
+                tmdbApi.getOnTheAirTVShows(page * 2 - 1),
+                tmdbApi.getOnTheAirTVShows(page * 2)
               ]);
               break;
             case 'airing-today':
               [page1, page2] = await Promise.all([
-                tmdbApi.getAiringTodayTVShows(1),
-                tmdbApi.getAiringTodayTVShows(2)
+                tmdbApi.getAiringTodayTVShows(page * 2 - 1),
+                tmdbApi.getAiringTodayTVShows(page * 2)
               ]);
               break;
             default:
               [page1, page2] = await Promise.all([
-                tmdbApi.getPopularTVShows(1),
-                tmdbApi.getPopularTVShows(2)
+                tmdbApi.getPopularTVShows(page * 2 - 1),
+                tmdbApi.getPopularTVShows(page * 2)
               ]);
           }
           setTVShows([...page1.results, ...page2.results]);
+          setTotalPages(Math.min(Math.ceil(page1.total_pages / 2), 250));
         }
       } catch (error) {
         console.error('Error loading TV shows:', error);
@@ -99,7 +103,7 @@ export default function TVShowsPage() {
       }
     };
     loadTVShows();
-  }, [appliedCategory, appliedGenre, appliedYear, appliedSortBy]);
+  }, [appliedCategory, appliedGenre, appliedYear, appliedSortBy, page]);
 
   const applyFilters = () => {
     setAppliedGenre(tempGenre);
@@ -107,6 +111,7 @@ export default function TVShowsPage() {
     setAppliedSortBy(tempSortBy);
     setAppliedCategory(tempCategory);
     setCategory(tempCategory);
+    setPage(1);
     setFilterOpen(false);
   };
 
@@ -120,6 +125,7 @@ export default function TVShowsPage() {
     setAppliedSortBy('popularity.desc');
     setAppliedCategory('popular');
     setCategory('popular');
+    setPage(1);
   };
 
   const closeFilter = () => {
@@ -134,6 +140,50 @@ export default function TVShowsPage() {
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
+
+  const PaginationControls = () => (
+    totalPages > 1 ? (
+      <div className="flex items-center justify-center gap-2 my-6">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full w-10 h-10"
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        
+        <div className="flex items-center gap-1">
+          {page > 2 && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(1)}>1</Button>
+          )}
+          {page > 3 && <span className="px-2">...</span>}
+          {page > 1 && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(page - 1)}>{page - 1}</Button>
+          )}
+          <Button size="icon" className="rounded-full w-10 h-10 bg-red-600 hover:bg-red-700">{page}</Button>
+          {page < totalPages && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(page + 1)}>{page + 1}</Button>
+          )}
+          {page < totalPages - 2 && <span className="px-2">...</span>}
+          {page < totalPages - 1 && (
+            <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" onClick={() => setPage(totalPages)}>{totalPages}</Button>
+          )}
+        </div>
+        
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full w-10 h-10"
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    ) : null
+  );
 
   if (loading) {
     return (
@@ -273,11 +323,15 @@ export default function TVShowsPage() {
             </div>
           )}
 
+          <PaginationControls />
+
           <TVShowGrid
             tvShows={tvShows}
             title=""
             category={category}
           />
+
+          <PaginationControls />
         </div>
       </main>
       <Footer />
