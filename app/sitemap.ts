@@ -30,7 +30,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
   ]
+
+  // Blog posts
+  const blogPosts = ['top-movies-2024', 'streaming-guide-beginners', 'best-action-movies', 'hidden-gems-2023', 'tv-shows-binge-watch']
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map(slug => ({
+    url: `${baseUrl}/blog/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }))
+
+  // Year pages
+  const yearPages: MetadataRoute.Sitemap = ['2024', '2023', '2022'].map(year => ({
+    url: `${baseUrl}/year/${year}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }))
 
   // Genre pages
   const genres = ['action', 'comedy', 'drama', 'horror', 'thriller', 'romance', 'sci-fi', 'fantasy', 'animation', 'crime']
@@ -70,9 +111,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
-    return [...staticPages, ...genrePages, ...movieUrls, ...tvShowUrls]
+    return [...staticPages, ...blogPages, ...yearPages, ...genrePages, ...movieUrls, ...tvShowUrls]
   } catch (error) {
     console.error('Error generating sitemap:', error)
-    return [...staticPages, ...genrePages]
+    return [...staticPages, ...blogPages, ...yearPages, ...genrePages]
   }
 }

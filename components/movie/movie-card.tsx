@@ -66,7 +66,7 @@ export function MovieCard({
           <div className="relative aspect-[2/3] overflow-hidden rounded-md bg-gray-900/70 dark:bg-gray-900/70">
             <Image
               src={tmdbApi.getImageUrl(movie.poster_path, 'w500')}
-              alt={`Watch ${movie.title}${releaseYear ? ` (${releaseYear})` : ''} Free Online HD - No Sign Up`}
+              alt={`Watch ${movie.title}${releaseYear ? ` (${releaseYear})` : ''} Free Online HD | Stream Full Movie`}
               fill
               className={`object-cover transition-transform duration-300 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'

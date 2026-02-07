@@ -1,0 +1,68 @@
+[
+  {
+    "slug": "top-movies-2024",
+    "title": "Top 10 Must-Watch Movies of 2024",
+    "excerpt": "From epic blockbusters to intimate dramas, 2024 has delivered exceptional cinema. Here are the must-watch films that defined the year.",
+    "date": "2024-01-15",
+    "author": "CineHub Editorial",
+    "readTime": "8 min read",
+    "category": "Reviews",
+    "image": "https://image.tmdb.org/t/p/w780/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
+    "imageAlt": "Dune: Part Two"
+  },
+  {
+    "slug": "streaming-guide-beginners",
+    "title": "Complete Streaming Guide for Beginners",
+    "excerpt": "New to streaming? This comprehensive guide covers everything from choosing quality settings to finding hidden gems across platforms.",
+    "date": "2024-01-10",
+    "author": "Tech Team",
+    "readTime": "12 min read",
+    "category": "Guides",
+    "image": "https://image.tmdb.org/t/p/w780/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+    "imageAlt": "Oppenheimer"
+  },
+  {
+    "slug": "best-action-movies",
+    "title": "Best Action Movies to Stream Right Now",
+    "excerpt": "Get your adrenaline pumping with these explosive action films. From classic shootouts to modern martial arts masterpieces.",
+    "date": "2024-01-05",
+    "author": "Action Desk",
+    "readTime": "10 min read",
+    "category": "Collections",
+    "image": "https://image.tmdb.org/t/p/w780/NNxCy9wbLb2KwqEHiSc4YI8lM7.jpg",
+    "imageAlt": "Mission: Impossible - Dead Reckoning"
+  },
+  {
+    "slug": "hidden-gems-2023",
+    "title": "Hidden Gems: Underrated Movies from 2023",
+    "excerpt": "These incredible films flew under the radar but deserve your attention. Discover the year's best-kept cinematic secrets.",
+    "date": "2023-12-20",
+    "author": "Discovery Team",
+    "readTime": "15 min read",
+    "category": "Discovery",
+    "image": "https://image.tmdb.org/t/p/w780/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg",
+    "imageAlt": "Poor Things"
+  },
+  {
+    "slug": "tv-shows-binge-watch",
+    "title": "15 TV Shows Perfect for Binge-Watching",
+    "excerpt": "Clear your schedule. These addictive series will keep you glued to your screen from the first episode to the last.",
+    "date": "2023-12-15",
+    "author": "Series Squad",
+    "readTime": "11 min read",
+    "category": "TV Shows",
+    "image": "https://image.tmdb.org/t/p/w780/z2ySpPK9NQjFnKr5TgHblN68ipo.jpg",
+    "imageAlt": "House of the Dragon"
+  },
+  {
+    "slug": "hdtoday-alternative",
+    "title": "Why CineHub is the Best HDToday Alternative",
+    "excerpt": "Looking for a reliable HDToday alternative? Discover why thousands are switching to CineHub for their streaming needs.",
+    "date": "2024-01-20",
+    "author": "Platform Team",
+    "readTime": "6 min read",
+    "category": "Platform",
+    "image": "https://image.tmdb.org/t/p/w780/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg",
+    "imageAlt": "Spider-Man: Across the Spider-Verse"
+  }
+]

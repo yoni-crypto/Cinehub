@@ -6,6 +6,12 @@ const nextConfig = {
   images: { 
     unoptimized: false,
     domains: ['image.tmdb.org', 'img.youtube.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
     formats: ['image/webp', 'image/avif']
   },
   compress: true,

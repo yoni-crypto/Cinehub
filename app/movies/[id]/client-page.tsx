@@ -16,6 +16,8 @@ import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
 import { continueWatching } from '@/lib/continue-watching';
 import { MovieStructuredData } from '@/components/seo/movie-structured-data';
+import { FAQSchema } from '@/components/seo/faq-schema';
+import { BreadcrumbSchema } from '@/components/seo/breadcrumb-schema';
 import React, { useState, useEffect } from 'react';
 
 interface ClientPageProps {
@@ -223,6 +225,12 @@ export default function ClientPage({ movieId }: ClientPageProps) {
   return (
     <div className="min-h-screen bg-background">
       <MovieStructuredData movie={movie} credits={credits} />
+      <FAQSchema movieTitle={movie.title} movieYear={typeof releaseYear === 'number' ? releaseYear : undefined} />
+      <BreadcrumbSchema items={[
+        { name: 'Home', url: 'https://cinehub1.vercel.app' },
+        { name: 'Movies', url: 'https://cinehub1.vercel.app/movies' },
+        { name: movie.title, url: `https://cinehub1.vercel.app/movies/${movieId}` }
+      ]} />
       <Header />
       
       <main className="pt-16 relative">

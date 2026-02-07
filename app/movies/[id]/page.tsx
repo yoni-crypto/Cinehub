@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: MoviePageProps): Promise<Meta
     const genres = movie.genres?.map((g: any) => g.name).join(', ') || '';
     const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '';
 
-    const title = `Watch ${movie.title}${releaseYear ? ` (${releaseYear})` : ''} Free Online | CineHub`;
+    const title = `Watch ${movie.title}${releaseYear ? ` (${releaseYear})` : ''} Free Online HD | Stream Full Movie | CineHub`;
     const description = movie.overview 
       ? `${movie.overview.slice(0, 150)}... Watch ${movie.title} online free. ${director ? `Directed by ${director}. ` : ''}${cast ? `Starring ${cast}. ` : ''}Stream now on CineHub.`
       : `Watch ${movie.title}${releaseYear ? ` (${releaseYear})` : ''} online free. Stream full movie in HD on CineHub.`;

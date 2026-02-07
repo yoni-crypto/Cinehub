@@ -161,16 +161,16 @@ export function HomeHeader() {
                   </span>
                   <div className="absolute top-full left-0 w-64 bg-background border border-border rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="grid grid-cols-2 gap-0">
-                      <Link href="/categories?genre=action" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Action</Link>
-                      <Link href="/categories?genre=comedy" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Comedy</Link>
-                      <Link href="/categories?genre=drama" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Drama</Link>
-                      <Link href="/categories?genre=horror" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Horror</Link>
-                      <Link href="/categories?genre=thriller" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Thriller</Link>
-                      <Link href="/categories?genre=romance" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Romance</Link>
-                      <Link href="/categories?genre=sci-fi" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Sci-Fi</Link>
-                      <Link href="/categories?genre=fantasy" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Fantasy</Link>
-                      <Link href="/categories?genre=animation" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Animation</Link>
-                      <Link href="/categories?genre=crime" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Crime</Link>
+                      <Link href="/genre/action" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Action</Link>
+                      <Link href="/genre/comedy" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Comedy</Link>
+                      <Link href="/genre/drama" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Drama</Link>
+                      <Link href="/genre/horror" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Horror</Link>
+                      <Link href="/genre/thriller" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Thriller</Link>
+                      <Link href="/genre/romance" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Romance</Link>
+                      <Link href="/genre/sci-fi" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Sci-Fi</Link>
+                      <Link href="/genre/fantasy" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Fantasy</Link>
+                      <Link href="/genre/animation" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Animation</Link>
+                      <Link href="/genre/crime" className="block px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-muted">Crime</Link>
                     </div>
                   </div>
                 </div>
