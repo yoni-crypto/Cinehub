@@ -1,6 +1,5 @@
-'use client';
-
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Header } from '@/components/layout/header';
@@ -34,6 +33,46 @@ type BlogPost = {
   content: ContentBlock[];
   tags: string[];
 };
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = (blogDetails as Record<string, BlogPost>)[params.slug];
+
+  if (!post) {
+    return {
+      title: 'Blog Post Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
+
+  return {
+    title: `${post.title} | CineHub Blog`,
+    description: post.excerpt,
+    keywords: [...post.tags, 'cinehub', 'streaming', 'movies', 'tv shows'],
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      url: `https://cinehub1.vercel.app/blog/${post.slug}`,
+      images: [{ url: post.image, width: 1200, height: 630, alt: post.imageAlt }],
+      publishedTime: post.date,
+      authors: [post.author],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [post.image],
+    },
+    alternates: {
+      canonical: `https://cinehub1.vercel.app/blog/${post.slug}`,
+    },
+  };
+}
+
+export function generateStaticParams() {
+  const posts = Object.keys(blogDetails);
+  return posts.map((slug) => ({ slug }));
+}
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = (blogDetails as Record<string, BlogPost>)[params.slug];

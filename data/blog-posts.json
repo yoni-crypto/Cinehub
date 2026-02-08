@@ -8,7 +8,7 @@
     "readTime": "8 min read",
     "category": "Reviews",
     "image": "https://image.tmdb.org/t/p/w780/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
-    "imageAlt": "Dune: Part Two"
+    "imageAlt": "Top movies of 2024 collage"
   },
   {
     "slug": "streaming-guide-beginners",
@@ -18,8 +18,8 @@
     "author": "Tech Team",
     "readTime": "12 min read",
     "category": "Guides",
-    "image": "https://image.tmdb.org/t/p/w780/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
-    "imageAlt": "Oppenheimer"
+    "image": "https://image.tmdb.org/t/p/w780/9zcbqSxdsRMZWHYtyCd1nXPr2xq.jpg",
+    "imageAlt": "Streaming on multiple devices"
   },
   {
     "slug": "best-action-movies",
@@ -29,8 +29,8 @@
     "author": "Action Desk",
     "readTime": "10 min read",
     "category": "Collections",
-    "image": "https://image.tmdb.org/t/p/w780/NNxCy9wbLb2KwqEHiSc4YI8lM7.jpg",
-    "imageAlt": "Mission: Impossible - Dead Reckoning"
+    "image": "https://image.tmdb.org/t/p/w780/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+    "imageAlt": "Action movie explosions"
   },
   {
     "slug": "hidden-gems-2023",
@@ -41,7 +41,7 @@
     "readTime": "15 min read",
     "category": "Discovery",
     "image": "https://image.tmdb.org/t/p/w780/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg",
-    "imageAlt": "Poor Things"
+    "imageAlt": "Underrated films collection"
   },
   {
     "slug": "tv-shows-binge-watch",
@@ -51,8 +51,8 @@
     "author": "Series Squad",
     "readTime": "11 min read",
     "category": "TV Shows",
-    "image": "https://image.tmdb.org/t/p/w780/z2ySpPK9NQjFnKr5TgHblN68ipo.jpg",
-    "imageAlt": "House of the Dragon"
+    "image": "https://image.tmdb.org/t/p/w780/9faGSFi5jam6pDWGNd0p8JcJgXQ.jpg",
+    "imageAlt": "Popular TV series"
   },
   {
     "slug": "hdtoday-alternative",
@@ -63,6 +63,50 @@
     "readTime": "6 min read",
     "category": "Platform",
     "image": "https://image.tmdb.org/t/p/w780/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg",
-    "imageAlt": "Spider-Man: Across the Spider-Verse"
+    "imageAlt": "Streaming platform interface"
+  },
+  {
+    "slug": "best-horror-movies-2024",
+    "title": "Best Horror Movies of 2024 - Scariest Films to Watch",
+    "excerpt": "From psychological thrillers to supernatural scares, discover the most terrifying horror movies of 2024 that will keep you up at night.",
+    "date": "2024-01-25",
+    "author": "Horror Desk",
+    "readTime": "9 min read",
+    "category": "Horror",
+    "image": "https://image.tmdb.org/t/p/w780/7nJ5Wz7n1Y5g7MZz8cV8s8eZzYH.jpg",
+    "imageAlt": "Horror movie atmosphere"
+  },
+  {
+    "slug": "romantic-movies-valentines",
+    "title": "Top 20 Romantic Movies Perfect for Date Night",
+    "excerpt": "Set the mood with these heartwarming romantic films. From classic love stories to modern rom-coms, find the perfect movie for your special evening.",
+    "date": "2024-02-01",
+    "author": "Romance Team",
+    "readTime": "10 min read",
+    "category": "Romance",
+    "image": "https://image.tmdb.org/t/p/w780/3zXceNTtyj5FLjwQXuPvLYK5YYL.jpg",
+    "imageAlt": "Romantic movie couple"
+  },
+  {
+    "slug": "anime-movies-must-watch",
+    "title": "25 Anime Movies Every Fan Must Watch",
+    "excerpt": "Explore the best anime films from Studio Ghibli masterpieces to modern classics. A comprehensive guide to essential anime cinema.",
+    "date": "2024-02-05",
+    "author": "Anime Squad",
+    "readTime": "14 min read",
+    "category": "Animation",
+    "image": "https://image.tmdb.org/t/p/w780/Ab8mkHmkYADjU7wQiOkia9BzGvS.jpg",
+    "imageAlt": "Anime movie visuals"
+  },
+  {
+    "slug": "free-streaming-sites-comparison",
+    "title": "CineHub vs Other Free Streaming Sites - Complete Comparison",
+    "excerpt": "Compare CineHub with HDToday, FMovies, 123Movies, and other free streaming platforms. See why CineHub is the superior choice.",
+    "date": "2024-02-10",
+    "author": "Platform Team",
+    "readTime": "8 min read",
+    "category": "Platform",
+    "image": "https://image.tmdb.org/t/p/w780/9ZlGiEKmcYrrxmiQEJDhjeT2kEW.jpg",
+    "imageAlt": "Streaming services comparison"
   }
 ]

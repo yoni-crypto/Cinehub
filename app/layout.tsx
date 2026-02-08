@@ -6,8 +6,10 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/lib/auth/auth-provider';
 import { Analytics } from '@vercel/analytics/next';
 import { StructuredData } from '@/components/seo/structured-data';
+import { FAQSchema } from '@/components/seo/faq-schema';
 import { KeyboardShortcuts } from '@/components/keyboard-shortcuts';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { UmamiTracker } from '@/components/analytics/umami-tracker';
 import { Suspense } from 'react';
 
 
@@ -78,6 +80,7 @@ export const metadata: Metadata = {
     description: 'Stream 1000s of movies and TV shows for free in HD. No sign up, no ads. Watch instantly!',
     images: ['/og-image.jpg'],
     creator: '@cinehub',
+    site: '@cinehub',
   },
   robots: {
     index: true,
@@ -107,10 +110,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <StructuredData />
+        <FAQSchema />
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script defer src="https://cloud.umami.is/script.js" data-website-id="75dacefb-9327-4e41-894e-15746ab91235"></script>
       </head>
       <body className={`${dmSans.variable} min-h-screen antialiased`}>
@@ -122,6 +126,9 @@ export default function RootLayout({
         >
           <ErrorBoundary>
             <AuthProvider>
+              <Suspense fallback={null}>
+                <UmamiTracker />
+              </Suspense>
               <KeyboardShortcuts />
               {children}
               <Toaster position="top-right" richColors />

@@ -1,45 +1,72 @@
-interface FAQSchemaProps {
-  movieTitle: string;
-  movieYear?: number;
-}
+"use client";
 
-export function FAQSchema({ movieTitle, movieYear }: FAQSchemaProps) {
-  const year = movieYear ? ` (${movieYear})` : '';
-  
-  const faqSchema = {
+export function FAQSchema() {
+  const faqData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
       {
         "@type": "Question",
-        "name": `How can I watch ${movieTitle}${year} online for free?`,
+        "name": "Is CineHub free to use?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `You can watch ${movieTitle}${year} online for free on CineHub without any registration or sign-up. Simply click the play button and start streaming instantly in HD quality.`
+          "text": "Yes, CineHub is completely free to use. You can watch unlimited movies and TV shows without any subscription or registration required."
         }
       },
       {
         "@type": "Question",
-        "name": `Is it free to watch ${movieTitle} on CineHub?`,
+        "name": "Do I need to sign up to watch movies?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `Yes, ${movieTitle} is completely free to watch on CineHub. No subscription, no payment, no credit card required. Stream unlimited movies and TV shows for free.`
+          "text": "No sign up is required. You can start watching movies and TV shows instantly without creating an account. However, creating a free account allows you to save favorites and create watchlists."
         }
       },
       {
         "@type": "Question",
-        "name": `Do I need to sign up to watch ${movieTitle}?`,
+        "name": "What quality are the movies available in?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `No sign-up required! Watch ${movieTitle} instantly without creating an account. CineHub offers free streaming with no registration needed.`
+          "text": "CineHub offers movies and TV shows in multiple quality options including HD (720p), Full HD (1080p), and select titles in 4K quality. The quality automatically adjusts based on your internet connection."
         }
       },
       {
         "@type": "Question",
-        "name": `What quality is ${movieTitle} available in?`,
+        "name": "How often is new content added?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `${movieTitle} is available in HD quality on CineHub. We provide high-definition streaming for the best viewing experience.`
+          "text": "New movies and TV shows are added daily to CineHub. We update our library regularly with the latest releases, trending content, and classic films."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I watch on mobile devices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, CineHub is fully responsive and works on all devices including smartphones, tablets, laptops, and desktop computers. You can watch anywhere, anytime."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is CineHub legal and safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CineHub aggregates content from various sources and provides links to streaming services. We recommend using a VPN for privacy and checking content availability in your region."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes CineHub better than HDToday or FMovies?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CineHub offers a cleaner interface, faster loading times, multiple server options, no intrusive ads, and a more reliable streaming experience compared to alternatives like HDToday, FMovies, or 123Movies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I download movies from CineHub?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CineHub is a streaming platform designed for online viewing. We recommend streaming content directly for the best experience and to ensure you're accessing the latest versions."
         }
       }
     ]
@@ -48,7 +75,7 @@ export function FAQSchema({ movieTitle, movieYear }: FAQSchemaProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }}
     />
   );
 }

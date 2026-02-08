@@ -1,10 +1,35 @@
-'use client';
-
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import blogPosts from '@/data/blog-posts.json';
+
+export const metadata: Metadata = {
+  title: 'CineHub Blog - Movie Reviews, Streaming Guides & Entertainment News',
+  description: 'Expert movie reviews, streaming guides, hidden gems, and the latest entertainment news. Discover what to watch next with CineHub\'s comprehensive blog.',
+  keywords: [
+    'movie blog',
+    'streaming guides',
+    'movie reviews',
+    'tv show recommendations',
+    'entertainment news',
+    'what to watch',
+    'best movies 2024',
+    'streaming tips',
+    'cinema blog',
+    'film reviews'
+  ],
+  openGraph: {
+    title: 'CineHub Blog - Movie Reviews & Streaming Guides',
+    description: 'Expert insights, streaming guides, and the latest in entertainment',
+    type: 'website',
+    url: 'https://cinehub1.vercel.app/blog',
+  },
+  alternates: {
+    canonical: 'https://cinehub1.vercel.app/blog',
+  },
+};
 
 export default function BlogPage() {
   return (

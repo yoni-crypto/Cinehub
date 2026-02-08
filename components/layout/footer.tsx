@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-background border-t border-border mt-16">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 xl:gap-6 mb-8">
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-1.5 mb-4">
               <img src="/logo.png" alt="CineHub" className="h-8 w-auto" />
@@ -43,21 +43,52 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-foreground font-semibold mb-3 text-sm">By Year</h3>
+            <h3 className="text-foreground font-semibold mb-3 text-sm">Popular Genres</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/year/2024" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
-                  2024
+                <Link href="/genre/action" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Action Movies
                 </Link>
               </li>
               <li>
-                <Link href="/year/2023" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
-                  2023
+                <Link href="/genre/comedy" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Comedy Movies
                 </Link>
               </li>
               <li>
-                <Link href="/year/2022" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
-                  2022
+                <Link href="/genre/horror" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Horror Movies
+                </Link>
+              </li>
+              <li>
+                <Link href="/genre/thriller" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Thriller Movies
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-foreground font-semibold mb-3 text-sm">More Genres</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/genre/drama" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Drama Movies
+                </Link>
+              </li>
+              <li>
+                <Link href="/genre/romance" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Romance Movies
+                </Link>
+              </li>
+              <li>
+                <Link href="/genre/sci-fi" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Sci-Fi Movies
+                </Link>
+              </li>
+              <li>
+                <Link href="/genre/animation" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Animation Movies
                 </Link>
               </li>
             </ul>
@@ -97,6 +128,11 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border pt-8">
+          <div className="mb-6">
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              <strong className="text-foreground">CineHub</strong> - Your ultimate destination to watch free movies and TV shows online in HD quality. Stream thousands of popular films, trending series, and new releases without registration. Best free alternative to HDToday, FMovies, 123Movies, and other streaming sites. Watch action movies, comedy films, horror movies, thriller series, drama shows, romance movies, sci-fi films, and more. Updated daily with the latest content.
+            </p>
+          </div>
           <p className="text-muted-foreground text-xs text-center">
             © 2024 CineHub. All rights reserved. Powered by TMDB API.
           </p>

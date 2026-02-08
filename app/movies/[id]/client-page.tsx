@@ -225,7 +225,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
   return (
     <div className="min-h-screen bg-background">
       <MovieStructuredData movie={movie} credits={credits} />
-      <FAQSchema movieTitle={movie.title} movieYear={typeof releaseYear === 'number' ? releaseYear : undefined} />
+      <FAQSchema />
       <BreadcrumbSchema items={[
         { name: 'Home', url: 'https://cinehub1.vercel.app' },
         { name: 'Movies', url: 'https://cinehub1.vercel.app/movies' },
