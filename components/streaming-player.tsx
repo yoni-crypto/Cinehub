@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Play, ExternalLink, Maximize, X } from 'lucide-react';
 
 interface StreamingPlayerProps {
@@ -14,12 +14,33 @@ export function StreamingPlayer({ url, title, onClose, onError }: StreamingPlaye
   const [playerMethod, setPlayerMethod] = useState<'iframe' | 'popup' | 'redirect'>('iframe');
   const [showFallback, setShowFallback] = useState(false);
   const [iframeError, setIframeError] = useState(false);
+  const [overlayActive, setOverlayActive] = useState(true);
+  const overlayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // Try iframe first, even on mobile
     setPlayerMethod('iframe');
     setShowFallback(false);
   }, [url]);
+
+  // Reset overlay on URL change, auto-drop after 4s
+  useEffect(() => {
+    setOverlayActive(true);
+    if (overlayTimer.current) clearTimeout(overlayTimer.current);
+    overlayTimer.current = setTimeout(() => setOverlayActive(false), 1500);
+    return () => { if (overlayTimer.current) clearTimeout(overlayTimer.current); };
+  }, [url]);
+
+  // Steal focus back any time the iframe opens a pop-under
+  useEffect(() => {
+    const refocus = () => setTimeout(() => window.focus(), 50);
+    window.addEventListener('blur', refocus);
+    return () => window.removeEventListener('blur', refocus);
+  }, []);
+
+  const handleOverlayClick = () => {
+    if (overlayTimer.current) clearTimeout(overlayTimer.current);
+    setTimeout(() => setOverlayActive(false), 300);
+  };
 
   const openInPopup = () => {
     const popup = window.open(
@@ -113,7 +134,7 @@ export function StreamingPlayer({ url, title, onClose, onError }: StreamingPlaye
       <iframe
         src={url}
         className="w-full h-full"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
         allowFullScreen
         frameBorder="0"
         title={title}
@@ -122,6 +143,15 @@ export function StreamingPlayer({ url, title, onClose, onError }: StreamingPlaye
         onError={handleIframeError}
         onLoad={() => setIframeError(false)}
       />
+      {overlayActive && (
+        <div
+          className="absolute inset-0 z-10 bg-black/70 flex flex-col items-center justify-center gap-3 cursor-pointer"
+          onClick={handleOverlayClick}
+        >
+          <div className="w-10 h-10 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+          <span className="text-white/60 text-xs">Loading player…</span>
+        </div>
+      )}
       
       {/* Control overlay */}
       <div className="absolute top-2 right-2 flex gap-1">

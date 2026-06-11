@@ -23,12 +23,12 @@ interface TVShowClientPageProps {
 }
 
 const TV_STREAMING_SOURCES: Array<{ name: string; buildUrl: (tvShowId: number, season: number, episode: number) => string }> = [
-  { name: 'VidSrc',     buildUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}` },
-  { name: 'AutoEmbed',  buildUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}` },
-  { name: 'VidLink',    buildUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}` },
-  { name: 'Smashy',     buildUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}` },
+  { name: 'VidLink',    buildUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false` },
   { name: '2Embed',     buildUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}` },
+  { name: 'AutoEmbed',  buildUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}` },
   { name: 'SuperEmbed', buildUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` },
+  { name: 'VidSrc',     buildUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}` },
+  { name: 'Smashy',     buildUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}` },
   { name: 'EmbedAPI',   buildUrl: (id, s, e) => `https://player.embed-api.stream/?id=${id}&s=${s}&e=${e}` },
 ];
 

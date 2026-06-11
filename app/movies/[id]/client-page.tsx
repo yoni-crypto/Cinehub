@@ -25,12 +25,12 @@ interface ClientPageProps {
 }
 
 const STREAMING_SOURCES: Array<{ name: string; buildUrl: (movieId: number) => string }> = [
-  { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}` },
-  { name: 'AutoEmbed',  buildUrl: (id) => `https://autoembed.co/movie/tmdb/${id}` },
-  { name: 'VidLink',    buildUrl: (id) => `https://vidlink.pro/movie/${id}` },
-  { name: 'Smashy',     buildUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}` },
+  { name: 'VidLink',    buildUrl: (id) => `https://vidlink.pro/movie/${id}?autoplay=true&title=false` },
   { name: '2Embed',     buildUrl: (id) => `https://www.2embed.cc/embed/${id}` },
+  { name: 'AutoEmbed',  buildUrl: (id) => `https://autoembed.co/movie/tmdb/${id}` },
   { name: 'SuperEmbed', buildUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1` },
+  { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}` },
+  { name: 'Smashy',     buildUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}` },
   { name: 'EmbedAPI',   buildUrl: (id) => `https://player.embed-api.stream/?id=${id}` },
 ];
 

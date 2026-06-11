@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Play, X, ServerCrash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { tmdbApi } from '@/lib/api/tmdb';
@@ -11,26 +11,12 @@ interface Server {
   tvUrl: (id: number, season: number, episode: number) => string;
 }
 
+// VidLink first — cleanest, least aggressive ads
 const SERVERS: Server[] = [
   {
-    name: 'VidSrc',
-    movieUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}`,
-    tvUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}`,
-  },
-  {
-    name: 'AutoEmbed',
-    movieUrl: (id) => `https://autoembed.co/movie/tmdb/${id}`,
-    tvUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}`,
-  },
-  {
     name: 'VidLink',
-    movieUrl: (id) => `https://vidlink.pro/movie/${id}`,
-    tvUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
-  },
-  {
-    name: 'Smashy',
-    movieUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}`,
-    tvUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`,
+    movieUrl: (id) => `https://vidlink.pro/movie/${id}?autoplay=true&title=false`,
+    tvUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false`,
   },
   {
     name: '2Embed',
@@ -38,9 +24,24 @@ const SERVERS: Server[] = [
     tvUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
   },
   {
+    name: 'AutoEmbed',
+    movieUrl: (id) => `https://autoembed.co/movie/tmdb/${id}`,
+    tvUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}`,
+  },
+  {
     name: 'SuperEmbed',
     movieUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
     tvUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`,
+  },
+  {
+    name: 'VidSrc',
+    movieUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}`,
+    tvUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}`,
+  },
+  {
+    name: 'Smashy',
+    movieUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}`,
+    tvUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`,
   },
   {
     name: 'EmbedAPI',
@@ -74,6 +75,27 @@ export function StreamingPlayer({
 }: StreamingPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(autoplay);
   const [serverIndex, setServerIndex] = useState(0);
+  // Overlay sits on top of the iframe to absorb the first click that ad scripts wait for
+  const [overlayActive, setOverlayActive] = useState(true);
+  const overlayTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Steal focus back if the iframe somehow opens a pop-under
+  useEffect(() => {
+    if (!isPlaying) return;
+    const refocus = () => setTimeout(() => window.focus(), 50);
+    window.addEventListener('blur', refocus);
+    return () => window.removeEventListener('blur', refocus);
+  }, [isPlaying]);
+
+  // Reset overlay whenever the server or content changes
+  useEffect(() => {
+    setOverlayActive(true);
+    if (overlayTimer.current) clearTimeout(overlayTimer.current);
+    // Auto-drop the overlay after 4s — by then autoplay has started
+    // and the iframe's fake-click layer is no longer the threat
+    overlayTimer.current = setTimeout(() => setOverlayActive(false), 1500);
+    return () => { if (overlayTimer.current) clearTimeout(overlayTimer.current); };
+  }, [serverIndex, movieId, seasonNumber, episodeNumber]);
 
   const getUrl = (index: number) => {
     const server = SERVERS[index];
@@ -87,12 +109,20 @@ export function StreamingPlayer({
   const handleClose = () => {
     setIsPlaying(false);
     setServerIndex(0);
+    setOverlayActive(true);
     onClose?.();
   };
 
   const handleServerChange = (index: number) => {
     setServerIndex(index);
     setIsPlaying(true);
+  };
+
+  // User clicked our overlay — absorb it (kills the ad trigger),
+  // then drop the overlay after a short delay so the NEXT click hits the real player
+  const handleOverlayClick = () => {
+    if (overlayTimer.current) clearTimeout(overlayTimer.current);
+    setTimeout(() => setOverlayActive(false), 300);
   };
 
   if (!isPlaying) {
@@ -165,17 +195,28 @@ export function StreamingPlayer({
         )}
       </div>
 
-      <div className="aspect-video">
+      <div className="aspect-video relative">
         <iframe
           key={`${serverIndex}-${movieId}-${seasonNumber}-${episodeNumber}`}
           src={getUrl(serverIndex)}
           title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
           className="w-full h-full"
           style={{ border: 'none' }}
           referrerPolicy="no-referrer"
         />
+        {/* Loading overlay — visible so users know the player is buffering,
+            blocks ad-click triggers during the first 1.5s, then auto-drops. */}
+        {overlayActive && (
+          <div
+            className="absolute inset-0 z-10 bg-black/70 flex flex-col items-center justify-center gap-3 cursor-pointer"
+            onClick={handleOverlayClick}
+          >
+            <div className="w-10 h-10 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+            <span className="text-white/60 text-xs">Loading player…</span>
+          </div>
+        )}
       </div>
     </div>
   );
