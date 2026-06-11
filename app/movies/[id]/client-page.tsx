@@ -24,13 +24,14 @@ interface ClientPageProps {
   movieId: number;
 }
 
-// Order must match app/api/streaming/check/route.ts — XYZ first (auto sound), then fallbacks
 const STREAMING_SOURCES: Array<{ name: string; buildUrl: (movieId: number) => string }> = [
-  { name: 'VidSrc XYZ', buildUrl: (id) => `https://vidsrc.xyz/embed/movie/${id}?autoplay=1` },
-  { name: 'VidSrc', buildUrl: (id) => `https://vidsrc.cc/v2/embed/movie/${id}?autoplay=1` },
-  { name: 'Embedder', buildUrl: (id) => `https://embedder.net/e/movie?tmdb=${id}&autoplay=1` },
-  { name: 'VidSrc.me', buildUrl: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}&autoplay=1` },
-  { name: 'VidSrc.to', buildUrl: (id) => `https://vidsrc.to/embed/movie/${id}?autoplay=1` },
+  { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}` },
+  { name: 'AutoEmbed',  buildUrl: (id) => `https://autoembed.co/movie/tmdb/${id}` },
+  { name: 'VidLink',    buildUrl: (id) => `https://vidlink.pro/movie/${id}` },
+  { name: 'Smashy',     buildUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}` },
+  { name: '2Embed',     buildUrl: (id) => `https://www.2embed.cc/embed/${id}` },
+  { name: 'SuperEmbed', buildUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1` },
+  { name: 'EmbedAPI',   buildUrl: (id) => `https://player.embed-api.stream/?id=${id}` },
 ];
 
 function buildEmbedUrl(movieId: number, serverIndex: number): string {

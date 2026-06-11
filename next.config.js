@@ -3,16 +3,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: { 
-    unoptimized: false,
+  images: {
+    unoptimized: true,
     domains: ['image.tmdb.org', 'img.youtube.com'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-    ],
-    formats: ['image/webp', 'image/avif']
   },
   compress: true,
   poweredByHeader: false,

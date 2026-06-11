@@ -1,12 +1,53 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Play, X } from 'lucide-react';
+import { useState } from 'react';
+import { Play, X, ServerCrash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { streamingApi } from '@/lib/api/streaming';
 import { tmdbApi } from '@/lib/api/tmdb';
-import { AdBlockDetector } from '@/components/ad-block-detector';
-import { LoadingScreen } from '@/components/loading-screen';
+
+interface Server {
+  name: string;
+  movieUrl: (id: number) => string;
+  tvUrl: (id: number, season: number, episode: number) => string;
+}
+
+const SERVERS: Server[] = [
+  {
+    name: 'VidSrc',
+    movieUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}`,
+    tvUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}`,
+  },
+  {
+    name: 'AutoEmbed',
+    movieUrl: (id) => `https://autoembed.co/movie/tmdb/${id}`,
+    tvUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}`,
+  },
+  {
+    name: 'VidLink',
+    movieUrl: (id) => `https://vidlink.pro/movie/${id}`,
+    tvUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}`,
+  },
+  {
+    name: 'Smashy',
+    movieUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}`,
+    tvUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`,
+  },
+  {
+    name: '2Embed',
+    movieUrl: (id) => `https://www.2embed.cc/embed/${id}`,
+    tvUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
+  },
+  {
+    name: 'SuperEmbed',
+    movieUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
+    tvUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`,
+  },
+  {
+    name: 'EmbedAPI',
+    movieUrl: (id) => `https://player.embed-api.stream/?id=${id}`,
+    tvUrl: (id, s, e) => `https://player.embed-api.stream/?id=${id}&s=${s}&e=${e}`,
+  },
+];
 
 interface StreamingPlayerProps {
   movieId: number;
@@ -28,63 +69,44 @@ export function StreamingPlayer({
   autoplay = false,
   onClose,
   isTVShow = false,
-  seasonNumber,
-  episodeNumber
+  seasonNumber = 1,
+  episodeNumber = 1,
 }: StreamingPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(autoplay);
-  const [hasStartedPlaying, setHasStartedPlaying] = useState(autoplay);
-  const [embedUrl, setEmbedUrl] = useState<string | null>(null);
-  const [subtitles, setSubtitles] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverIndex, setServerIndex] = useState(0);
 
-  useEffect(() => {
-    if (isPlaying && !embedUrl) {
-      fetchEmbedUrl();
-    }
-  }, [isPlaying, embedUrl]);
-
-  const fetchEmbedUrl = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Use the reliable source directly
-      const directUrl = `https://vidsrc.cc/v2/embed/movie/${movieId}`;
-      console.log('Using direct streaming URL:', directUrl);
-      setEmbedUrl(directUrl);
-    } catch (err) {
-      setError('Failed to load streaming');
-      console.error('Error setting embed URL:', err);
-    } finally {
-      setIsLoading(false);
-    }
+  const getUrl = (index: number) => {
+    const server = SERVERS[index];
+    return isTVShow
+      ? server.tvUrl(movieId, seasonNumber, episodeNumber)
+      : server.movieUrl(movieId);
   };
 
-  const handlePlay = () => {
-    setIsPlaying(true);
-    setHasStartedPlaying(true);
-  };
+  const handlePlay = () => setIsPlaying(true);
 
   const handleClose = () => {
     setIsPlaying(false);
-    setHasStartedPlaying(false);
-    setEmbedUrl(null);
-    setError(null);
+    setServerIndex(0);
     onClose?.();
   };
 
-  if (!isPlaying && !hasStartedPlaying) {
+  const handleServerChange = (index: number) => {
+    setServerIndex(index);
+    setIsPlaying(true);
+  };
+
+  if (!isPlaying) {
     return (
       <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
         <img
-          src={backdropPath ? tmdbApi.getBackdropUrl(backdropPath, 'w1280') :
-               posterPath ? tmdbApi.getPosterUrl(posterPath, 'w500') :
-               '/placeholder-movie.jpg'}
+          src={
+            backdropPath ? tmdbApi.getBackdropUrl(backdropPath, 'w1280') :
+            posterPath ? tmdbApi.getPosterUrl(posterPath, 'w500') :
+            '/placeholder.png'
+          }
           alt={title}
           className="w-full h-full object-cover"
         />
-
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
           <div className="text-center">
             <Button
@@ -98,67 +120,6 @@ export function StreamingPlayer({
             <p className="text-gray-300 text-sm">Click to start streaming</p>
           </div>
         </div>
-
-        {onClose && (
-          <Button
-            size="sm"
-            variant="secondary"
-            className="absolute top-4 right-4 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 border-0"
-            onClick={handleClose}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
-        <LoadingScreen message="Loading stream…" compact />
-        {onClose && (
-          <Button
-            size="sm"
-            variant="secondary"
-            className="absolute top-4 right-4 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 border-0 z-10"
-            onClick={handleClose}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        )}
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
-        <AdBlockDetector />
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <p className="text-red-400 text-sm mb-4">{error}</p>
-            <div className="space-y-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                className="bg-red-600 hover:bg-red-700 text-white mr-2"
-                onClick={handlePlay}
-              >
-                Try Again
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-white border-white/30"
-                onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(title + ' trailer')}`, '_blank')}
-              >
-                Watch Trailer Instead
-              </Button>
-            </div>
-          </div>
-        </div>
-
         {onClose && (
           <Button
             size="sm"
@@ -174,63 +135,48 @@ export function StreamingPlayer({
   }
 
   return (
-    <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
-      {embedUrl && (
+    <div className="relative w-full bg-black rounded-lg overflow-hidden">
+      {/* Server switcher bar */}
+      <div className="flex items-center gap-1.5 px-3 py-2 bg-black/90 border-b border-white/10 flex-wrap">
+        <ServerCrash className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+        <span className="text-xs text-gray-400 mr-1 shrink-0">Server:</span>
+        {SERVERS.map((server, i) => (
+          <button
+            key={server.name}
+            onClick={() => handleServerChange(i)}
+            className={`text-xs px-2 py-0.5 rounded transition-colors ${
+              i === serverIndex
+                ? 'bg-red-600 text-white'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            }`}
+          >
+            {server.name}
+          </button>
+        ))}
+        {onClose && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto h-6 w-6 p-0 text-gray-400 hover:text-white"
+            onClick={handleClose}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+
+      <div className="aspect-video">
         <iframe
-          src={embedUrl}
+          key={`${serverIndex}-${movieId}-${seasonNumber}-${episodeNumber}`}
+          src={getUrl(serverIndex)}
           title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
           allowFullScreen
           className="w-full h-full"
-          frameBorder="0"
-          loading="lazy"
-          referrerPolicy="no-referrer"
           style={{ border: 'none' }}
-          onLoad={() => {
-            console.log('Streaming iframe loaded successfully');
-            // Try to unmute after load
-            setTimeout(() => {
-              const iframe = document.querySelector('iframe');
-              if (iframe && iframe.contentWindow) {
-                try {
-                  iframe.contentWindow.postMessage({ action: 'unmute' }, '*');
-                } catch (e) {
-                  console.log('Could not unmute automatically');
-                }
-              }
-            }, 1000);
-          }}
-          onError={() => {
-            console.error('Streaming iframe failed to load, trying alternative...');
-            const altSources = [
-              `https://vidsrc.xyz/embed/movie/${movieId}`,
-              `https://embedder.net/e/movie?tmdb=${movieId}`,
-              `https://vidsrc.me/embed/movie?tmdb=${movieId}`
-            ];
-            
-            const currentIndex = altSources.findIndex(src => embedUrl.includes(src.split('/')[2]));
-            const nextSource = altSources[currentIndex + 1] || altSources[0];
-            
-            console.log('Trying next source:', nextSource);
-            setEmbedUrl(nextSource);
-          }}
+          referrerPolicy="no-referrer"
         />
-      )}
-
-      {onClose && (
-        <Button
-          size="sm"
-          variant="secondary"
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 h-8 w-8 sm:h-10 sm:w-10 p-0 bg-black/60 hover:bg-black/80 border-0 z-10"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onClose();
-          }}
-        >
-          <X className="w-4 h-4 sm:w-5 sm:h-5" />
-        </Button>
-      )}
+      </div>
     </div>
   );
 }
