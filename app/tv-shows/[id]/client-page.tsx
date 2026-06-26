@@ -22,14 +22,16 @@ interface TVShowClientPageProps {
   tvShowId: number;
 }
 
-const TV_STREAMING_SOURCES: Array<{ name: string; buildUrl: (tvShowId: number, season: number, episode: number) => string }> = [
+const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL ?? 'http://localhost:3001';
+
+const TV_STREAMING_SOURCES: Array<{ name: string; buildUrl: (tvShowId: number, season: number, episode: number) => string; native?: boolean }> = [
+  { name: 'StreamCore', buildUrl: (id, s, e) => `${STREAMCORE_URL}/tv/${id}/${s}/${e}`, native: true },
   { name: 'VidLink',    buildUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false` },
   { name: '2Embed',     buildUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}` },
   { name: 'AutoEmbed',  buildUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}` },
   { name: 'SuperEmbed', buildUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` },
   { name: 'VidSrc',     buildUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}` },
   { name: 'Smashy',     buildUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}` },
-  { name: 'EmbedAPI',   buildUrl: (id, s, e) => `https://player.embed-api.stream/?id=${id}&s=${s}&e=${e}` },
 ];
 
 function buildTVEmbedUrl(tvShowId: number, season: number, episode: number, serverIndex: number): string {
@@ -369,9 +371,10 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                     </div>
                   </div>
                   <div className="p-1.5">
-                    <StreamingPlayer 
+                    <StreamingPlayer
                       url={buildTVEmbedUrl(tvShowId, selectedSeason, selectedEpisode, selectedServer)}
                       title={`${tvShow.name} S${selectedSeason}E${selectedEpisode}`}
+                      onError={() => setSelectedServer(s => s < STREAMING_SOURCES.length - 1 ? s + 1 : s)}
                     />
                   </div>
                 </div>
@@ -431,7 +434,9 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                             : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted'
                         }`}
                       >
-                        <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
+                        <span className="text-[10px] uppercase tracking-wide opacity-80">
+                          {TV_STREAMING_SOURCES[idx].native ? 'Ad-free ★' : 'Server'}
+                        </span>
                         <span className="flex items-center gap-1.5 font-medium mt-0.5">
                           <Play className="w-3.5 h-3.5" fill="currentColor" />
                           {TV_STREAMING_SOURCES[idx].name}

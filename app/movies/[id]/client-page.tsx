@@ -24,14 +24,16 @@ interface ClientPageProps {
   movieId: number;
 }
 
-const STREAMING_SOURCES: Array<{ name: string; buildUrl: (movieId: number) => string }> = [
+const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL ?? 'http://localhost:3001';
+
+const STREAMING_SOURCES: Array<{ name: string; buildUrl: (movieId: number) => string; native?: boolean }> = [
+  { name: 'StreamCore', buildUrl: (id) => `${STREAMCORE_URL}/movie/${id}`, native: true },
   { name: 'VidLink',    buildUrl: (id) => `https://vidlink.pro/movie/${id}?autoplay=true&title=false` },
   { name: '2Embed',     buildUrl: (id) => `https://www.2embed.cc/embed/${id}` },
   { name: 'AutoEmbed',  buildUrl: (id) => `https://autoembed.co/movie/tmdb/${id}` },
   { name: 'SuperEmbed', buildUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1` },
   { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}` },
   { name: 'Smashy',     buildUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}` },
-  { name: 'EmbedAPI',   buildUrl: (id) => `https://player.embed-api.stream/?id=${id}` },
 ];
 
 function buildEmbedUrl(movieId: number, serverIndex: number): string {
@@ -330,9 +332,10 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                     </div>
                   </div>
                   <div className="p-1.5">
-                    <StreamingPlayer 
+                    <StreamingPlayer
                       url={buildEmbedUrl(movieId, selectedServer)}
                       title={movie.title}
+                      onError={() => setSelectedServer(s => s < STREAMING_SOURCES.length - 1 ? s + 1 : s)}
                     />
                   </div>
                 </div>
@@ -390,7 +393,9 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                             : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted'
                         }`}
                       >
-                        <span className="text-[10px] uppercase tracking-wide opacity-80">Server</span>
+                        <span className="text-[10px] uppercase tracking-wide opacity-80">
+                          {STREAMING_SOURCES[idx].native ? 'Ad-free ★' : 'Server'}
+                        </span>
                         <span className="flex items-center gap-1.5 font-medium mt-0.5">
                           <Play className="w-3.5 h-3.5" fill="currentColor" />
                           {STREAMING_SOURCES[idx].name}
