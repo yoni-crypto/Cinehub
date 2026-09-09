@@ -33,7 +33,7 @@ export function AdBlockDetector() {
     <Alert className="mb-4 border-yellow-500/50 bg-yellow-500/10">
       <AlertTriangle className="h-4 w-4 text-yellow-500" />
       <AlertDescription className="text-yellow-200">
-        Ad blocker detected. If streaming doesn't work, try disabling your ad blocker for this site or use the alternative "Watch Trailer" option.
+        We run a few ads to keep CineHub 100% free. If streaming doesn't work, please whitelist this site or disable your ad blocker.
       </AlertDescription>
     </Alert>
   );
