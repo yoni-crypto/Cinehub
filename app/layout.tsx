@@ -11,6 +11,7 @@ import { KeyboardShortcuts } from '@/components/keyboard-shortcuts';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { UmamiTracker } from '@/components/analytics/umami-tracker';
 import { ServiceWorkerRegister } from '@/components/service-worker-register';
+import { AdScriptLoader } from '@/components/ads/ad-script-loader';
 import { Suspense } from 'react';
 
 
@@ -132,6 +133,9 @@ export default function RootLayout({
               </Suspense>
               <KeyboardShortcuts />
               <ServiceWorkerRegister />
+              <AdScriptLoader configKey="pushNotifications" />
+              <AdScriptLoader configKey="vignette" />
+              <AdScriptLoader configKey="interstitial" />
               {children}
               <Toaster position="top-right" richColors />
               <Suspense fallback={null}>

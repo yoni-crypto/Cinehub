@@ -6,6 +6,7 @@ import { MovieGrid } from '@/components/movie/movie-grid';
 import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { MovieGridSkeleton } from '@/components/movie/movie-skeleton';
 import { TVShowGridSkeleton } from '@/components/tv-shows/tv-show-skeleton';
+import { AdSlot } from '@/components/ads/ad-slot';
 
 function ContentTabs({ activeTab, onTabChange }: { activeTab: 'movies' | 'tv-shows'; onTabChange: (tab: 'movies' | 'tv-shows') => void }) {
   return (
@@ -112,6 +113,7 @@ export default function HomeClient() {
               title={index === 0 ? '' : section.title}
             />
           )}
+          {index === 1 && <AdSlot configKey="inPagePush" className="my-10" minHeight={90} />}
         </div>
       ))}
     </>

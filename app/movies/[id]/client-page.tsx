@@ -11,6 +11,7 @@ import { MovieGrid } from '@/components/movie/movie-grid';
 import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
 import { AdBlockDetector } from '@/components/ad-block-detector';
+import { AdSlot } from '@/components/ads/ad-slot';
 import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
@@ -598,6 +599,9 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                     </div>
                   </div>
                 )}
+
+                {/* Inline native/banner ad — high visibility above cast */}
+                <AdSlot configKey="inPagePush" className="mb-8" minHeight={90} />
 
                 {/* Cast */}
                 {credits.cast.length > 0 && (

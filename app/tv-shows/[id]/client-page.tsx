@@ -11,6 +11,7 @@ import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
 import { AdBlockDetector } from '@/components/ad-block-detector';
+import { AdSlot } from '@/components/ads/ad-slot';
 import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
@@ -647,6 +648,8 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
             <p className="text-muted-foreground">No episodes available for this season.</p>
           )}
         </div>
+
+        <AdSlot configKey="inPagePush" className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4" minHeight={90} />
 
         {/* Cast */}
         {credits.cast.length > 0 && (
