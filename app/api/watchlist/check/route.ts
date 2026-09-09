@@ -5,6 +5,8 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Watchlist, MediaEntryType } from '@/lib/models/FavoriteWatchlist';
 import mongoose from 'mongoose';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -25,8 +27,10 @@ export async function GET(request: NextRequest) {
 
     await connectToDatabase();
 
+    const u = new mongoose.Types.ObjectId(session.user.id);
+
     const existing = await Watchlist.findOne({
-      user: new mongoose.Types.ObjectId(session.user.id),
+      user: u,
       mediaId,
       mediaType,
     }).select('_id');
