@@ -12,7 +12,6 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { UmamiTracker } from '@/components/analytics/umami-tracker';
 import { ServiceWorkerRegister } from '@/components/service-worker-register';
 import { AdScriptLoader } from '@/components/ads/ad-script-loader';
-import { MultiTagLoader } from '@/components/ads/multi-tag';
 import { Suspense } from 'react';
 
 
@@ -119,6 +118,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script defer src="https://cloud.umami.is/script.js" data-website-id="75dacefb-9327-4e41-894e-15746ab91235"></script>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="278163" async data-cfasync="false"></script>
       </head>
       <body className={`${dmSans.variable} min-h-screen antialiased`}>
         <ThemeProvider
@@ -134,7 +134,6 @@ export default function RootLayout({
               </Suspense>
               <KeyboardShortcuts />
               <ServiceWorkerRegister />
-              <MultiTagLoader />
               <AdScriptLoader configKey="pushNotifications" />
               <AdScriptLoader configKey="vignette" />
               <AdScriptLoader configKey="interstitial" />
