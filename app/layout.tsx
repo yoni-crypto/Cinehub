@@ -10,6 +10,7 @@ import { FAQSchema } from '@/components/seo/faq-schema';
 import { KeyboardShortcuts } from '@/components/keyboard-shortcuts';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { UmamiTracker } from '@/components/analytics/umami-tracker';
+import { ServiceWorkerRegister } from '@/components/service-worker-register';
 import { Suspense } from 'react';
 
 
@@ -130,6 +131,7 @@ export default function RootLayout({
                 <UmamiTracker />
               </Suspense>
               <KeyboardShortcuts />
+              <ServiceWorkerRegister />
               {children}
               <Toaster position="top-right" richColors />
               <Suspense fallback={null}>

@@ -1,3 +1,10 @@
+self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 11759543
+}
+self.lary = ""
+importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
+
 const CACHE_NAME = 'cinehub-v1';
 const urlsToCache = [
   '/',
