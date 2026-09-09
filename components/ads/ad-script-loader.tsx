@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { adsConfig, type AdFormatConfig, type AdFormatKey } from '@/lib/config/ads';
+import { adsConfig, adsEnabled, type AdFormatConfig, type AdFormatKey } from '@/lib/config/ads';
 
 interface AdScriptLoaderProps {
   configKey: AdFormatKey;
@@ -47,6 +47,8 @@ export function AdScriptLoader({ configKey }: AdScriptLoaderProps) {
   const firedRef = useRef(false);
 
   useEffect(() => {
+    if (!adsEnabled) return;
+
     const config = adsConfig[configKey] as AdFormatConfig;
     if (!config?.enabled) return;
     if (firedRef.current) return;

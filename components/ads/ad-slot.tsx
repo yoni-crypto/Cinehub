@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { adsConfig, type AdSlotConfig } from '@/lib/config/ads';
+import { adsConfig, adsEnabled, type AdSlotConfig } from '@/lib/config/ads';
 
 interface AdSlotProps {
   configKey: keyof typeof adsConfig;
@@ -12,6 +12,8 @@ interface AdSlotProps {
 export function AdSlot({ configKey, className = '', minHeight = 100 }: AdSlotProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+
+  if (!adsEnabled) return null;
 
   const config = adsConfig[configKey] as AdSlotConfig;
   if (!config?.enabled) return null;
