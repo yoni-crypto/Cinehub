@@ -12,11 +12,6 @@ import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
 import { AdBlockDetector } from '@/components/ad-block-detector';
 import { AdSlot } from '@/components/ads/ad-slot';
-import {
-  PlayGate,
-  shouldShowPlayGate,
-  markPlayGateShown,
-} from '@/components/ads/play-gate';
 import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
@@ -49,7 +44,6 @@ function buildEmbedUrl(movieId: number, serverIndex: number): string {
 
 export default function ClientPage({ movieId }: ClientPageProps) {
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
-  const [showGate, setShowGate] = useState(false);
   const [selectedServer, setSelectedServer] = useState(0);
   const [userSelectedServer, setUserSelectedServer] = useState(false);
   const [lightsOff, setLightsOff] = useState(false);
@@ -200,7 +194,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
 
 
   // Handle play button clicks - just open the player, no new tabs
-  const openPlayer = (serverIndex?: number) => {
+  const handlePlayClick = (serverIndex?: number) => {
     const idx = serverIndex ?? selectedServer;
     if (typeof serverIndex === 'number') {
       setSelectedServer(serverIndex);
@@ -229,21 +223,6 @@ export default function ClientPage({ movieId }: ClientPageProps) {
         title: movie.title,
         poster: movie.poster_path || ''
       });
-    }
-  };
-
-  // Ad-gate before the player, like top streaming sites — never covers the video
-  const handlePlayClick = (serverIndex?: number) => {
-    const idx = serverIndex ?? selectedServer;
-    if (typeof serverIndex === 'number') {
-      setSelectedServer(serverIndex);
-      setUserSelectedServer(true);
-    }
-    if (shouldShowPlayGate()) {
-      markPlayGateShown();
-      setShowGate(true);
-    } else {
-      openPlayer(idx);
     }
   };
 
@@ -676,15 +655,6 @@ export default function ClientPage({ movieId }: ClientPageProps) {
       </main>
 
       <Footer />
-
-      <PlayGate
-        open={showGate}
-        onDone={() => {
-          setShowGate(false);
-          openPlayer();
-        }}
-        onCancel={() => setShowGate(false)}
-      />
     </div>
   );
 }

@@ -12,11 +12,6 @@ import { WatchlistButton } from '@/components/movie/watchlist-button';
 import { FavoritesButton } from '@/components/movie/favorites-button';
 import { AdBlockDetector } from '@/components/ad-block-detector';
 import { AdSlot } from '@/components/ads/ad-slot';
-import {
-  PlayGate,
-  shouldShowPlayGate,
-  markPlayGateShown,
-} from '@/components/ads/play-gate';
 import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
@@ -48,8 +43,6 @@ function buildTVEmbedUrl(tvShowId: number, season: number, episode: number, serv
 export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   const seasonSelectorRef = useRef<HTMLDivElement>(null);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
-  const [showGate, setShowGate] = useState(false);
-  const pendingPlayRef = React.useRef<{ server?: number; season?: number; episode?: number }>({});
   const [selectedServer, setSelectedServer] = useState(0);
   const [userSelectedServer, setUserSelectedServer] = useState(false);
   const [lightsOff, setLightsOff] = useState(false);
@@ -254,18 +247,6 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
         episode: e,
         episodeName: episodeName
       });
-    }
-  };
-
-  // Ad-gate before player for direct play clicks (auto-play skips it)
-  const requestPlay = (serverIndex?: number, season?: number, episode?: number) => {
-    pendingPlayRef.current = { server: serverIndex, season, episode };
-    if (shouldShowPlayGate()) {
-      markPlayGateShown();
-      setShowGate(true);
-    } else {
-      const p = pendingPlayRef.current;
-      openPlayer(p.server, p.season, p.episode);
     }
   };
 
@@ -596,7 +577,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                     type="button"
                     onClick={() => {
                       const ep = seasonDetails?.episodes?.[0]?.episode_number ?? selectedEpisode;
-                      requestPlay(idx, selectedSeason, ep);
+                      openPlayer(idx, selectedSeason, ep);
                     }}
                     className="flex flex-col items-center min-w-[100px] px-4 py-2.5 rounded-lg border border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted text-sm transition-colors"
                   >
@@ -619,7 +600,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                 <div
                   key={episode.id}
                   onClick={() => {
-                    requestPlay(selectedServer, selectedSeason, episode.episode_number);
+                    openPlayer(selectedServer, selectedSeason, episode.episode_number);
                     // Track episode selection
                     if (typeof window !== 'undefined' && (window as any).umami) {
                       (window as any).umami.track('episode_select', {
@@ -716,16 +697,6 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
       </main>
 
       <Footer />
-
-      <PlayGate
-        open={showGate}
-        onDone={() => {
-          setShowGate(false);
-          const p = pendingPlayRef.current;
-          openPlayer(p.server, p.season, p.episode);
-        }}
-        onCancel={() => setShowGate(false)}
-      />
     </div>
   );
 }
