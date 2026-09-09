@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { CategoriesClientPage } from './client-page';
+import { MonetagMultiTag } from '@/components/ads/monetag-multi-tag';
 
 export const metadata: Metadata = {
   title: 'Movie Categories - CineHub',
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function CategoriesPage() {
   return (
     <div className="min-h-screen bg-background">
+      <MonetagMultiTag />
       <Header />
       
       <main className="pt-16">

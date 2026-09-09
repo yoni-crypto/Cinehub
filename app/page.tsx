@@ -9,6 +9,7 @@ import { TVShowGrid } from '@/components/tv-shows/tv-show-grid';
 import { MovieGridSkeleton } from '@/components/movie/movie-skeleton';
 import { TVShowGridSkeleton } from '@/components/tv-shows/tv-show-skeleton';
 import { ContinueWatching } from '@/components/continue-watching';
+import { MonetagMultiTag } from '@/components/ads/monetag-multi-tag';
 import HomeClient from './home-client';
 
 export const metadata: Metadata = {
@@ -118,6 +119,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <MonetagMultiTag />
       <HomeHeader />
 
       <main className="mt-8">
