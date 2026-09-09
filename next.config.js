@@ -10,12 +10,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
-  webpack: (config) => {
-    config.ignoreWarnings = [
-      { module: /node_modules\/(@supabase\/realtime-js)/ }
-    ];
-    return config;
-  },
   headers: async () => [
     {
       source: '/(.*)',

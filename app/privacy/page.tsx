@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-2xl font-semibold text-foreground mb-4">4. Data Security</h2>
               <p>
-                If you create an account, your data is encrypted and stored securely using Supabase infrastructure. 
+                If you create an account, your data is encrypted and stored securely in our MongoDB database. 
                 We implement industry-standard security measures to protect your information.
               </p>
             </section>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-2xl font-semibold text-foreground mb-4">6. Third-Party Services</h2>
               <p>
-                CineHub uses TMDB for movie data and Supabase for optional account features. 
+                CineHub uses TMDB for movie data and MongoDB for optional account features. 
                 We do not share your data with any third parties for marketing or advertising purposes.
               </p>
             </section>

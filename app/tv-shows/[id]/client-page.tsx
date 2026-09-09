@@ -374,7 +374,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                     <StreamingPlayer
                       url={buildTVEmbedUrl(tvShowId, selectedSeason, selectedEpisode, selectedServer)}
                       title={`${tvShow.name} S${selectedSeason}E${selectedEpisode}`}
-                      onError={() => setSelectedServer(s => s < STREAMING_SOURCES.length - 1 ? s + 1 : s)}
+                      onError={() => setSelectedServer(s => s < TV_STREAMING_SOURCES.length - 1 ? s + 1 : s)}
                     />
                   </div>
                 </div>

@@ -1,127 +1,94 @@
-import { getSupabaseClient } from '@/lib/supabase/client';
-
-const supabase = getSupabaseClient();
-
 export interface WatchlistItem {
-  id: number;
+  id: string;
   user_id: string;
   movie_id: number;
+  media_type: 'movie' | 'tv';
   movie_title: string;
   movie_poster: string;
   added_at: string;
 }
 
 export class WatchlistService {
-  private supabase: any;
+  async addToWatchlist(
+    movieId: number,
+    movieTitle: string,
+    moviePoster: string,
+    mediaType: 'movie' | 'tv' = 'movie'
+  ) {
+    const res = await fetch('/api/watchlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mediaId: movieId,
+        mediaType,
+        title: movieTitle,
+        poster: moviePoster,
+      }),
+    });
 
-  constructor() {
-    this.supabase = supabase;
-  }
-
-  async addToWatchlist(movieId: number, movieTitle: string, moviePoster: string) {
-    if (!this.supabase) {
-      throw new Error('Supabase is not configured. Please check your environment variables.');
-    }
-
-    const { data: { user } } = await this.supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('User must be authenticated to add movies to watchlist');
-    }
-
-    const { error } = await this.supabase
-      .from('watchlist')
-      .insert({
-        user_id: user.id,
-        movie_id: movieId,
-        movie_title: movieTitle,
-        movie_poster: moviePoster,
-      });
-
-    if (error) {
-      if (error.code === '23505') {
-        throw new Error('Movie is already in your watchlist');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        throw new Error('User must be authenticated to add movies to watchlist');
       }
-      throw error;
+      throw new Error(data.error || 'Failed to update watchlist');
+    }
+
+    const data = await res.json();
+    if (data.inWatchlist === false) {
+      throw new Error('Movie is already in your watchlist');
     }
 
     return { success: true };
   }
 
-  async removeFromWatchlist(movieId: number) {
-    if (!this.supabase) {
-      throw new Error('Supabase is not configured. Please check your environment variables.');
-    }
+  async removeFromWatchlist(movieId: number, mediaType: 'movie' | 'tv' = 'movie') {
+    const res = await fetch(
+      `/api/watchlist?mediaId=${movieId}&mediaType=${mediaType}`,
+      { method: 'DELETE' }
+    );
 
-    const { data: { user } } = await this.supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('User must be authenticated to remove movies from watchlist');
-    }
-
-    const { error } = await this.supabase
-      .from('watchlist')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('movie_id', movieId);
-
-    if (error) {
-      throw error;
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        throw new Error('User must be authenticated to remove movies from watchlist');
+      }
+      throw new Error(data.error || 'Failed to update watchlist');
     }
 
     return { success: true };
   }
 
   async getWatchlist(): Promise<WatchlistItem[]> {
-    if (!this.supabase) {
-      console.warn('Supabase is not configured. Returning empty watchlist.');
+    const res = await fetch('/api/watchlist', { cache: 'no-store' });
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        return [];
+      }
+      console.warn('Failed to load watchlist. Returning empty.');
       return [];
     }
 
-    const { data: { user } } = await this.supabase.auth.getUser();
-    
-    if (!user) {
-      return [];
-    }
-
-    const { data, error } = await this.supabase
-      .from('watchlist')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('added_at', { ascending: false });
-
-    if (error) {
-      throw error;
-    }
-
-    return data || [];
+    return res.json();
   }
 
-  async isInWatchlist(movieId: number): Promise<boolean> {
-    if (!this.supabase) {
-      return false;
-    }
-
+  async isInWatchlist(
+    movieId: number,
+    mediaType: 'movie' | 'tv' = 'movie'
+  ): Promise<boolean> {
     try {
-      const { data: { user } } = await this.supabase.auth.getUser();
-      
-      if (!user) {
+      const res = await fetch(
+        `/api/watchlist/check?mediaId=${movieId}&mediaType=${mediaType}`,
+        { cache: 'no-store' }
+      );
+
+      if (!res.ok) {
         return false;
       }
 
-      const { data, error } = await this.supabase
-        .from('watchlist')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('movie_id', movieId)
-        .maybeSingle();
-
-      if (error) {
-        console.warn('Error checking watchlist status:', error);
-        return false;
-      }
-
-      return !!data;
+      const data = await res.json();
+      return !!data.inWatchlist;
     } catch (error) {
       console.warn('Error checking watchlist status:', error);
       return false;

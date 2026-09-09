@@ -1,11 +1,15 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
-import { User } from '@supabase/supabase-js';
+import { createContext, useContext } from 'react';
+import { SessionProvider, useSession, signOut as nextAuthSignOut } from 'next-auth/react';
 
 interface AuthContextType {
-  user: User | null;
+  user: {
+    id: string;
+    email?: string | null;
+    name?: string | null;
+    image?: string | null;
+  } | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -20,7 +24,7 @@ export const useAuth = () => {
   if (typeof window === 'undefined') {
     return { user: null, loading: false, signOut: async () => {} };
   }
-  
+
   const context = useContext(AuthContext);
   if (!context) {
     return { user: null, loading: false, signOut: async () => {} };
@@ -28,65 +32,23 @@ export const useAuth = () => {
   return context;
 };
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+function AuthConsumer({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables are not configured. Authentication features will be disabled.');
-    return (
-      <AuthContext.Provider value={{ user: null, loading: false, signOut: async () => {} }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  }
-
-  const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
-
-  useEffect(() => {
-    let mounted = true;
-    
-    const getUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (mounted) {
-          setUser(user);
-        }
-      } catch (error) {
-        console.error('Error getting user:', error);
-        if (mounted) {
-          setUser(null);
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
       }
-    };
+    : null;
 
-    getUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (mounted) {
-          setUser(session?.user ?? null);
-          setLoading(false);
-        }
-      }
-    );
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
+  const loading = status === 'loading';
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      await nextAuthSignOut({ callbackUrl: '/' });
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -96,5 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider value={{ user, loading, signOut }}>
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthConsumer>{children}</AuthConsumer>
+    </SessionProvider>
   );
 }
