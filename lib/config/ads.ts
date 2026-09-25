@@ -14,7 +14,7 @@ export interface AdFormatConfig extends AdSlotConfig {
   loadDelayMs?: number;
 }
 
-export const adsEnabled = true;
+export const adsEnabled = false;
 export const adsConfig = {
   popunder: {
     enabled: true,
