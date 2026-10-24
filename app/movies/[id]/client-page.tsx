@@ -231,9 +231,9 @@ export default function ClientPage({ movieId }: ClientPageProps) {
       <MovieStructuredData movie={movie} credits={credits} />
       <FAQSchema />
       <BreadcrumbSchema items={[
-        { name: 'Home', url: 'https://cinehub1.vercel.app' },
-        { name: 'Movies', url: 'https://cinehub1.vercel.app/movies' },
-        { name: movie.title, url: `https://cinehub1.vercel.app/movies/${movieId}` }
+        { name: 'Home', url: 'https://movie.yonasaddisu.me' },
+        { name: 'Movies', url: 'https://movie.yonasaddisu.me/movies' },
+        { name: movie.title, url: `https://movie.yonasaddisu.me/movies/${movieId}` }
       ]} />
       <Header />
       

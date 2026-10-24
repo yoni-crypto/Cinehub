@@ -22,7 +22,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://cinehub1.vercel.app'),
+  metadataBase: new URL('https://movie.yonasaddisu.me'),
   title: {
     default: 'Watch Free Movies & TV Shows Online HD - No Sign Up Required | CineHub',
     template: '%s | Watch Free on CineHub'
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://cinehub1.vercel.app',
+    url: 'https://movie.yonasaddisu.me',
     siteName: 'CineHub',
     title: 'Watch Free Movies & TV Shows Online HD - No Sign Up | CineHub',
     description: 'Stream 1000s of movies and TV shows for free in HD quality. No registration, no ads, no downloads. Watch latest films and trending series instantly. Best free streaming site 2024.',
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://cinehub1.vercel.app',
+    canonical: 'https://movie.yonasaddisu.me',
   },
   verification: {
     google: '32b4b569e6dea431',

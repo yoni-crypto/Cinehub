@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: TVShowPageProps): Promise<Met
         title,
         description,
         type: 'video.tv_show',
-        url: `https://cinehub1.vercel.app/tv-shows/${tvShowId}`,
+        url: `https://movie.yonasaddisu.me/tv-shows/${tvShowId}`,
         images: [{
           url: posterUrl,
           width: 780,
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: TVShowPageProps): Promise<Met
         images: [posterUrl],
       },
       alternates: {
-        canonical: `https://cinehub1.vercel.app/tv-shows/${tvShowId}`,
+        canonical: `https://movie.yonasaddisu.me/tv-shows/${tvShowId}`,
       },
     };
   } catch (error) {

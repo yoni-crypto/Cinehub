@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: MoviePageProps): Promise<Meta
         title,
         description,
         type: 'video.movie',
-        url: `https://cinehub1.vercel.app/movies/${movieId}`,
+        url: `https://movie.yonasaddisu.me/movies/${movieId}`,
         images: [{
           url: posterUrl,
           width: 780,
@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: MoviePageProps): Promise<Meta
         images: [posterUrl],
       },
       alternates: {
-        canonical: `https://cinehub1.vercel.app/movies/${movieId}`,
+        canonical: `https://movie.yonasaddisu.me/movies/${movieId}`,
       },
     };
   } catch {

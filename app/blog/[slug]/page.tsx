@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: post.title,
       description: post.excerpt,
       type: 'article',
-      url: `https://cinehub1.vercel.app/blog/${post.slug}`,
+      url: `https://movie.yonasaddisu.me/blog/${post.slug}`,
       images: [{ url: post.image, width: 1200, height: 630, alt: post.imageAlt }],
       publishedTime: post.date,
       authors: [post.author],
@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: [post.image],
     },
     alternates: {
-      canonical: `https://cinehub1.vercel.app/blog/${post.slug}`,
+      canonical: `https://movie.yonasaddisu.me/blog/${post.slug}`,
     },
   };
 }

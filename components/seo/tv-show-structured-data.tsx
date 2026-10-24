@@ -44,7 +44,7 @@ export function TVShowStructuredData({ tvShow, credits }: TVShowStructuredDataPr
     genre: tvShow.genres?.map((g) => g.name) || [],
     numberOfSeasons: tvShow.number_of_seasons,
     numberOfEpisodes: tvShow.number_of_episodes,
-    url: `https://cinehub1.vercel.app/tv-shows/${tvShow.id}`,
+    url: `https://movie.yonasaddisu.me/tv-shows/${tvShow.id}`,
   };
 
   return (

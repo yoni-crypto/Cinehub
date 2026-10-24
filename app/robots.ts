@@ -14,7 +14,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/auth/', '/proxy/'],
       },
     ],
-    sitemap: 'https://cinehub1.vercel.app/sitemap.xml',
-    host: 'https://cinehub1.vercel.app',
+    sitemap: 'https://movie.yonasaddisu.me/sitemap.xml',
+    host: 'https://movie.yonasaddisu.me',
   }
 }

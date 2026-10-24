@@ -1,4 +1,4 @@
-const BASE_URL = 'https://cinehub1.vercel.app';
+const BASE_URL = 'https://movie.yonasaddisu.me';
 
 export async function submitToIndexNow(urls: string[]) {
   if (!urls || urls.length === 0) return;

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'About CineHub - Free Movie & TV Show Streaming Platform',
   description: 'Learn about CineHub, the best free streaming platform to watch movies and TV shows online in HD. No sign up, no ads, no downloads required. Stream 1000s of titles instantly.',
   alternates: {
-    canonical: 'https://cinehub1.vercel.app/about',
+    canonical: 'https://movie.yonasaddisu.me/about',
   },
 };
 

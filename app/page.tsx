@@ -33,11 +33,11 @@ export const metadata: Metadata = {
     title: 'Watch Free Movies & TV Shows Online HD - No Sign Up | CineHub',
     description: 'Stream 1000s of movies and TV shows for free in HD quality. No registration, no ads, no downloads. Watch latest films and trending series instantly.',
     type: 'website',
-    url: 'https://cinehub1.vercel.app',
+    url: 'https://movie.yonasaddisu.me',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
   },
   alternates: {
-    canonical: 'https://cinehub1.vercel.app',
+    canonical: 'https://movie.yonasaddisu.me',
   },
 };
 

@@ -7,12 +7,12 @@ export function StructuredData() {
     "name": "CineHub",
     "alternateName": ["CineHub - Free Movie Streaming", "CineHub Movies", "Watch Free Movies CineHub"],
     "description": "Watch free movies and TV shows online in HD quality without sign up. Stream thousands of popular films, trending series, and new releases instantly. Best free streaming site.",
-    "url": "https://cinehub1.vercel.app",
+    "url": "https://movie.yonasaddisu.me",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://cinehub1.vercel.app/search?q={search_term_string}"
+        "urlTemplate": "https://movie.yonasaddisu.me/search?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     },
@@ -33,8 +33,8 @@ export function StructuredData() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "CineHub",
-    "url": "https://cinehub1.vercel.app",
-    "logo": "https://cinehub1.vercel.app/logo.png",
+    "url": "https://movie.yonasaddisu.me",
+    "logo": "https://movie.yonasaddisu.me/logo.png",
     "description": "Free online movie and TV show streaming platform",
     "sameAs": [
       "https://twitter.com/elyonox",

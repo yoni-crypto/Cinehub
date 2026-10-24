@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const INDEXNOW_KEY = '1d3051b4934a44b9bd07d8d82458361d';
-const BASE_URL = 'https://cinehub1.vercel.app';
+const BASE_URL = 'https://movie.yonasaddisu.me';
 
 export async function POST(request: Request) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify({
-        host: 'cinehub1.vercel.app',
+        host: 'movie.yonasaddisu.me',
         key: INDEXNOW_KEY,
         keyLocation: `${BASE_URL}/${INDEXNOW_KEY}.txt`,
         urlList: urls,

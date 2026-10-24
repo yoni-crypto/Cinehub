@@ -24,10 +24,10 @@ export const metadata: Metadata = {
     title: 'CineHub Blog - Movie Reviews & Streaming Guides',
     description: 'Expert insights, streaming guides, and the latest in entertainment',
     type: 'website',
-    url: 'https://cinehub1.vercel.app/blog',
+    url: 'https://movie.yonasaddisu.me/blog',
   },
   alternates: {
-    canonical: 'https://cinehub1.vercel.app/blog',
+    canonical: 'https://movie.yonasaddisu.me/blog',
   },
 };
 

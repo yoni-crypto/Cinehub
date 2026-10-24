@@ -93,7 +93,7 @@ export async function generateMetadata({ params }: GenrePageProps): Promise<Meta
       title,
       description,
       type: 'website',
-      url: `https://cinehub1.vercel.app/genre/${params.slug}`,
+      url: `https://movie.yonasaddisu.me/genre/${params.slug}`,
       siteName: 'CineHub',
     },
     twitter: {
@@ -102,7 +102,7 @@ export async function generateMetadata({ params }: GenrePageProps): Promise<Meta
       description,
     },
     alternates: {
-      canonical: `https://cinehub1.vercel.app/genre/${params.slug}`,
+      canonical: `https://movie.yonasaddisu.me/genre/${params.slug}`,
     },
   };
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const BASE_URL = 'https://cinehub1.vercel.app';
+const BASE_URL = 'https://movie.yonasaddisu.me';
 const INDEXNOW_KEY = '1d3051b4934a44b9bd07d8d82458361d';
 
 async function submitToIndexNow(urls) {
@@ -11,7 +11,7 @@ async function submitToIndexNow(urls) {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify({
-        host: 'cinehub1.vercel.app',
+        host: 'movie.yonasaddisu.me',
         key: INDEXNOW_KEY,
         keyLocation: `${BASE_URL}/${INDEXNOW_KEY}.txt`,
         urlList: urls,

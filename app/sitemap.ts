@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { tmdbApi } from '@/lib/api/tmdb'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://cinehub1.vercel.app'
+  const baseUrl = 'https://movie.yonasaddisu.me'
   
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

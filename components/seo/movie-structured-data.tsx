@@ -48,7 +48,7 @@ export function MovieStructuredData({ movie, credits }: MovieStructuredDataProps
       name,
     })),
     genre: movie.genres?.map((g) => g.name) || [],
-    url: `https://cinehub1.vercel.app/movies/${movie.id}`,
+    url: `https://movie.yonasaddisu.me/movies/${movie.id}`,
   };
 
   return (
