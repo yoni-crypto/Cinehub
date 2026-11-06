@@ -22,43 +22,31 @@ interface NativeServer {
 type Server = EmbedServer | NativeServer;
 
 const SERVERS: Server[] = [
-  { type: 'native', name: 'StreamCore' },
-  {
-    type: 'embed',
-    name: 'VidLink',
+  ...(process.env.NEXT_PUBLIC_STREAMCORE_URL ? [{ type: 'native', name: 'StreamCore' } as NativeServer] : []),
+  { type: 'embed', name: 'VidLink',
     movieUrl: (id) => `https://vidlink.pro/movie/${id}?autoplay=true&title=false`,
-    tvUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false`,
-  },
-  {
-    type: 'embed',
-    name: '2Embed',
+    tvUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false` },
+  { type: 'embed', name: 'Videasy',
+    movieUrl: (id) => `https://player.videasy.net/movie/${id}`,
+    tvUrl: (id, s, e) => `https://player.videasy.net/tv/${id}/${s}/${e}` },
+  { type: 'embed', name: 'VidFast',
+    movieUrl: (id) => `https://vidfast.pro/movie/${id}?autoPlay=true`,
+    tvUrl: (id, s, e) => `https://vidfast.pro/tv/${id}/${s}/${e}?autoPlay=true` },
+  { type: 'embed', name: 'VidSrc',
+    movieUrl: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
+    tvUrl: (id, s, e) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}` },
+  { type: 'embed', name: '2Embed',
     movieUrl: (id) => `https://www.2embed.cc/embed/${id}`,
-    tvUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
-  },
-  {
-    type: 'embed',
-    name: 'AutoEmbed',
-    movieUrl: (id) => `https://autoembed.co/movie/tmdb/${id}`,
-    tvUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}`,
-  },
-  {
-    type: 'embed',
-    name: 'SuperEmbed',
+    tvUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}` },
+  { type: 'embed', name: 'SuperEmbed',
     movieUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
-    tvUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}`,
-  },
-  {
-    type: 'embed',
-    name: 'VidSrc',
-    movieUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}`,
-    tvUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}`,
-  },
-  {
-    type: 'embed',
-    name: 'Smashy',
-    movieUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}`,
-    tvUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}`,
-  },
+    tvUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` },
+  { type: 'embed', name: 'AutoEmbed',
+    movieUrl: (id) => `https://player.autoembed.me/embed/movie/${id}`,
+    tvUrl: (id, s, e) => `https://player.autoembed.me/embed/tv/${id}/${s}/${e}` },
+  { type: 'embed', name: 'VidZee',
+    movieUrl: (id) => `https://player.vidzee.wtf/embed/movie/${id}`,
+    tvUrl: (id, s, e) => `https://player.vidzee.wtf/embed/tv/${id}/${s}/${e}` },
 ];
 
 interface StreamingPlayerProps {
@@ -180,7 +168,7 @@ export function StreamingPlayer({
   const { m3u8, error: streamCoreError, loading: streamCoreLoading } = useStreamCore(
     movieId, isTVShow, seasonNumber, episodeNumber,
     isPlaying && isNative,
-    () => setServerIndex(1),
+    () => setServerIndex(i => Math.min(i + 1, SERVERS.length - 1)),
   );
 
   // Steal focus back if an iframe opens a pop-under

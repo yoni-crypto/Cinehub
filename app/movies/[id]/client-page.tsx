@@ -25,16 +25,19 @@ interface ClientPageProps {
   movieId: number;
 }
 
-const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL ?? 'http://localhost:3001';
+const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL;
 
+// Ordered by reliability (verified live 2026-11-06). StreamCore only when configured.
 const STREAMING_SOURCES: Array<{ name: string; buildUrl: (movieId: number) => string; native?: boolean }> = [
-  { name: 'StreamCore', buildUrl: (id) => `${STREAMCORE_URL}/movie/${id}`, native: true },
+  ...(STREAMCORE_URL ? [{ name: 'StreamCore', buildUrl: (id: number) => `${STREAMCORE_URL}/movie/${id}`, native: true }] : []),
   { name: 'VidLink',    buildUrl: (id) => `https://vidlink.pro/movie/${id}?autoplay=true&title=false` },
+  { name: 'Videasy',    buildUrl: (id) => `https://player.videasy.net/movie/${id}` },
+  { name: 'VidFast',    buildUrl: (id) => `https://vidfast.pro/movie/${id}?autoPlay=true` },
+  { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}` },
   { name: '2Embed',     buildUrl: (id) => `https://www.2embed.cc/embed/${id}` },
-  { name: 'AutoEmbed',  buildUrl: (id) => `https://autoembed.co/movie/tmdb/${id}` },
   { name: 'SuperEmbed', buildUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1` },
-  { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.fyi/embed/movie/${id}` },
-  { name: 'Smashy',     buildUrl: (id) => `https://embed.smashystream.com/playere.php?tmdb=${id}` },
+  { name: 'AutoEmbed',  buildUrl: (id) => `https://player.autoembed.me/embed/movie/${id}` },
+  { name: 'VidZee',     buildUrl: (id) => `https://player.vidzee.wtf/embed/movie/${id}` },
 ];
 
 function buildEmbedUrl(movieId: number, serverIndex: number): string {

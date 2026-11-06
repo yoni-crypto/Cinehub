@@ -23,16 +23,19 @@ interface TVShowClientPageProps {
   tvShowId: number;
 }
 
-const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL ?? 'http://localhost:3001';
+const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL;
 
+// Ordered by reliability (verified live 2026-11-06). StreamCore only when configured.
 const TV_STREAMING_SOURCES: Array<{ name: string; buildUrl: (tvShowId: number, season: number, episode: number) => string; native?: boolean }> = [
-  { name: 'StreamCore', buildUrl: (id, s, e) => `${STREAMCORE_URL}/tv/${id}/${s}/${e}`, native: true },
+  ...(STREAMCORE_URL ? [{ name: 'StreamCore', buildUrl: (id: number, s: number, e: number) => `${STREAMCORE_URL}/tv/${id}/${s}/${e}`, native: true }] : []),
   { name: 'VidLink',    buildUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false` },
+  { name: 'Videasy',    buildUrl: (id, s, e) => `https://player.videasy.net/tv/${id}/${s}/${e}` },
+  { name: 'VidFast',    buildUrl: (id, s, e) => `https://vidfast.pro/tv/${id}/${s}/${e}?autoPlay=true` },
+  { name: 'VidSrc',     buildUrl: (id, s, e) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}` },
   { name: '2Embed',     buildUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}` },
-  { name: 'AutoEmbed',  buildUrl: (id, s, e) => `https://autoembed.co/tv/tmdb/${id}-${s}-${e}` },
   { name: 'SuperEmbed', buildUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` },
-  { name: 'VidSrc',     buildUrl: (id, s, e) => `https://vidsrc.fyi/embed/tv/${id}/${s}/${e}` },
-  { name: 'Smashy',     buildUrl: (id, s, e) => `https://embed.smashystream.com/playere.php?tmdb=${id}&season=${s}&episode=${e}` },
+  { name: 'AutoEmbed',  buildUrl: (id, s, e) => `https://player.autoembed.me/embed/tv/${id}/${s}/${e}` },
+  { name: 'VidZee',     buildUrl: (id, s, e) => `https://player.vidzee.wtf/embed/tv/${id}/${s}/${e}` },
 ];
 
 function buildTVEmbedUrl(tvShowId: number, season: number, episode: number, serverIndex: number): string {
