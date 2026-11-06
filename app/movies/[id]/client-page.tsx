@@ -3,7 +3,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Play, ChevronRight, Home, X, Lightbulb, MessageCircle, ExternalLink, Star } from 'lucide-react';
+import { Play, ChevronRight, Home, X, Lightbulb, MessageCircle, ExternalLink, SkipForward, Star } from 'lucide-react';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -16,6 +16,8 @@ import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
 import { continueWatching } from '@/lib/continue-watching';
+import { MOVIE_SERVERS } from '@/lib/streaming/servers';
+import { useServerSelection } from '@/hooks/use-server-selection';
 import { MovieStructuredData } from '@/components/seo/movie-structured-data';
 import { FAQSchema } from '@/components/seo/faq-schema';
 import { BreadcrumbSchema } from '@/components/seo/breadcrumb-schema';
@@ -25,20 +27,7 @@ interface ClientPageProps {
   movieId: number;
 }
 
-const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL;
-
-// Ordered by reliability (verified live 2026-11-06). StreamCore only when configured.
-const STREAMING_SOURCES: Array<{ name: string; buildUrl: (movieId: number) => string; native?: boolean }> = [
-  ...(STREAMCORE_URL ? [{ name: 'StreamCore', buildUrl: (id: number) => `${STREAMCORE_URL}/movie/${id}`, native: true }] : []),
-  { name: 'VidLink',    buildUrl: (id) => `https://vidlink.pro/movie/${id}?autoplay=true&title=false` },
-  { name: 'Videasy',    buildUrl: (id) => `https://player.videasy.net/movie/${id}` },
-  { name: 'VidFast',    buildUrl: (id) => `https://vidfast.pro/movie/${id}?autoPlay=true` },
-  { name: 'VidSrc',     buildUrl: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}` },
-  { name: '2Embed',     buildUrl: (id) => `https://www.2embed.cc/embed/${id}` },
-  { name: 'SuperEmbed', buildUrl: (id) => `https://multiembed.mov/?video_id=${id}&tmdb=1` },
-  { name: 'AutoEmbed',  buildUrl: (id) => `https://player.autoembed.me/embed/movie/${id}` },
-  { name: 'VidZee',     buildUrl: (id) => `https://player.vidzee.wtf/embed/movie/${id}` },
-];
+const STREAMING_SOURCES = MOVIE_SERVERS;
 
 function buildEmbedUrl(movieId: number, serverIndex: number): string {
   const source = STREAMING_SOURCES[Math.min(serverIndex, STREAMING_SOURCES.length - 1)] ?? STREAMING_SOURCES[0];
@@ -47,7 +36,13 @@ function buildEmbedUrl(movieId: number, serverIndex: number): string {
 
 export default function ClientPage({ movieId }: ClientPageProps) {
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
-  const [selectedServer, setSelectedServer] = useState(0);
+  const {
+    index: selectedServer,
+    choose: setSelectedServer,
+    next: nextServer,
+    confirmWorking: confirmServerWorking,
+    isDown: isServerDown,
+  } = useServerSelection('movie', STREAMING_SOURCES);
   const [userSelectedServer, setUserSelectedServer] = useState(false);
   const [lightsOff, setLightsOff] = useState(false);
   const [movie, setMovie] = useState<any>(null);
@@ -67,6 +62,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
       playerOpenedAt.current = Date.now();
       // Start watch time tracking
       watchingInterval.current = setInterval(() => {
+        confirmServerWorking();
         if (typeof window !== 'undefined' && (window as any).umami) {
           (window as any).umami.track('watching', {
             type: 'movie',
@@ -312,6 +308,15 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                       Open in new tab
                     </a>
                     <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => nextServer()}
+                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 px-2 py-1.5 rounded transition-colors"
+                        title="Switch to the next working server"
+                      >
+                        <SkipForward className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Not working?</span> Next server
+                      </button>
                       {lightsOff && (
                         <button
                           type="button"
@@ -339,7 +344,7 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                     <StreamingPlayer
                       url={buildEmbedUrl(movieId, selectedServer)}
                       title={movie.title}
-                      onError={() => setSelectedServer(s => s < STREAMING_SOURCES.length - 1 ? s + 1 : s)}
+                      onError={() => nextServer()}
                     />
                   </div>
                 </div>
@@ -395,10 +400,10 @@ export default function ClientPage({ movieId }: ClientPageProps) {
                           selectedServer === idx
                             ? 'bg-red-600 border-red-600 text-white'
                             : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted'
-                        }`}
+                        } ${isServerDown(idx) && selectedServer !== idx ? 'opacity-50' : ''}`}
                       >
                         <span className="text-[10px] uppercase tracking-wide opacity-80">
-                          {STREAMING_SOURCES[idx].native ? 'Ad-free ★' : 'Server'}
+                          {isServerDown(idx) ? 'Offline' : STREAMING_SOURCES[idx].native ? 'Ad-free ★' : 'Server'}
                         </span>
                         <span className="flex items-center gap-1.5 font-medium mt-0.5">
                           <Play className="w-3.5 h-3.5" fill="currentColor" />

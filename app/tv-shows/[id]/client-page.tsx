@@ -3,7 +3,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Play, ChevronRight, Home, X, Lightbulb, MessageCircle, ExternalLink } from 'lucide-react';
+import { Play, ChevronRight, Home, X, Lightbulb, MessageCircle, ExternalLink, SkipForward } from 'lucide-react';
 import { tmdbApi } from '@/lib/api/tmdb';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -16,6 +16,8 @@ import ShareButton from '@/components/share-button';
 import { LoadingScreen } from '@/components/loading-screen';
 import { StreamingPlayer } from '@/components/streaming-player';
 import { continueWatching } from '@/lib/continue-watching';
+import { TV_SERVERS } from '@/lib/streaming/servers';
+import { useServerSelection } from '@/hooks/use-server-selection';
 import { TVShowStructuredData } from '@/components/seo/tv-show-structured-data';
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -23,20 +25,7 @@ interface TVShowClientPageProps {
   tvShowId: number;
 }
 
-const STREAMCORE_URL = process.env.NEXT_PUBLIC_STREAMCORE_URL;
-
-// Ordered by reliability (verified live 2026-11-06). StreamCore only when configured.
-const TV_STREAMING_SOURCES: Array<{ name: string; buildUrl: (tvShowId: number, season: number, episode: number) => string; native?: boolean }> = [
-  ...(STREAMCORE_URL ? [{ name: 'StreamCore', buildUrl: (id: number, s: number, e: number) => `${STREAMCORE_URL}/tv/${id}/${s}/${e}`, native: true }] : []),
-  { name: 'VidLink',    buildUrl: (id, s, e) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&title=false` },
-  { name: 'Videasy',    buildUrl: (id, s, e) => `https://player.videasy.net/tv/${id}/${s}/${e}` },
-  { name: 'VidFast',    buildUrl: (id, s, e) => `https://vidfast.pro/tv/${id}/${s}/${e}?autoPlay=true` },
-  { name: 'VidSrc',     buildUrl: (id, s, e) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}` },
-  { name: '2Embed',     buildUrl: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}` },
-  { name: 'SuperEmbed', buildUrl: (id, s, e) => `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${s}&e=${e}` },
-  { name: 'AutoEmbed',  buildUrl: (id, s, e) => `https://player.autoembed.me/embed/tv/${id}/${s}/${e}` },
-  { name: 'VidZee',     buildUrl: (id, s, e) => `https://player.vidzee.wtf/embed/tv/${id}/${s}/${e}` },
-];
+const TV_STREAMING_SOURCES = TV_SERVERS;
 
 function buildTVEmbedUrl(tvShowId: number, season: number, episode: number, serverIndex: number): string {
   const source = TV_STREAMING_SOURCES[Math.min(serverIndex, TV_STREAMING_SOURCES.length - 1)] ?? TV_STREAMING_SOURCES[0];
@@ -46,7 +35,13 @@ function buildTVEmbedUrl(tvShowId: number, season: number, episode: number, serv
 export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   const seasonSelectorRef = useRef<HTMLDivElement>(null);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
-  const [selectedServer, setSelectedServer] = useState(0);
+  const {
+    index: selectedServer,
+    choose: setSelectedServer,
+    next: nextServer,
+    confirmWorking: confirmServerWorking,
+    isDown: isServerDown,
+  } = useServerSelection('tv', TV_STREAMING_SOURCES);
   const [userSelectedServer, setUserSelectedServer] = useState(false);
   const [lightsOff, setLightsOff] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState<number>(1);
@@ -134,6 +129,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
   useEffect(() => {
     if (isPlayerOpen) {
       watchingInterval.current = setInterval(() => {
+        confirmServerWorking();
         if (typeof window !== 'undefined' && (window as any).umami) {
           (window as any).umami.track('watching', {
             type: 'tv',
@@ -354,6 +350,15 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                       </a>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => nextServer()}
+                        className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 px-2 py-1.5 rounded transition-colors"
+                        title="Switch to the next working server"
+                      >
+                        <SkipForward className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Not working?</span> Next server
+                      </button>
                       {lightsOff && (
                         <button
                           type="button"
@@ -378,7 +383,7 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                     <StreamingPlayer
                       url={buildTVEmbedUrl(tvShowId, selectedSeason, selectedEpisode, selectedServer)}
                       title={`${tvShow.name} S${selectedSeason}E${selectedEpisode}`}
-                      onError={() => setSelectedServer(s => s < TV_STREAMING_SOURCES.length - 1 ? s + 1 : s)}
+                      onError={() => nextServer()}
                     />
                   </div>
                 </div>
@@ -436,10 +441,10 @@ export default function TVShowClientPage({ tvShowId }: TVShowClientPageProps) {
                           selectedServer === idx
                             ? 'bg-red-600 border-red-600 text-white'
                             : 'border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground hover:bg-muted'
-                        }`}
+                        } ${isServerDown(idx) && selectedServer !== idx ? 'opacity-50' : ''}`}
                       >
                         <span className="text-[10px] uppercase tracking-wide opacity-80">
-                          {TV_STREAMING_SOURCES[idx].native ? 'Ad-free ★' : 'Server'}
+                          {isServerDown(idx) ? 'Offline' : TV_STREAMING_SOURCES[idx].native ? 'Ad-free ★' : 'Server'}
                         </span>
                         <span className="flex items-center gap-1.5 font-medium mt-0.5">
                           <Play className="w-3.5 h-3.5" fill="currentColor" />
