@@ -2,12 +2,6 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_URL || '';
 
-if (!MONGODB_URI) {
-  throw new Error(
-    'Please define the MONGODB_URI or MONGODB_URL environment variable inside .env'
-  );
-}
-
 interface Cached {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -24,6 +18,13 @@ globalWithMongo._mongooseCached = cached;
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (cached.conn) {
     return cached.conn;
+  }
+
+  // Checked lazily so `next build` doesn't crash when the env var is absent.
+  if (!MONGODB_URI) {
+    throw new Error(
+      'Please define the MONGODB_URI or MONGODB_URL environment variable inside .env'
+    );
   }
 
   if (!cached.promise) {
