@@ -5,7 +5,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ['image.tmdb.org', 'img.youtube.com'],
+    domains: ['image.tmdb.org', 'img.youtube.com', 's4.anilist.co'],
   },
   compress: true,
   poweredByHeader: false,

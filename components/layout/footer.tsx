@@ -35,6 +35,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/anime" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
+                  Anime
+                </Link>
+              </li>
+              <li>
                 <Link href="/categories" className="text-muted-foreground hover:text-red-600 transition-colors text-sm">
                   Categories
                 </Link>

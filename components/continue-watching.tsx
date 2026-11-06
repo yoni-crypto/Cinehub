@@ -4,20 +4,9 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Play, X } from 'lucide-react';
-import { continueWatching } from '@/lib/continue-watching';
+import { continueWatching, type WatchProgress } from '@/lib/continue-watching';
 import { tmdbApi } from '@/lib/api/tmdb';
 
-interface WatchProgress {
-  id: string;
-  type: 'movie' | 'tv';
-  title: string;
-  poster: string;
-  lastWatched: number;
-  progress?: number;
-  season?: number;
-  episode?: number;
-  episodeName?: string;
-}
 
 export function ContinueWatching() {
   const [items, setItems] = useState<WatchProgress[]>([]);
@@ -26,7 +15,7 @@ export function ContinueWatching() {
     setItems(continueWatching.getAll());
   }, []);
 
-  const handleRemove = (id: string, type: 'movie' | 'tv') => {
+  const handleRemove = (id: string, type: WatchProgress['type']) => {
     continueWatching.remove(id, type);
     setItems(continueWatching.getAll());
   };
@@ -40,13 +29,15 @@ export function ContinueWatching() {
         {items.slice(0, 10).map((item) => (
           <div key={`${item.type}-${item.id}`} className="flex-shrink-0 w-48 group relative">
             <Link href={
-              item.type === 'movie' 
-                ? `/movies/${item.id}?autoplay=true` 
+              item.type === 'movie'
+                ? `/movies/${item.id}?autoplay=true`
+                : item.type === 'anime'
+                ? `/anime/${item.id}?autoplay=true&episode=${item.episode ?? 1}`
                 : `/tv-shows/${item.id}?autoplay=true&season=${item.season}&episode=${item.episode}`
             }>
               <div className="relative aspect-video rounded-lg overflow-hidden bg-muted mb-2">
                 <Image
-                  src={tmdbApi.getImageUrl(item.poster, 'w500')}
+                  src={item.poster?.startsWith('http') ? item.poster : tmdbApi.getImageUrl(item.poster, 'w500')}
                   alt={item.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -59,6 +50,12 @@ export function ContinueWatching() {
                   </div>
                 )}
                 
+                {item.type === 'anime' && item.episode && (
+                  <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+                    EP {item.episode}
+                  </div>
+                )}
+
                 {/* Progress bar */}
                 {item.progress && item.progress > 5 && (
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/50">
@@ -87,6 +84,9 @@ export function ContinueWatching() {
             {/* Title and episode info */}
             <div className="text-foreground text-sm">
               <p className="font-medium truncate">{item.title}</p>
+              {item.type === 'anime' && item.episode && (
+                <p className="text-muted-foreground text-xs truncate">Episode {item.episode}</p>
+              )}
               {item.type === 'tv' && item.season && item.episode && (
                 <p className="text-muted-foreground text-xs truncate">
                   S{item.season}E{item.episode}

@@ -1,8 +1,8 @@
-interface WatchProgress {
+export interface WatchProgress {
   id: string;
-  type: 'movie' | 'tv';
+  type: 'movie' | 'tv' | 'anime';
   title: string;
-  poster: string;
+  poster: string; // TMDB path for movie/tv, full URL for anime
   lastWatched: number;
   progress?: number; // 0-100 percentage
   season?: number;
@@ -48,13 +48,13 @@ export const continueWatching = {
   },
 
   // Get specific item
-  get(id: string, type: 'movie' | 'tv'): WatchProgress | null {
+  get(id: string, type: WatchProgress['type']): WatchProgress | null {
     const items = this.getAll();
     return items.find(i => i.id === id && i.type === type) || null;
   },
 
   // Remove item
-  remove(id: string, type: 'movie' | 'tv') {
+  remove(id: string, type: WatchProgress['type']) {
     const items = this.getAll().filter(i => !(i.id === id && i.type === type));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   },

@@ -209,6 +209,9 @@ export function HomeHeader() {
                 <Link href="/tv-shows" className="text-white hover:text-red-400 transition-colors font-medium">
                   TV Shows
                 </Link>
+                <Link href="/anime" className="text-white hover:text-red-400 transition-colors font-medium">
+                  Anime
+                </Link>
                 <Link href="/categories?category=top-rated" className="text-white hover:text-red-400 transition-colors font-medium flex items-center gap-1">
                   <Star className="w-4 h-4" />
                   Top Rated

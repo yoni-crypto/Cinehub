@@ -267,6 +267,10 @@ export function Header() {
                 TV Shows
               </Link>
             </div>
+
+            <Link href="/anime" className="text-foreground hover:text-red-500 transition-colors font-medium">
+              Anime
+            </Link>
             
             <div className="relative group">
               <span className="text-foreground hover:text-red-500 transition-colors font-medium cursor-pointer">
@@ -546,6 +550,13 @@ export function Header() {
                   onClick={closeMobileMenu}
                 >
                   TV Shows
+                </Link>
+                <Link
+                  href="/anime"
+                  className="block px-4 py-3 text-foreground font-semibold border-b border-border hover:bg-muted transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  Anime
                 </Link>
                 <Link
                   href="/categories?category=top-rated"
